@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go2car/features/home/presentation/views/widgets/small_button.dart';
+import 'package:go2car/features/home/presentation/views/widgets/home_view_small_card.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HomeCards extends StatelessWidget {
-  const HomeCards({super.key});
+class HomeViewCards extends StatelessWidget {
+  const HomeViewCards({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -89,14 +89,14 @@ class HomeCards extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SmallCard(
+            HomeViewSmallCard(
               title: 'Find My Car',
               subTitle: "Navigate back to your vehicle",
               icon: Icons.place_outlined,
               iconBackgroundColor: Color(0xffF0FDF1),
               iconColor: Colors.green,
             ),
-            SmallCard(
+            HomeViewSmallCard(
               title: 'Settings & Profile',
               subTitle: 'Manage preferences',
               icon: Icons.settings_outlined,
