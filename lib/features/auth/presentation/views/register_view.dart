@@ -15,7 +15,6 @@ class RegisterView extends StatelessWidget {
         backgroundColor: Colors.white,
         appBar: AppBar(
          
-          centerTitle: true,
           backgroundColor: Colors.transparent,
         ),
         body: const SafeArea(child: RegisterViewBody()),

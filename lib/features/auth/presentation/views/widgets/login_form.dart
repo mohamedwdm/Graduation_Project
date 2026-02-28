@@ -5,6 +5,7 @@ import 'package:go2car/core/widgets/show_snackbar.dart';
 import 'package:go2car/features/auth/presentation/manager/auth_cubit/auth_cubit.dart';
 import 'package:go2car/features/auth/presentation/views/register_view.dart';
 import 'package:go2car/features/auth/presentation/views/widgets/custom_text_field.dart';
+import 'package:go2car/features/layout/presentation/views/main_layout.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -82,12 +83,11 @@ class _LoginFormState extends State<LoginForm> {
             child: BlocConsumer<AuthCubit, AuthState>(
               listener: (context, state) {
                 if (state is LoginSuccess) {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        //return const HomeView();
-                        return const RegisterView();
+                        return const MainLayout();
                       },
                     ),
                   );

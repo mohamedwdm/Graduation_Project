@@ -92,6 +92,7 @@ class _RegisterFormState extends State<RegisterForm> {
               if (value == null || value.isEmpty) {
                 return "Email is required";
               }
+              //@@@@@@@@@@@@@@@@@@@@@update this
               final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
               if (!emailRegex.hasMatch(value)) {
                 return "Enter a valid email";

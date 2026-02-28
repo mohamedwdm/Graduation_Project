@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go2car/core/utils/styles.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class RegisterHeaderSection extends StatelessWidget {

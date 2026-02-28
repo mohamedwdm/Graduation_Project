@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go2car/core/utils/styles.dart';
-import 'package:go2car/features/auth/presentation/views/register_view.dart';
+
 import 'package:go2car/features/auth/presentation/views/widgets/login_form.dart';
 import 'package:go2car/features/auth/presentation/views/widgets/login_header_section.dart';
 
