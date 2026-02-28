@@ -10,7 +10,8 @@ class HomeView extends StatelessWidget {
       // appBar: AppBar(backgroundColor: Colors.transparent),
 
       body: SafeArea(child: HomeViewBody()),
-      backgroundColor: Color(0xffF6F8F6),
+      backgroundColor: Color(0xffFFFFFF),
+     // backgroundColor: Color(0xffF6F8F6),
     );
   }
 }

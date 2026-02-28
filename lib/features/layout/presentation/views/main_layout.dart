@@ -36,7 +36,8 @@ class _MainLayoutState extends State<MainLayout> {
         selectedItemColor: const Color(0xff00A24F),
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
-        backgroundColor: Color(0xffF9F9F9),
+       // backgroundColor: Color(0xffF9F9F9),
+        backgroundColor: Color(0xffFFFFFF),
         
         onTap: (index) {
           setState(() {
