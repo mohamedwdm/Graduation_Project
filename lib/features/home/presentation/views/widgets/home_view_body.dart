@@ -15,7 +15,7 @@ class HomeViewBody extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           HomeHeaderSection(),
-          SizedBox(height: 10),
+          SizedBox(height: 20),
           HomeViewCards(),
           SizedBox(height: 25),
           Text(
@@ -26,9 +26,7 @@ class HomeViewBody extends StatelessWidget {
             ),
           ),
           SizedBox(height: 15),
-          QuickActionCard(
-            onTap: (){},
-          ),
+          QuickActionCard(onTap: () {}),
         ],
       ),
     );
