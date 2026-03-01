@@ -26,7 +26,9 @@ class HomeViewBody extends StatelessWidget {
             ),
           ),
           SizedBox(height: 15),
-          QuickActionCard(),
+          QuickActionCard(
+            onTap: (){},
+          ),
         ],
       ),
     );
