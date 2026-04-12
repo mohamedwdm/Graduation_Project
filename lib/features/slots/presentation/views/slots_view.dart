@@ -8,9 +8,8 @@ class SlotsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-
-      body:  SafeArea(child: SlotsViewBody()),
-      backgroundColor: Color(0xffF6F8F6),
+      body: SafeArea(child: SlotsViewBody()),
+      backgroundColor: Color(0xffFFFFFF),
     );
   }
 }
