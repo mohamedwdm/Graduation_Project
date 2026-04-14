@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
-
-import 'package:go2car/features/slots/presentation/views/widgets/slots_view_body.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/di/injection_container.dart';
+import '../manager/slots_cubit/slots_cubit.dart';
+import 'widgets/slots_view_body.dart';
 
 class SlotsView extends StatelessWidget {
   const SlotsView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: SafeArea(child: SlotsViewBody()),
-      backgroundColor: Color(0xffFFFFFF),
+    return BlocProvider(
+      create: (context) => sl<SlotsCubit>()..loadSlots(),
+      child: const Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: SlotsViewBody(),
+        ),
+      ),
     );
   }
 }

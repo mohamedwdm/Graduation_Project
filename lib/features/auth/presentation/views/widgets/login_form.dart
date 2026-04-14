@@ -14,15 +14,14 @@ class LoginForm extends StatefulWidget {
   State<LoginForm> createState() => _LoginFormState();
 }
 
-String? email;
-String? password;
-
-AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
-
 class _LoginFormState extends State<LoginForm> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  
+  AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
+  String? email;
+  String? password;
 
   @override
   void dispose() {
@@ -75,14 +74,12 @@ class _LoginFormState extends State<LoginForm> {
             },
           ),
           
-         
-
           const SizedBox(height: 30),
           SizedBox(
             width: double.infinity,
             child: BlocConsumer<AuthCubit, AuthState>(
               listener: (context, state) {
-                if (state is LoginSuccess) {
+                if (state is AuthSuccess) {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
@@ -91,35 +88,36 @@ class _LoginFormState extends State<LoginForm> {
                       },
                     ),
                   );
-                  //formkey1.currentState!.reset();
                   _emailController.clear();
                   _passwordController.clear();
-                  ShowSnackBar(context, "Logged Successfully");
-                } else if (state is LoginFailure) {
-                  ShowSnackBar(context, state.errorMessege);
+                  showSnackBar(context, "Logged Successfully");
+                } else if (state is AuthFailureState) {
+                  showSnackBar(context, state.message);
                 }
               },
               builder: (context, state) {
                 return CustomButton(
-                  isLoading: state is LoginLoading ? true : false,
+                  isLoading: state is AuthLoading,
                   backgroundcolor: const Color(0xff00A24F),
                   textcolor: Colors.white,
                   text: 'SIGN IN',
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
-                      BlocProvider.of<AuthCubit>(
-                        context,
-                      ).loginUser(email: email!, password: password!);
+                      context.read<AuthCubit>().login(
+                        email: email!,
+                        password: password!,
+                      );
                     } else {
-                      autovalidateMode = AutovalidateMode.always;
-                      setState(() {});
+                      setState(() {
+                        autovalidateMode = AutovalidateMode.always;
+                      });
                     }
                   },
                 );
               },
             ),
           ),
-          SizedBox(height: 15),
+          const SizedBox(height: 15),
           SizedBox(
             width: double.infinity,
             child: CustomButton(
@@ -139,7 +137,7 @@ class _LoginFormState extends State<LoginForm> {
                 },
             ),
           ),
-          SizedBox(height: 15,),
+          const SizedBox(height: 15),
            const Align(
             alignment: Alignment.center,
             child: Text("Forget Password?", style: TextStyle(color: Colors.red)),

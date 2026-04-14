@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go2car/core/utils/styles.dart';
 import 'package:go2car/features/auth/presentation/views/login_view.dart';
 import 'package:go2car/features/auth/presentation/views/widgets/register_form.dart';
 import 'package:go2car/features/auth/presentation/views/widgets/register_header_section.dart';
@@ -68,7 +67,7 @@ class RegisterViewBody extends StatelessWidget {
           const SizedBox(height: 15),
           Text(
             'Or',
-            style: Styles.textStyle18.copyWith(color: Colors.grey.shade600),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.grey.shade600),
             textAlign: TextAlign.center,
           ),
           // const CustomButtonForSocialMediaConnection(

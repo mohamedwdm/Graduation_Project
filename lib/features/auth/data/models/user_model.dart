@@ -1,22 +1,34 @@
-class UserModel {
-  final String userid;
-  final String name;
-  final String email;
+import 'package:go2car/features/auth/domain/entities/user_entity.dart';
+import 'package:go2car/core/utils/typedefs.dart';
 
-  UserModel({
-    required this.userid,
-    required this.name,
-    required this.email,
+class UserModel extends UserEntity {
+  const UserModel({
+    required super.userid,
+    required super.name,
+    required super.email,
   });
 
-  // Convert Firestore doc -> UserModel
-  factory UserModel.fromJson(jsonData) {
+  factory UserModel.fromJson(JsonMap json) {
     return UserModel(
-      userid: jsonData['userid'] ?? '',
-      name: jsonData['name'] ?? '',
-      email: jsonData['email'] ?? '',
+      userid: json['userid']?.toString() ?? json['id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      email: json['email']?.toString() ?? '',
     );
   }
 
+  factory UserModel.fromEntity(UserEntity entity) {
+    return UserModel(
+      userid: entity.userid,
+      name: entity.name,
+      email: entity.email,
+    );
+  }
 
+  JsonMap toJson() {
+    return {
+      'userid': userid,
+      'name': name,
+      'email': email,
+    };
+  }
 }

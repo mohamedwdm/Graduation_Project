@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go2car/core/utils/styles.dart';
 
 class CustomButton extends StatelessWidget {
   const CustomButton({
@@ -42,7 +41,7 @@ class CustomButton extends StatelessWidget {
                 )
                 : Text(
                   text,
-                  style: Styles.textStyle16.copyWith(
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: textcolor,
                     fontWeight: FontWeight.w700,
                     fontSize: fontsize,

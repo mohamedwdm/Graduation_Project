@@ -1,53 +1,58 @@
-import 'package:bloc/bloc.dart';
-import 'package:go2car/features/auth/data/models/user_model.dart';
-import 'package:go2car/features/auth/data/repos/user_repo.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:go2car/features/auth/domain/entities/user_entity.dart';
+import 'package:go2car/features/auth/domain/usecases/login_usecase.dart';
+import 'package:go2car/features/auth/domain/usecases/register_usecase.dart';
+import 'package:go2car/features/auth/domain/usecases/logout_usecase.dart';
+import 'package:go2car/core/usecase/usecase.dart';
 
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit(this.userRepo) : super(AuthInitial());
+  final LoginUseCase _loginUseCase;
+  final RegisterUseCase _registerUseCase;
+  final LogoutUseCase _logoutUseCase;
 
-  final UserRepo userRepo;
+  AuthCubit({
+    required LoginUseCase loginUseCase,
+    required RegisterUseCase registerUseCase,
+    required LogoutUseCase logoutUseCase,
+  })  : _loginUseCase = loginUseCase,
+        _registerUseCase = registerUseCase,
+        _logoutUseCase = logoutUseCase,
+        super(const AuthInitial());
 
-  Future<void> registerUser({
+  Future<void> login({
+    required String email,
+    required String password,
+  }) async {
+    emit(const AuthLoading());
+    final result = await _loginUseCase(
+      LoginParams(email: email, password: password),
+    );
+    result.fold(
+      (failure) => emit(AuthFailureState(failure.message)),
+      (user) => emit(AuthSuccess(user)),
+    );
+  }
+
+  Future<void> register({
     required String email,
     required String password,
     required String name,
   }) async {
-    emit(RegisterLoading());
-    var result = await userRepo.registerUser(
-      email: email,
-      password: password,
-      name: name,
+    emit(const AuthLoading());
+    final result = await _registerUseCase(
+      RegisterParams(email: email, password: password, name: name),
     );
     result.fold(
-      (failure) {
-        emit(RegisterFailure(errorMessege: failure.errorMessage));
-      },
-      (_) {
-        emit(RegisterSuccess());
-      },
+      (failure) => emit(AuthFailureState(failure.message)),
+      (_) => emit(const RegisterSuccess()),
     );
   }
 
-  Future<void> loginUser({
-    required String email,
-    required String password,
-  }) async {
-    emit(LoginLoading());
-    var result = await userRepo.loginUser(email: email, password: password);
-    result.fold(
-      (failure) {
-        emit(LoginFailure(errorMessege: failure.errorMessage));
-      },
-      (user) {
-        emit(LoginSuccess(user: user));
-      },
-    );
-  }
-
-  Future<void> logOut() async {
-    await userRepo.logOut();
+  Future<void> logout() async {
+    await _logoutUseCase(const NoParams());
+    emit(const AuthInitial());
   }
 }

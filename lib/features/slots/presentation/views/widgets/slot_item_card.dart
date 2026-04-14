@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go2car/features/slots/data/models/slot_model.dart';
+import '../../../domain/entities/slot_entity.dart';
 
 class SlotItemCard extends StatelessWidget {
-  final SlotModel slotModel;
+  final SlotEntity slot;
 
-  const SlotItemCard({super.key, required this.slotModel});
+  const SlotItemCard({super.key, required this.slot});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class SlotItemCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    slotModel.slotId,
+                    slot.slotId,
                     style: const TextStyle(
                       fontFamily: 'Space Grotesk',
                       fontWeight: FontWeight.w700,
@@ -44,7 +44,7 @@ class SlotItemCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    slotModel.locationNote,
+                    slot.locationNote,
                     style: const TextStyle(
                       fontFamily: 'Space Grotesk',
                       fontWeight: FontWeight.w400,
@@ -61,7 +61,7 @@ class SlotItemCard extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color:
-                      slotModel.isAvailable
+                      slot.isAvailable
                           ? const Color(0xFFDCFCE7)
                           : const Color(0xFFFEE2E2),
                   borderRadius: BorderRadius.circular(9999),
@@ -69,22 +69,22 @@ class SlotItemCard extends StatelessWidget {
                 child: Row(
                   children: [
                     Icon(
-                      slotModel.isAvailable ? Icons.check_circle : Icons.cancel,
+                      slot.isAvailable ? Icons.check_circle : Icons.cancel,
                       size: 16,
                       color:
-                          slotModel.isAvailable
+                          slot.isAvailable
                               ? const Color(0xFF15803D)
                               : const Color(0xFFDC2626),
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      slotModel.isAvailable ? 'Available' : 'Occupied',
+                      slot.isAvailable ? 'Available' : 'Occupied',
                       style: TextStyle(
                         fontFamily: 'Space Grotesk',
                         fontWeight: FontWeight.w500,
                         fontSize: 14,
                         color:
-                            slotModel.isAvailable
+                            slot.isAvailable
                                 ? const Color(0xFF15803D)
                                 : const Color(0xFFDC2626),
                       ),
@@ -94,15 +94,15 @@ class SlotItemCard extends StatelessWidget {
               ),
             ],
           ),
-          if (slotModel.hasEvCharging || slotModel.isAccessible) ...[
+          if (slot.hasEvCharging || slot.isAccessible) ...[
             const SizedBox(height: 16),
             Row(
               children: [
-                if (slotModel.hasEvCharging)
+                if (slot.hasEvCharging)
                   _buildFeatureTag(Icons.bolt_sharp, 'EV Charging'),
-                if (slotModel.hasEvCharging && slotModel.isAccessible)
+                if (slot.hasEvCharging && slot.isAccessible)
                   const SizedBox(width: 16),
-                if (slotModel.isAccessible)
+                if (slot.isAccessible)
                   _buildFeatureTag(Icons.accessible, 'Accessible'),
               ],
             ),

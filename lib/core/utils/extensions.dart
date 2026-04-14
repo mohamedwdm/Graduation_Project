@@ -1,0 +1,33 @@
+import 'package:flutter/material.dart';
+
+extension ContextExtensions on BuildContext {
+  ThemeData get theme => Theme.of(this);
+  TextTheme get textTheme => theme.textTheme;
+  ColorScheme get colorScheme => theme.colorScheme;
+
+  void showSnackBar(String message, {bool isError = false}) {
+    ScaffoldMessenger.of(this).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? colorScheme.error : colorScheme.primary,
+      ),
+    );
+  }
+
+  void push(Widget widget) => Navigator.push(
+        this,
+        MaterialPageRoute(builder: (context) => widget),
+      );
+
+  void pop() => Navigator.pop(this);
+}
+
+extension StringExtensions on String {
+  String get capitalize =>
+      isEmpty ? this : "${this[0].toUpperCase()}${substring(1)}";
+
+  bool get isValidEmail {
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    return emailRegex.hasMatch(this);
+  }
+}

@@ -3,13 +3,24 @@ import 'package:go2car/features/home/presentation/views/widgets/home_view_big_ca
 import 'package:go2car/features/home/presentation/views/widgets/home_view_small_card.dart';
 
 class HomeViewCards extends StatelessWidget {
-  const HomeViewCards({super.key});
+  const HomeViewCards({
+    super.key,
+    required this.availableSlots,
+    required this.totalSlots,
+  });
+
+  final int availableSlots;
+  final int totalSlots;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        HomeViewBigCard(onTap: (){},),
+        HomeViewBigCard(
+          onTap: () {},
+          availableSlots: availableSlots,
+          totalSlots: totalSlots,
+        ),
         SizedBox(height: 25),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

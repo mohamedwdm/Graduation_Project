@@ -2,8 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomeViewBigCard extends StatelessWidget {
-  const HomeViewBigCard({super.key, required this.onTap});
+  const HomeViewBigCard({
+    super.key,
+    required this.onTap,
+    required this.availableSlots,
+    required this.totalSlots,
+  });
+
   final VoidCallback onTap;
+  final int availableSlots;
+  final int totalSlots;
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +83,7 @@ class HomeViewBigCard extends StatelessWidget {
             ),
             const SizedBox(height: 3),
             Text(
-              "Locate the nearest parking spot instantly",
+              "$availableSlots slots available out of $totalSlots",
               style: GoogleFonts.spaceGrotesk(
                 color: Colors.white70,
                 fontSize: 13,

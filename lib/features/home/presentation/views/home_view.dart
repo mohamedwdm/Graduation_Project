@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/di/injection_container.dart';
+import '../manager/home_cubit/home_cubit.dart';
 import 'package:go2car/features/home/presentation/views/widgets/home_view_body.dart';
 
 class HomeView extends StatelessWidget {
@@ -6,12 +9,12 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(backgroundColor: Colors.transparent),
-
-      body: SafeArea(child: HomeViewBody()),
-      backgroundColor: Color(0xffFFFFFF),
-     // backgroundColor: Color(0xffF6F8F6),
+    return BlocProvider(
+      create: (context) => sl<HomeCubit>()..loadDashboard(),
+      child: const Scaffold(
+        body: SafeArea(child: HomeViewBody()),
+        backgroundColor: Color(0xffFFFFFF),
+      ),
     );
   }
 }

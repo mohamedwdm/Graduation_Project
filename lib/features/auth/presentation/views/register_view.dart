@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go2car/features/auth/data/repos/user_repo_impl.dart';
+import 'package:go2car/core/di/injection_container.dart';
 import 'package:go2car/features/auth/presentation/manager/auth_cubit/auth_cubit.dart';
 import 'package:go2car/features/auth/presentation/views/widgets/register_view_body.dart';
 
@@ -10,7 +10,7 @@ class RegisterView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthCubit(UserRepoImpl()),
+      create: (context) => sl<AuthCubit>(),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
