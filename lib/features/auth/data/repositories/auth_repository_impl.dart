@@ -9,6 +9,7 @@ import 'package:go2car/core/network/api_client.dart';
 import 'package:go2car/core/websocket/socket_manager.dart';
 import 'package:go2car/features/auth/domain/entities/user_entity.dart';
 import 'package:go2car/features/auth/domain/repositories/auth_repository.dart';
+import 'package:go2car/features/auth/data/models/user_model.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _remoteDataSource;
@@ -99,6 +100,27 @@ class AuthRepositoryImpl implements AuthRepository {
       await _localDataSource.clearUser();
       await _localDataSource.clearToken();
       return right(null);
+    }
+  }
+
+  @override
+  FutureEither<UserEntity> loginAsGuest() async {
+    try {
+      final authResponse = await _remoteDataSource.loginAsGuest();
+      
+      final token = authResponse.token;
+      final user = authResponse.user;
+
+      // Token Orchestration
+      await _localDataSource.cacheToken(token);
+      _apiClient.updateAuthToken(token);
+      _socketManager.updateToken(token);
+      
+      await _localDataSource.cacheUser(user);
+      
+      return right(user);
+    } catch (e) {
+      return left(ServerFailure(e.toString()));
     }
   }
 }

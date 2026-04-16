@@ -14,4 +14,6 @@ abstract class AuthRepository {
   });
 
   FutureVoid logout();
+
+  FutureEither<UserEntity> loginAsGuest();
 }

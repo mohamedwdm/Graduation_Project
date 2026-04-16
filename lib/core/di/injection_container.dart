@@ -6,6 +6,7 @@ import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/auth/domain/usecases/login_usecase.dart';
 import '../../features/auth/domain/usecases/logout_usecase.dart';
 import '../../features/auth/domain/usecases/register_usecase.dart';
+import '../../features/auth/domain/usecases/login_as_guest_usecase.dart';
 import '../../features/auth/presentation/manager/auth_cubit/auth_cubit.dart';
 import '../../features/slots/data/datasources/slots_remote_datasource.dart';
 import '../../features/slots/data/datasources/slots_socket_datasource.dart';
@@ -75,12 +76,14 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => LoginUseCase(sl()));
   sl.registerLazySingleton(() => RegisterUseCase(sl()));
   sl.registerLazySingleton(() => LogoutUseCase(sl()));
+  sl.registerLazySingleton(() => LoginAsGuestUseCase(sl()));
 
   // Cubit
   sl.registerFactory(() => AuthCubit(
         loginUseCase: sl(),
         registerUseCase: sl(),
         logoutUseCase: sl(),
+        loginAsGuestUseCase: sl(),
       ));
 
   // Slots Feature

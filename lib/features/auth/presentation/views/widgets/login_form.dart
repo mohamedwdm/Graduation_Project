@@ -142,6 +142,21 @@ class _LoginFormState extends State<LoginForm> {
             alignment: Alignment.center,
             child: Text("Forget Password?", style: TextStyle(color: Colors.red)),
           ),
+          const SizedBox(height: 20),
+          TextButton(
+            onPressed: () {
+              context.read<AuthCubit>().loginAsGuest();
+            },
+            child: const Text(
+              "Continue as Guest",
+              style: TextStyle(
+                color: Color(0xff00A24F),
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                decoration: TextDecoration.underline,
+              ),
+            ),
+          ),
         ],
       ),
     );
