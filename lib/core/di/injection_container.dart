@@ -1,4 +1,9 @@
 import 'package:get_it/get_it.dart';
+import 'package:go2car/features/analysis_admin/data/datasources/analysis_datasource.dart';
+import 'package:go2car/features/analysis_admin/data/repositories/analysis_repository_impl.dart';
+import 'package:go2car/features/analysis_admin/domain/repositories/analysis_repository.dart';
+import 'package:go2car/features/analysis_admin/domain/usecases/get_analysis_data_usecase.dart';
+import 'package:go2car/features/analysis_admin/presentation/manager/analysis_cubit/analysis_cubit.dart';
 import '../../features/auth/data/datasources/auth_local_datasource.dart';
 import '../../features/auth/data/datasources/auth_remote_datasource.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
@@ -195,5 +200,30 @@ Future<void> initDependencies() async {
   // Cubit
   sl.registerFactory(() => ParkingOverviewCubit(
         getParkingOverviewUseCase: sl(),
+      ));
+
+  // ─────────────────────────────────────────────────────────────
+  // Analysis Dashboard Admin Feature
+  // ─────────────────────────────────────────────────────────────
+
+  // Data Sources
+  sl.registerLazySingleton<AnalysisDataSource>(
+    () => AnalysisMockDataSourceImpl(),
+  );
+
+  // Repository
+  sl.registerLazySingleton<AnalysisRepository>(
+    () => AnalysisRepositoryImpl(
+      dataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Use Case
+  sl.registerLazySingleton(() => GetAnalysisDataUseCase(sl()));
+
+  // Cubit
+  sl.registerFactory(() => AnalysisCubit(
+        getAnalysisDataUseCase: sl(),
       ));
 }

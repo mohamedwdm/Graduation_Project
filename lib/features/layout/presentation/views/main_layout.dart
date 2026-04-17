@@ -6,6 +6,8 @@ import 'package:go2car/features/find_car/presentation/views/find_car_view.dart';
 import 'package:go2car/features/profile/presentation/views/profile_view.dart';
 import 'package:go2car/features/parking_overview_admin/presentation/views/parking_overview_view.dart';
 import 'package:go2car/features/parking_overview_admin/presentation/manager/parking_overview_cubit/parking_overview_cubit.dart';
+import 'package:go2car/features/analysis_admin/presentation/views/analysis_dashboard_view.dart';
+import 'package:go2car/features/analysis_admin/presentation/manager/analysis_cubit/analysis_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go2car/core/di/injection_container.dart';
 
@@ -57,7 +59,12 @@ class _MainLayoutState extends State<MainLayout> {
         ),
       );
       
-      pages.add(const Scaffold(body: Center(child: Text("Analyze View Placeholder"))));
+      pages.add(
+        BlocProvider(
+          create: (context) => sl<AnalysisCubit>(),
+          child: const AnalysisDashboardView(),
+        ),
+      );
       items.add(
         const BottomNavigationBarItem(
           icon: Icon(Icons.analytics_outlined),
