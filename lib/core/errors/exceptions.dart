@@ -26,3 +26,7 @@ class CacheException extends AppException {
 class UnauthorizedException extends AppException {
   const UnauthorizedException([super.message = 'Unauthorized']);
 }
+
+class ForbiddenException extends AppException {
+  const ForbiddenException([super.message = 'Forbidden']);
+}

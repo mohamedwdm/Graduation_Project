@@ -43,6 +43,10 @@ class AuthFailure extends Failure {
   const AuthFailure(super.message);
 }
 
+class ForbiddenFailure extends Failure {
+  const ForbiddenFailure(super.message);
+}
+
 class ValidationFailure extends Failure {
   final Map<String, List<String>> fieldErrors;
 

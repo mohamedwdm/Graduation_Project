@@ -31,6 +31,13 @@ import '../../features/home/data/repositories/home_repository_impl.dart';
 import '../../features/home/domain/repositories/home_repository.dart';
 import '../../features/home/domain/usecases/get_dashboard_summary_usecase.dart';
 import '../../features/home/presentation/manager/home_cubit/home_cubit.dart';
+import '../../features/parking_overview_admin/data/datasources/parking_overview_datasource.dart';
+import '../../features/parking_overview_admin/data/datasources/parking_overview_mock_datasource.dart';
+import '../../features/parking_overview_admin/data/datasources/parking_overview_remote_datasource.dart';
+import '../../features/parking_overview_admin/data/repositories/parking_overview_repository_impl.dart';
+import '../../features/parking_overview_admin/domain/repositories/parking_overview_repository.dart';
+import '../../features/parking_overview_admin/domain/usecases/get_parking_overview_usecase.dart';
+import '../../features/parking_overview_admin/presentation/manager/parking_overview_cubit/parking_overview_cubit.dart';
 import '../config/env_config.dart';
 import '../network/api_client.dart';
 import '../network/network_info.dart';
@@ -158,4 +165,35 @@ Future<void> initDependencies() async {
   );
   sl.registerLazySingleton(() => GetDashboardSummaryUseCase(sl()));
   sl.registerFactory(() => HomeCubit(sl()));
+
+  // ─────────────────────────────────────────────────────────────
+  // Parking Overview Admin Feature
+  // ─────────────────────────────────────────────────────────────
+
+  // Data Sources
+  // [ACTIVE] Mock — returns dummy data during development
+  sl.registerLazySingleton<ParkingOverviewDataSource>(
+    () => ParkingOverviewMockDataSourceImpl(),
+  );
+
+  // [SWAP WHEN BACKEND READY] Un-comment below & comment out mock above:
+  // sl.registerLazySingleton<ParkingOverviewDataSource>(
+  //   () => ParkingOverviewRemoteDataSourceImpl(apiClient: sl()),
+  // );
+
+  // Repository
+  sl.registerLazySingleton<ParkingOverviewRepository>(
+    () => ParkingOverviewRepositoryImpl(
+      dataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Use Case
+  sl.registerLazySingleton(() => GetParkingOverviewUseCase(sl()));
+
+  // Cubit
+  sl.registerFactory(() => ParkingOverviewCubit(
+        getParkingOverviewUseCase: sl(),
+      ));
 }

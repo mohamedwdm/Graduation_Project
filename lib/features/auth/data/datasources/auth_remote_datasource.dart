@@ -36,6 +36,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'userid': 'user_123',
         'name': email.split('@')[0],
         'email': email,
+        'role': email == 'admin@go2car.com' ? 'admin' : 'user',
       }),
     );
   }

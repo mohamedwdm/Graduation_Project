@@ -84,7 +84,7 @@ class _LoginFormState extends State<LoginForm> {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return const MainLayout();
+                        return MainLayout(user: state.user);
                       },
                     ),
                   );

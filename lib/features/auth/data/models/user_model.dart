@@ -6,6 +6,7 @@ class UserModel extends UserEntity {
     required super.userid,
     required super.name,
     required super.email,
+    required super.role,
   });
 
   factory UserModel.fromJson(JsonMap json) {
@@ -13,6 +14,7 @@ class UserModel extends UserEntity {
       userid: json['userid']?.toString() ?? json['id']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
       email: json['email']?.toString() ?? '',
+      role: json['role']?.toString() ?? 'user',
     );
   }
 
@@ -21,6 +23,7 @@ class UserModel extends UserEntity {
       userid: entity.userid,
       name: entity.name,
       email: entity.email,
+      role: entity.role,
     );
   }
 
@@ -29,6 +32,7 @@ class UserModel extends UserEntity {
       'userid': userid,
       'name': name,
       'email': email,
+      'role': role,
     };
   }
 }

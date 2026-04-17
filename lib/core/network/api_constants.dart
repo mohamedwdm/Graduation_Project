@@ -25,4 +25,7 @@ abstract class ApiConstants {
 
   // Dashboard
   static const String dashboard = '/dashboard/summary';
+
+  // Admin
+  static const String adminParkingOverview = '/admin/parking/overview';
 }
