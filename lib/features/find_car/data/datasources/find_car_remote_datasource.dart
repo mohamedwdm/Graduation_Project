@@ -13,7 +13,16 @@ class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
 
   @override
   Future<CarLocationModel> findMyCar() async {
-    final response = await _apiClient.get(ApiConstants.findCar);
-    return CarLocationModel.fromJson(response.data);
+    // Simulated remote call
+    await Future.delayed(const Duration(milliseconds: 1200));
+    
+    return CarLocationModel.fromJson({
+      'slot_id': 'slot_12',
+      'slot_label': 'B-13',
+      'floor': 2,
+      'section': 'Section B',
+      'parked_at': DateTime.now().subtract(const Duration(hours: 4)).toIso8601String(),
+      'walk_time_seconds': 180,
+    });
   }
 }

@@ -15,27 +15,31 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
   @override
   Future<ProfileModel> fetchProfile() async {
-    final response = await _apiClient.get(ApiConstants.profile);
-    return ProfileModel.fromJson(response.data);
+    // Simulated remote call
+    await Future.delayed(const Duration(milliseconds: 700));
+    
+    return ProfileModel.fromJson({
+      'id': 'user_123',
+      'name': 'Ali Mohamed',
+      'email': 'ali.mohamed@example.com',
+      'phone_number': '+201234567890',
+      'vehicle_plate_number': 'ABC 123',
+      'avatar_url': 'https://i.pravatar.cc/150?u=user_123',
+      'created_at': DateTime.now().subtract(const Duration(days: 30)).toIso8601String(),
+    });
   }
 
   @override
   Future<ProfileModel> updateProfile(ProfileModel model) async {
-    final response = await _apiClient.put(
-      ApiConstants.updateProfile,
-      data: model.toJson(),
-    );
-    return ProfileModel.fromJson(response.data);
+    // Simulated remote call
+    await Future.delayed(const Duration(seconds: 1));
+    return model;
   }
 
   @override
   Future<String> uploadAvatar(String filePath) async {
-    // Logic for multipart file upload using ApiClient
-    final response = await _apiClient.uploadFile(
-      ApiConstants.uploadAvatar,
-      filePath,
-      'avatar',
-    );
-    return response.data['avatar_url'] as String;
+    // Simulated remote call
+    await Future.delayed(const Duration(seconds: 2));
+    return 'https://i.pravatar.cc/150?u=user_123_new';
   }
 }
