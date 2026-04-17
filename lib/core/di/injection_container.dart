@@ -43,6 +43,11 @@ import '../../features/parking_overview_admin/data/repositories/parking_overview
 import '../../features/parking_overview_admin/domain/repositories/parking_overview_repository.dart';
 import '../../features/parking_overview_admin/domain/usecases/get_parking_overview_usecase.dart';
 import '../../features/parking_overview_admin/presentation/manager/parking_overview_cubit/parking_overview_cubit.dart';
+import 'package:go2car/features/manage_slots_admin/data/datasources/manage_slots_datasource.dart';
+import 'package:go2car/features/manage_slots_admin/data/repositories/manage_slots_repository_impl.dart';
+import 'package:go2car/features/manage_slots_admin/domain/repositories/manage_slots_repository.dart';
+import 'package:go2car/features/manage_slots_admin/domain/usecases/get_manage_slots_usecase.dart';
+import 'package:go2car/features/manage_slots_admin/presentation/manager/manage_slots_cubit/manage_slots_cubit.dart';
 import '../config/env_config.dart';
 import '../network/api_client.dart';
 import '../network/network_info.dart';
@@ -225,5 +230,36 @@ Future<void> initDependencies() async {
   // Cubit
   sl.registerFactory(() => AnalysisCubit(
         getAnalysisDataUseCase: sl(),
+      ));
+
+  // ─────────────────────────────────────────────────────────────
+  // Manage Slots Admin Feature
+  // ─────────────────────────────────────────────────────────────
+
+  // Data Sources
+  // [ACTIVE] Mock
+  sl.registerLazySingleton<ManageSlotsDataSource>(
+    () => ManageSlotsMockDataSourceImpl(),
+  );
+
+  // [REMOTE] Uncomment when ready
+  // sl.registerLazySingleton<ManageSlotsDataSource>(
+  //   () => ManageSlotsRemoteDataSourceImpl(apiClient: sl()),
+  // );
+
+  // Repository
+  sl.registerLazySingleton<ManageSlotsRepository>(
+    () => ManageSlotsRepositoryImpl(
+      dataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Use Case
+  sl.registerLazySingleton(() => GetManageSlotsUseCase(sl()));
+
+  // Cubit
+  sl.registerFactory(() => ManageSlotsCubit(
+        getManageSlotsUseCase: sl(),
       ));
 }

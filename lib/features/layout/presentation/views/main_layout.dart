@@ -8,6 +8,8 @@ import 'package:go2car/features/parking_overview_admin/presentation/views/parkin
 import 'package:go2car/features/parking_overview_admin/presentation/manager/parking_overview_cubit/parking_overview_cubit.dart';
 import 'package:go2car/features/analysis_admin/presentation/views/analysis_dashboard_view.dart';
 import 'package:go2car/features/analysis_admin/presentation/manager/analysis_cubit/analysis_cubit.dart';
+import 'package:go2car/features/manage_slots_admin/presentation/views/manage_slots_view.dart';
+import 'package:go2car/features/manage_slots_admin/presentation/manager/manage_slots_cubit/manage_slots_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go2car/core/di/injection_container.dart';
 
@@ -69,6 +71,19 @@ class _MainLayoutState extends State<MainLayout> {
         const BottomNavigationBarItem(
           icon: Icon(Icons.analytics_outlined),
           label: "Analyze",
+        ),
+      );
+
+      pages.add(
+        BlocProvider(
+          create: (context) => sl<ManageSlotsCubit>(),
+          child: const ManageSlotsView(),
+        ),
+      );
+      items.add(
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.settings_suggest_outlined),
+          label: "Manage",
         ),
       );
     } else {

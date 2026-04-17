@@ -29,4 +29,5 @@ abstract class ApiConstants {
   // Admin
   static const String adminParkingOverview = '/admin/parking/overview';
   static const String adminAnalysis = '/admin/parking/analysis';
+  static const String adminManageSlots = '/admin/slots';
 }
