@@ -8,6 +8,7 @@ abstract class ApiConstants {
   // Auth
   static const String login = '/auth/login';
   static const String register = '/auth/register';
+  static const String verifyEmail = '/auth/verify-email';
   static const String profile = '/auth/profile';
   static const String logout = '/auth/logout';
   static const String loginGuest = '/auth/login/guest';

@@ -18,6 +18,8 @@ abstract class AuthRemoteDataSource {
   Future<void> logout();
   
   Future<AuthResponseModel> loginAsGuest();
+
+  Future<void> verifyEmail({required String token});
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -72,6 +74,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'name': 'Guest User',
         'email': 'guest@go2car.com',
       }),
+    );
+  }
+
+  @override
+  Future<void> verifyEmail({required String token}) async {
+    await _apiClient.get(
+      ApiConstants.verifyEmail,
+      queryParameters: {'token': token},
     );
   }
 }

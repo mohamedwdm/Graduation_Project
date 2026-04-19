@@ -12,7 +12,7 @@ class AuthResponseModel {
 
   factory AuthResponseModel.fromJson(JsonMap json) {
     return AuthResponseModel(
-      token: json['token']?.toString() ?? '',
+      token: json['access_token']?.toString() ?? json['token']?.toString() ?? '',
       user: UserModel.fromJson(json['user'] as JsonMap? ?? json),
     );
   }
