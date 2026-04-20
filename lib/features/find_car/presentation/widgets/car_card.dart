@@ -10,7 +10,7 @@ class CarCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(color: const Color(0xFFE2E8F0)),
@@ -99,12 +99,13 @@ class CarCard extends StatelessWidget {
                 child: InkWell(
                   onTap: null, // Disabled
                   child: Container(
-                    height: 52,
+                    height: 50,
                     alignment: Alignment.center,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.location_on_outlined, size: 18, color: Color(0xFF334155)),
+                        const Icon(Icons.map_outlined,
+                            size: 18, color: Color(0xFF334155)),
                         const SizedBox(width: 8),
                         Text(
                           "View on map",
@@ -131,7 +132,8 @@ class CarCard extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.navigation_outlined, size: 18, color: Color(0xFF13EC5B)),
+                        const Icon(Icons.navigation_outlined,
+                            size: 18, color: Color(0xFF13EC5B)),
                         const SizedBox(width: 8),
                         Text(
                           "Navigate",
