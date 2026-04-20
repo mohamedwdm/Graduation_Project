@@ -36,6 +36,12 @@ class SocketManager {
   void connect() {
     if (_state == SocketConnectionState.connected || _state == SocketConnectionState.connecting) return;
     
+    // Temporary disabled as there is no backend support for WebSockets yet.
+    log('Socket Connection: Disabled (Waiting for backend implementation)');
+    _updateState(SocketConnectionState.disconnected);
+    return;
+
+    /*
     _updateState(SocketConnectionState.connecting);
     
     try {
@@ -60,6 +66,7 @@ class SocketManager {
       log('Socket Connection Error: $e');
       _onError(e);
     }
+    */
   }
 
   void _onMessage(dynamic message) {
