@@ -1,8 +1,10 @@
 abstract class ApiConstants {
-  static const String devBaseUrl = 'https://go2car-dev.herokuapp.com/api/v1'; // Placeholder
+  static const String devBaseUrl =
+      'https://go2car-dev.herokuapp.com/api/v1'; // Placeholder
   static const String prodBaseUrl = 'https://api.go2car.com/v1'; // Placeholder
-  
-  static const String devSocketUrl = 'ws://go2car-dev.herokuapp.com/ws'; // Placeholder
+
+  static const String devSocketUrl =
+      'ws://go2car-dev.herokuapp.com/ws'; // Placeholder
   static const String prodSocketUrl = 'ws://api.go2car.com/ws'; // Placeholder
 
   // Auth

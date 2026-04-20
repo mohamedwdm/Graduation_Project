@@ -1,9 +1,10 @@
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/api_constants.dart';
-import '../models/car_location_model.dart';
+import '../../../../core/utils/typedefs.dart';
+import '../models/car_model.dart';
 
 abstract class FindCarRemoteDataSource {
-  Future<CarLocationModel> findMyCar();
+  Future<List<CarModel>> getUserCars();
 }
 
 class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
@@ -12,17 +13,9 @@ class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
   FindCarRemoteDataSourceImpl(this._apiClient);
 
   @override
-  Future<CarLocationModel> findMyCar() async {
-    // Simulated remote call
-    await Future.delayed(const Duration(milliseconds: 1200));
-    
-    return CarLocationModel.fromJson({
-      'slot_id': 'slot_12',
-      'slot_label': 'B-13',
-      'floor': 2,
-      'section': 'Section B',
-      'parked_at': DateTime.now().subtract(const Duration(hours: 4)).toIso8601String(),
-      'walk_time_seconds': 180,
-    });
+  Future<List<CarModel>> getUserCars() async {
+    final response = await _apiClient.get(ApiConstants.findCar);
+    final List data = response.data as List;
+    return data.map((json) => CarModel.fromJson(json as JsonMap)).toList();
   }
 }

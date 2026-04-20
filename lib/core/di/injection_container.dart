@@ -23,7 +23,7 @@ import '../../features/slots/presentation/manager/slots_cubit/slots_cubit.dart';
 import '../../features/find_car/data/datasources/find_car_remote_datasource.dart';
 import '../../features/find_car/data/repositories/find_car_repository_impl.dart';
 import '../../features/find_car/domain/repositories/find_car_repository.dart';
-import '../../features/find_car/domain/usecases/find_car_usecase.dart';
+import '../../features/find_car/domain/usecases/get_user_cars.dart';
 import '../../features/find_car/presentation/manager/find_car_cubit/find_car_cubit.dart';
 import '../../features/profile/data/datasources/profile_local_datasource.dart';
 import '../../features/profile/data/datasources/profile_remote_datasource.dart';
@@ -138,10 +138,15 @@ Future<void> initDependencies() async {
     () => FindCarRemoteDataSourceImpl(sl()),
   );
   sl.registerLazySingleton<FindCarRepository>(
-    () => FindCarRepositoryImpl(sl(), sl()),
+    () => FindCarRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
   );
-  sl.registerLazySingleton(() => FindCarUseCase(sl()));
-  sl.registerFactory(() => FindCarCubit(sl()));
+  sl.registerLazySingleton(() => GetUserCarsUseCase(sl()));
+  sl.registerFactory(() => FindCarCubit(
+        getUserCarsUseCase: sl(),
+      ));
 
   // Profile Feature
   sl.registerLazySingleton<ProfileRemoteDataSource>(

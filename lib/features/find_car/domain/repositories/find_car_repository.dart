@@ -1,6 +1,6 @@
 import '../../../../core/utils/typedefs.dart';
-import '../entities/car_location_entity.dart';
+import '../entities/car_entity.dart';
 
 abstract class FindCarRepository {
-  FutureEither<CarLocationEntity> findMyCar();
+  FutureEither<List<CarEntity>> getUserCars();
 }

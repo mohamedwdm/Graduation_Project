@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/entities/car_location_entity.dart';
+import '../../../domain/entities/car_entity.dart';
 
 abstract class FindCarState extends Equatable {
   const FindCarState();
@@ -17,12 +17,12 @@ class FindCarLoading extends FindCarState {
 }
 
 class FindCarLoaded extends FindCarState {
-  final CarLocationEntity carLocation;
+  final List<CarEntity> cars;
 
-  const FindCarLoaded(this.carLocation);
+  const FindCarLoaded(this.cars);
 
   @override
-  List<Object?> get props => [carLocation];
+  List<Object?> get props => [cars];
 }
 
 class FindCarError extends FindCarState {
