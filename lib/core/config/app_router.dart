@@ -1,3 +1,5 @@
+import 'package:go2car/features/auth/domain/entities/user_entity.dart';
+import 'package:go2car/features/layout/presentation/views/main_layout.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,11 +23,19 @@ abstract class AppRouter {
       ),
       GoRoute(
         path: registerPath,
-        builder: (context, state) => const Scaffold(body: Center(child: Text('Register View Placeholder'))),
+        builder: (context, state) => const Scaffold(
+            body: Center(child: Text('Register View Placeholder'))),
       ),
+      // GoRoute(
+      //   path: homePath,
+      //   builder: (context, state) => const Scaffold(body: Center(child: Text('Home View Placeholder'))),
+      // ),
       GoRoute(
         path: homePath,
-        builder: (context, state) => const Scaffold(body: Center(child: Text('Home View Placeholder'))),
+        builder: (context, state) {
+          final user = state.extra as UserEntity;
+          return MainLayout(user: user);
+        },
       ),
       GoRoute(
         path: adminParkingOverviewPath,

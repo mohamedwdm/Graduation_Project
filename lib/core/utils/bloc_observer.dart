@@ -30,9 +30,9 @@ class AppBlocObserver extends BlocObserver {
   void onEvent(Bloc bloc, Object? event) {
     super.onEvent(bloc, event);
   }
-  
-  @override
-  void onDone(Bloc bloc, Object? event, [Object? error, StackTrace? stackTrace]) {
-    super.onDone(bloc, event, error, stackTrace);
-  }
+
+  // @override
+  // void onDone(Bloc bloc, Object? event, [Object? error, StackTrace? stackTrace]) {
+  //   super.onDone(bloc, event, error, stackTrace);
+  // }
 }

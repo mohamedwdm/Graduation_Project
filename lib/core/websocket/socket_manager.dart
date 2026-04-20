@@ -39,10 +39,13 @@ class SocketManager {
     _updateState(SocketConnectionState.connecting);
     
     try {
-      final uri = Uri.parse(_baseUrl).replace(
+      final baseUri = Uri.parse(_baseUrl);
+      final uri = baseUri.replace(
+        scheme: baseUri.scheme == 'https' ? 'wss' : (baseUri.scheme == 'http' ? 'ws' : baseUri.scheme),
         queryParameters: _authToken != null ? {'token': _authToken} : null,
       );
       
+      log('Connecting to Socket: $uri');
       _channel = WebSocketChannel.connect(uri);
       
       _channel!.stream.listen(

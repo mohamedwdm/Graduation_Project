@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go2car/core/config/app_router.dart';
 import 'package:go2car/core/widgets/custom_button.dart';
 import 'package:go2car/core/widgets/show_snackbar.dart';
 import 'package:go2car/features/auth/presentation/manager/auth_cubit/auth_cubit.dart';
 import 'package:go2car/features/auth/presentation/views/register_view.dart';
 import 'package:go2car/features/auth/presentation/views/widgets/custom_text_field.dart';
 import 'package:go2car/features/layout/presentation/views/main_layout.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -18,7 +20,7 @@ class _LoginFormState extends State<LoginForm> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  
+
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
   String? email;
   String? password;
@@ -73,20 +75,23 @@ class _LoginFormState extends State<LoginForm> {
               password = value;
             },
           ),
-          
           const SizedBox(height: 30),
           SizedBox(
             width: double.infinity,
             child: BlocConsumer<AuthCubit, AuthState>(
               listener: (context, state) {
                 if (state is AuthSuccess) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return MainLayout(user: state.user);
-                      },
-                    ),
+                  // Navigator.pushReplacement(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) {
+                  //       return MainLayout(user: state.user);
+                  //     },
+                  //   ),
+                  // );
+                  context.go(
+                    AppRouter.homePath,
+                    extra: state.user,
                   );
                   _emailController.clear();
                   _passwordController.clear();
@@ -104,9 +109,9 @@ class _LoginFormState extends State<LoginForm> {
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
                       context.read<AuthCubit>().login(
-                        email: email!,
-                        password: password!,
-                      );
+                            email: email!,
+                            password: password!,
+                          );
                     } else {
                       setState(() {
                         autovalidateMode = AutovalidateMode.always;
@@ -126,21 +131,22 @@ class _LoginFormState extends State<LoginForm> {
               text: 'Create Acccount',
               fontsize: 16,
               onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return const RegisterView();
-                      },
-                    ),
-                  );
-                },
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return const RegisterView();
+                    },
+                  ),
+                );
+              },
             ),
           ),
           const SizedBox(height: 15),
-           const Align(
+          const Align(
             alignment: Alignment.center,
-            child: Text("Forget Password?", style: TextStyle(color: Colors.red)),
+            child:
+                Text("Forget Password?", style: TextStyle(color: Colors.red)),
           ),
           const SizedBox(height: 20),
           TextButton(

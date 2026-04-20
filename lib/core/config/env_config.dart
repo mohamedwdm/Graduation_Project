@@ -46,7 +46,8 @@ class EnvConfig {
 
   static EnvConfig get instance {
     if (_instance == null) {
-      throw Exception('EnvConfig has not been initialized. Call EnvConfig.initialize() in main.dart');
+      throw Exception(
+          'EnvConfig has not been initialized. Call EnvConfig.initialize() in main.dart');
     }
     return _instance!;
   }
