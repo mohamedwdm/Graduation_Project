@@ -29,8 +29,11 @@ import '../../features/profile/data/datasources/profile_local_datasource.dart';
 import '../../features/profile/data/datasources/profile_remote_datasource.dart';
 import '../../features/profile/data/repositories/profile_repository_impl.dart';
 import '../../features/profile/domain/repositories/profile_repository.dart';
-import '../../features/profile/domain/usecases/profile_usecases.dart';
+import '../../features/profile/domain/usecases/get_profile_usecase.dart';
+import '../../features/profile/domain/usecases/get_saved_cars_usecase.dart';
+import '../../features/profile/domain/usecases/update_profile_name_usecase.dart';
 import '../../features/profile/presentation/manager/profile_cubit/profile_cubit.dart';
+import '../../features/profile/presentation/manager/saved_cars_cubit/saved_cars_cubit.dart';
 import '../../features/home/data/datasources/home_remote_datasource.dart';
 import '../../features/home/data/repositories/home_repository_impl.dart';
 import '../../features/home/domain/repositories/home_repository.dart';
@@ -161,14 +164,21 @@ Future<void> initDependencies() async {
       remoteDataSource: sl(),
       localDataSource: sl(),
       networkInfo: sl(),
+      isMockMode: true,
     ),
   );
   sl.registerLazySingleton(() => GetProfileUseCase(sl()));
-  sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
+  sl.registerLazySingleton(() => GetSavedCarsUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateProfileNameUseCase(sl()));
   sl.registerFactory(
     () => ProfileCubit(
       getProfileUseCase: sl(),
-      updateProfileUseCase: sl(),
+      updateProfileNameUseCase: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => SavedCarsCubit(
+      getSavedCarsUseCase: sl(),
     ),
   );
 

@@ -14,6 +14,7 @@ abstract class ApiConstants {
   static const String profile = '/auth/profile';
   static const String logout = '/auth/logout';
   static const String loginGuest = '/auth/login/guest';
+  static const String savedCars = '/user/cars';
 
   // Car Slots
   static const String slots = '/slots';

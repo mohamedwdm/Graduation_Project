@@ -1,11 +1,12 @@
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/api_constants.dart';
 import '../models/profile_model.dart';
+import '../models/saved_car_model.dart';
 
 abstract class ProfileRemoteDataSource {
   Future<ProfileModel> fetchProfile();
-  Future<ProfileModel> updateProfile(ProfileModel model);
-  Future<String> uploadAvatar(String filePath);
+  Future<ProfileModel> updateProfileName(String newName);
+  Future<List<SavedCarModel>> fetchSavedCars();
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
@@ -15,31 +16,45 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
   @override
   Future<ProfileModel> fetchProfile() async {
-    // Simulated remote call
-    await Future.delayed(const Duration(milliseconds: 700));
-    
-    return ProfileModel.fromJson({
-      'id': 'user_123',
-      'name': 'Ali Mohamed',
-      'email': 'ali.mohamed@example.com',
-      'phone_number': '+201234567890',
-      'vehicle_plate_number': 'ABC 123',
-      'avatar_url': 'https://i.pravatar.cc/150?u=user_123',
-      'created_at': DateTime.now().subtract(const Duration(days: 30)).toIso8601String(),
-    });
+    // TODO: Replace with _apiClient.get(ApiConstants.profile)
+    await Future.delayed(const Duration(milliseconds: 600));
+    return const ProfileModel(
+      id: 'user_001',
+      name: 'Mohamed Ahmed',
+      email: 'mohamed.ahmed@go2car.com',
+      avatarUrl: 'https://i.pravatar.cc/150?u=user_001',
+    );
   }
 
   @override
-  Future<ProfileModel> updateProfile(ProfileModel model) async {
-    // Simulated remote call
-    await Future.delayed(const Duration(seconds: 1));
-    return model;
+  Future<ProfileModel> updateProfileName(String newName) async {
+    // TODO: Replace with _apiClient.put(ApiConstants.updateProfile)
+    await Future.delayed(const Duration(milliseconds: 800));
+    return ProfileModel(
+      id: 'user_001',
+      name: newName,
+      email: 'mohamed.ahmed@go2car.com',
+      avatarUrl: 'https://i.pravatar.cc/150?u=user_001',
+    );
   }
 
   @override
-  Future<String> uploadAvatar(String filePath) async {
-    // Simulated remote call
-    await Future.delayed(const Duration(seconds: 2));
-    return 'https://i.pravatar.cc/150?u=user_123_new';
+  Future<List<SavedCarModel>> fetchSavedCars() async {
+    // TODO: Replace with _apiClient.get(ApiConstants.savedCars)
+    await Future.delayed(const Duration(milliseconds: 500));
+    return [
+      const SavedCarModel(
+        id: 'car_001',
+        model: 'Toyota Camry 2024',
+        color: 'Silver',
+        plateNumber: 'ABC 1234',
+      ),
+      const SavedCarModel(
+        id: 'car_002',
+        model: 'Honda Civic 2023',
+        color: 'Black',
+        plateNumber: 'XYZ 5678',
+      ),
+    ];
   }
 }

@@ -1,79 +1,90 @@
 import 'package:dartz/dartz.dart';
-import '../../../../core/errors/exceptions.dart';
-import '../../../../core/errors/failures.dart';
-import '../../../../core/network/network_info.dart';
-import '../../../../core/utils/typedefs.dart';
+import 'package:go2car/core/errors/exceptions.dart';
+import 'package:go2car/core/errors/failures.dart';
+import 'package:go2car/core/network/network_info.dart';
+import 'package:go2car/core/utils/typedefs.dart';
 import '../../domain/entities/profile_entity.dart';
+import '../../domain/entities/saved_car_entity.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../datasources/profile_local_datasource.dart';
 import '../datasources/profile_remote_datasource.dart';
 import '../models/profile_model.dart';
 
 class ProfileRepositoryImpl implements ProfileRepository {
-  final ProfileRemoteDataSource _remoteDataSource;
-  final ProfileLocalDataSource _localDataSource;
-  final NetworkInfo _networkInfo;
+  final ProfileRemoteDataSource remoteDataSource;
+  final ProfileLocalDataSource localDataSource;
+  final NetworkInfo networkInfo;
+  final bool isMockMode;
 
   ProfileRepositoryImpl({
-    required ProfileRemoteDataSource remoteDataSource,
-    required ProfileLocalDataSource localDataSource,
-    required NetworkInfo networkInfo,
-  })  : _remoteDataSource = remoteDataSource,
-        _localDataSource = localDataSource,
-        _networkInfo = networkInfo;
+    required this.remoteDataSource,
+    required this.localDataSource,
+    required this.networkInfo,
+    this.isMockMode = true,
+  });
 
   @override
   FutureEither<ProfileEntity> getProfile() async {
-    if (await _networkInfo.isConnected) {
+    if (isMockMode) {
+      return Right(await remoteDataSource.fetchProfile());
+    }
+
+    if (await networkInfo.isConnected) {
       try {
-        final remoteProfile = await _remoteDataSource.fetchProfile();
-        await _localDataSource.cacheProfile(remoteProfile);
+        final remoteProfile = await remoteDataSource.fetchProfile();
+        await localDataSource.cacheProfile(remoteProfile);
         return Right(remoteProfile);
       } on ServerException catch (e) {
-        return Left(ServerFailure(e.message, statusCode: e.statusCode));
-      } catch (e) {
-        return Left(ServerFailure(e.toString()));
+        return Left(ServerFailure(e.message));
       }
     } else {
-      final cachedProfile = await _localDataSource.getCachedProfile();
-      if (cachedProfile != null) {
-        return Right(cachedProfile);
+      try {
+        final localProfile = await localDataSource.getCachedProfile();
+        if (localProfile != null) {
+          return Right(localProfile);
+        } else {
+          return const Left(CacheFailure('No cached profile found'));
+        }
+      } catch (e) {
+        return const Left(CacheFailure('Local database error'));
       }
-      return const Left(CacheFailure('No cached profile found'));
     }
   }
 
   @override
-  FutureEither<ProfileEntity> updateProfile(ProfileEntity updated) async {
-    if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure());
+  FutureEither<ProfileEntity> updateProfileName(String newName) async {
+    if (isMockMode) {
+      return Right(await remoteDataSource.updateProfileName(newName));
     }
 
-    try {
-      final model = ProfileModel.fromEntity(updated);
-      final remoteUpdated = await _remoteDataSource.updateProfile(model);
-      await _localDataSource.cacheProfile(remoteUpdated);
-      return Right(remoteUpdated);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message, statusCode: e.statusCode));
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    if (await networkInfo.isConnected) {
+      try {
+        final updatedProfile = await remoteDataSource.updateProfileName(newName);
+        await localDataSource.cacheProfile(updatedProfile);
+        return Right(updatedProfile);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(e.message));
+      }
+    } else {
+      return const Left(NetworkFailure());
     }
   }
 
   @override
-  FutureEither<String> uploadAvatar(String filePath) async {
-    if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure());
+  FutureEither<List<SavedCarEntity>> getSavedCars() async {
+    if (isMockMode) {
+      return Right(await remoteDataSource.fetchSavedCars());
     }
 
-    try {
-      final avatarUrl = await _remoteDataSource.uploadAvatar(filePath);
-      return Right(avatarUrl);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message, statusCode: e.statusCode));
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteCars = await remoteDataSource.fetchSavedCars();
+        return Right(remoteCars);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(e.message));
+      }
+    } else {
+      return const Left(NetworkFailure());
     }
   }
 }

@@ -1,53 +1,48 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../../core/usecase/usecase.dart';
-import '../../../domain/usecases/profile_usecases.dart';
+import 'package:go2car/core/usecase/usecase.dart';
+import '../../../domain/usecases/get_profile_usecase.dart';
+import '../../../domain/usecases/update_profile_name_usecase.dart';
+import '../../../domain/entities/profile_entity.dart';
 import 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
-  final GetProfileUseCase _getProfileUseCase;
-  final UpdateProfileUseCase _updateProfileUseCase;
+  final GetProfileUseCase getProfileUseCase;
+  final UpdateProfileNameUseCase updateProfileNameUseCase;
 
   ProfileCubit({
-    required GetProfileUseCase getProfileUseCase,
-    required UpdateProfileUseCase updateProfileUseCase,
-  })  : _getProfileUseCase = getProfileUseCase,
-        _updateProfileUseCase = updateProfileUseCase,
-        super(const ProfileInitial());
+    required this.getProfileUseCase,
+    required this.updateProfileNameUseCase,
+  }) : super(ProfileInitial());
 
   Future<void> loadProfile() async {
-    emit(const ProfileLoading());
-
-    final result = await _getProfileUseCase(const NoParams());
-
+    emit(ProfileLoading());
+    final result = await getProfileUseCase(const NoParams());
     result.fold(
       (failure) => emit(ProfileError(failure.message)),
       (profile) => emit(ProfileLoaded(profile)),
     );
   }
 
-  Future<void> updateProfile({
-    String? name,
-    String? phoneNumber,
-    String? vehiclePlateNumber,
-    String? avatarUrl,
-  }) async {
-    if (state is! ProfileLoaded) return;
+  Future<void> updateName(String newName) async {
+    final currentState = state;
+    ProfileEntity? currentProfile;
 
-    final currentProfile = (state as ProfileLoaded).profile;
-    final updatedProfile = currentProfile.copyWith(
-      name: name,
-      phoneNumber: phoneNumber,
-      vehiclePlateNumber: vehiclePlateNumber,
-      avatarUrl: avatarUrl,
-    );
+    if (currentState is ProfileLoaded) {
+      currentProfile = currentState.profile;
+    } else if (currentState is ProfileUpdateSuccess) {
+      currentProfile = currentState.profile;
+    } else if (currentState is ProfileUpdating) {
+      currentProfile = currentState.profile;
+    }
 
-    emit(const ProfileUpdating());
+    if (currentProfile == null) return;
 
-    final result = await _updateProfileUseCase(updatedProfile);
+    emit(ProfileUpdating(currentProfile));
 
+    final result = await updateProfileNameUseCase(newName);
     result.fold(
       (failure) => emit(ProfileError(failure.message)),
-      (updated) => emit(ProfileLoaded(updated)),
+      (updatedProfile) => emit(ProfileUpdateSuccess(updatedProfile)),
     );
   }
 }
