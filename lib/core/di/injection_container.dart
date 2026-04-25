@@ -34,6 +34,10 @@ import '../../features/profile/domain/usecases/get_saved_cars_usecase.dart';
 import '../../features/profile/domain/usecases/update_profile_name_usecase.dart';
 import '../../features/profile/presentation/manager/profile_cubit/profile_cubit.dart';
 import '../../features/profile/presentation/manager/saved_cars_cubit/saved_cars_cubit.dart';
+import '../../features/profile/domain/usecases/add_saved_car_usecase.dart';
+import '../../features/profile/domain/usecases/update_saved_car_usecase.dart';
+import '../../features/profile/domain/usecases/delete_saved_car_usecase.dart';
+import '../../features/profile/presentation/manager/saved_car_form_cubit/saved_car_form_cubit.dart';
 import '../../features/home/data/datasources/home_remote_datasource.dart';
 import '../../features/home/data/repositories/home_repository_impl.dart';
 import '../../features/home/domain/repositories/home_repository.dart';
@@ -170,6 +174,9 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => GetProfileUseCase(sl()));
   sl.registerLazySingleton(() => GetSavedCarsUseCase(sl()));
   sl.registerLazySingleton(() => UpdateProfileNameUseCase(sl()));
+  sl.registerLazySingleton(() => AddSavedCarUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateSavedCarUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteSavedCarUseCase(sl()));
   sl.registerFactory(
     () => ProfileCubit(
       getProfileUseCase: sl(),
@@ -179,6 +186,13 @@ Future<void> initDependencies() async {
   sl.registerFactory(
     () => SavedCarsCubit(
       getSavedCarsUseCase: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => SavedCarFormCubit(
+      addSavedCarUseCase: sl(),
+      updateSavedCarUseCase: sl(),
+      deleteSavedCarUseCase: sl(),
     ),
   );
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import '../manager/saved_cars_cubit/saved_cars_cubit.dart';
 import '../manager/saved_cars_cubit/saved_cars_state.dart';
 import 'saved_car_card.dart';
@@ -28,8 +29,11 @@ class SavedCarsSection extends StatelessWidget {
                 ),
               ),
               InkWell(
-                onTap: () {
-                  // Add New logic
+                onTap: () async {
+                  await context.push('/add-saved-car');
+                  if (context.mounted) {
+                    context.read<SavedCarsCubit>().loadSavedCars();
+                  }
                 },
                 child: Row(
                   children: [

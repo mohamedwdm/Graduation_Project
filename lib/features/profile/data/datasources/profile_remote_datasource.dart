@@ -7,10 +7,29 @@ abstract class ProfileRemoteDataSource {
   Future<ProfileModel> fetchProfile();
   Future<ProfileModel> updateProfileName(String newName);
   Future<List<SavedCarModel>> fetchSavedCars();
+  Future<SavedCarModel> addSavedCar(SavedCarModel car);
+  Future<SavedCarModel> updateSavedCar(SavedCarModel car);
+  Future<void> deleteSavedCar(String id);
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   final ApiClient _apiClient;
+
+  // Mock state
+  final List<SavedCarModel> _mockCars = [
+    const SavedCarModel(
+      id: 'car_001',
+      model: 'Toyota Camry 2024',
+      color: 'Silver',
+      plateNumber: 'ABC 1234',
+    ),
+    const SavedCarModel(
+      id: 'car_002',
+      model: 'Honda Civic 2023',
+      color: 'Black',
+      plateNumber: 'XYZ 5678',
+    ),
+  ];
 
   ProfileRemoteDataSourceImpl(this._apiClient);
 
@@ -40,21 +59,63 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
   @override
   Future<List<SavedCarModel>> fetchSavedCars() async {
-    // TODO: Replace with _apiClient.get(ApiConstants.savedCars)
+    // API IMPLEMENTATION (Commented)
+    /*
+    final response = await _apiClient.get(ApiConstants.savedCars);
+    return (response.data as List).map((e) => SavedCarModel.fromJson(e)).toList();
+    */
+
+    // MOCK IMPLEMENTATION
     await Future.delayed(const Duration(milliseconds: 500));
-    return [
-      const SavedCarModel(
-        id: 'car_001',
-        model: 'Toyota Camry 2024',
-        color: 'Silver',
-        plateNumber: 'ABC 1234',
-      ),
-      const SavedCarModel(
-        id: 'car_002',
-        model: 'Honda Civic 2023',
-        color: 'Black',
-        plateNumber: 'XYZ 5678',
-      ),
-    ];
+    return _mockCars.toList();
+  }
+
+  @override
+  Future<SavedCarModel> addSavedCar(SavedCarModel car) async {
+    // API IMPLEMENTATION (Commented)
+    /*
+    final response = await _apiClient.post(
+      ApiConstants.savedCars,
+      data: car.toJson(),
+    );
+    return SavedCarModel.fromJson(response.data);
+    */
+
+    // MOCK IMPLEMENTATION
+    await Future.delayed(const Duration(milliseconds: 500));
+    _mockCars.add(car);
+    return car;
+  }
+
+  @override
+  Future<SavedCarModel> updateSavedCar(SavedCarModel car) async {
+    // API IMPLEMENTATION (Commented)
+    /*
+    final response = await _apiClient.put(
+      '${ApiConstants.savedCars}/${car.id}',
+      data: car.toJson(),
+    );
+    return SavedCarModel.fromJson(response.data);
+    */
+
+    // MOCK IMPLEMENTATION
+    await Future.delayed(const Duration(milliseconds: 500));
+    final index = _mockCars.indexWhere((c) => c.id == car.id);
+    if (index != -1) {
+      _mockCars[index] = car;
+    }
+    return car;
+  }
+
+  @override
+  Future<void> deleteSavedCar(String id) async {
+    // API IMPLEMENTATION (Commented)
+    /*
+    await _apiClient.delete('${ApiConstants.savedCars}/$id');
+    */
+
+    // MOCK IMPLEMENTATION
+    await Future.delayed(const Duration(milliseconds: 500));
+    _mockCars.removeWhere((c) => c.id == id);
   }
 }

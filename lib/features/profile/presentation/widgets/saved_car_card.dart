@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import '../../domain/entities/saved_car_entity.dart';
+import '../manager/saved_cars_cubit/saved_cars_cubit.dart';
 
 class SavedCarCard extends StatelessWidget {
   final SavedCarEntity car;
@@ -66,8 +69,14 @@ class SavedCarCard extends StatelessWidget {
               color: Color(0xFF64748B),
               size: 20,
             ),
-            onPressed: () {
-              // Edit car logic
+            onPressed: () async {
+              await context.push(
+                '/edit-saved-car',
+                extra: car,
+              );
+              if (context.mounted) {
+                context.read<SavedCarsCubit>().loadSavedCars();
+              }
             },
           ),
         ],
