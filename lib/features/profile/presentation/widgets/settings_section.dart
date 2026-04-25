@@ -131,7 +131,8 @@ class SettingsSection extends StatelessWidget {
             },
             child: Text(
               'Logout',
-              style: GoogleFonts.spaceGrotesk(color: const Color(0xFFEF4444), fontWeight: FontWeight.bold),
+              style: GoogleFonts.spaceGrotesk(
+                  color: const Color(0xFFEF4444), fontWeight: FontWeight.bold),
             ),
           ),
         ],

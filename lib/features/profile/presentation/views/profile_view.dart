@@ -46,14 +46,16 @@ class ProfileView extends StatelessWidget {
             if (state is ProfileError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(state.message, style: GoogleFonts.spaceGrotesk()),
+                  content:
+                      Text(state.message, style: GoogleFonts.spaceGrotesk()),
                   backgroundColor: const Color(0xFFEF4444),
                 ),
               );
             } else if (state is ProfileUpdateSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Profile updated successfully', style: GoogleFonts.spaceGrotesk()),
+                  content: Text('Profile updated successfully',
+                      style: GoogleFonts.spaceGrotesk()),
                   backgroundColor: const Color(0xFF13EC5B),
                 ),
               );
@@ -61,7 +63,8 @@ class ProfileView extends StatelessWidget {
           },
           builder: (context, state) {
             if (state is ProfileLoading) {
-              return const Center(child: CircularProgressIndicator(color: Color(0xFF13EC5B)));
+              return const Center(
+                  child: CircularProgressIndicator(color: Color(0xFF13EC5B)));
             }
 
             if (state is ProfileLoaded ||
@@ -102,7 +105,8 @@ class ProfileView extends StatelessWidget {
                         backgroundColor: const Color(0xFF13EC5B),
                         foregroundColor: Colors.white,
                       ),
-                      onPressed: () => context.read<ProfileCubit>().loadProfile(),
+                      onPressed: () =>
+                          context.read<ProfileCubit>().loadProfile(),
                       child: Text('Retry', style: GoogleFonts.spaceGrotesk()),
                     ),
                   ],
