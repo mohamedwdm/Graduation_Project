@@ -148,7 +148,7 @@ Future<void> initDependencies() async {
     () => FindCarRepositoryImpl(
       remoteDataSource: sl(),
       networkInfo: sl(),
-      isMockMode: true,
+      isMockMode: false,
     ),
   );
   sl.registerLazySingleton(() => GetUserCarsUseCase(sl()));
@@ -168,7 +168,7 @@ Future<void> initDependencies() async {
       remoteDataSource: sl(),
       localDataSource: sl(),
       networkInfo: sl(),
-      isMockMode: true,
+      isMockMode: false,
     ),
   );
   sl.registerLazySingleton(() => GetProfileUseCase(sl()));

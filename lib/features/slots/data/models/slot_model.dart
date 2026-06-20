@@ -28,12 +28,38 @@ class SlotModel extends SlotEntity {
         );
 
   factory SlotModel.fromJson(JsonMap json) {
+    int parsedFloor = 0;
+    if (json['floor'] is int) {
+      parsedFloor = json['floor'] as int;
+    } else if (json['floorIndex'] is int) {
+      parsedFloor = json['floorIndex'] as int;
+    } else {
+      final sectionData = json['section'];
+      if (sectionData is Map) {
+        final floorData = sectionData['floor'];
+        if (floorData is Map) {
+          final floorVal = floorData['floor_code'] ?? floorData['floor_name'] ?? '';
+          parsedFloor = int.tryParse(floorVal.toString().replaceAll(RegExp(r'\D'), '')) ?? 0;
+        }
+      }
+    }
+
+    String parsedSection = '';
+    final sectionData = json['section'];
+    if (sectionData is Map) {
+      parsedSection = (sectionData['section_name'] ?? sectionData['section_code'] ?? '').toString();
+    } else if (sectionData != null) {
+      parsedSection = sectionData.toString();
+    } else {
+      parsedSection = (json['locationNote'] ?? '').toString();
+    }
+
     return SlotModel(
       id: json['id']?.toString() ?? json['slotId']?.toString() ?? '',
-      label: json['label']?.toString() ?? json['slotId']?.toString() ?? '',
+      label: json['label']?.toString() ?? json['slot_code']?.toString() ?? json['slotId']?.toString() ?? '',
       isOccupied: json['is_occupied'] as bool? ?? !(json['isAvailable'] as bool? ?? true),
-      floor: json['floor'] as int? ?? json['floorIndex'] as int? ?? 0,
-      section: json['section']?.toString() ?? json['locationNote']?.toString() ?? '',
+      floor: parsedFloor,
+      section: parsedSection,
       hasEvCharging: json['has_ev_charging'] as bool? ?? json['hasEvCharging'] as bool? ?? false,
       isAccessible: json['is_accessible'] as bool? ?? json['isAccessible'] as bool? ?? false,
       lastUpdated: json['last_updated'] != null

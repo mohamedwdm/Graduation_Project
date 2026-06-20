@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../../core/di/injection_container.dart';
 import '../../../../../core/widgets/greeting_header.dart';
+import '../../../../auth/data/datasources/auth_local_datasource.dart';
 import '../../manager/slots_cubit/slots_cubit.dart';
 import '../../manager/slots_cubit/slots_state.dart';
 import 'floor_selector.dart';
@@ -15,6 +17,24 @@ class SlotsViewBody extends StatefulWidget {
 
 class _SlotsViewBodyState extends State<SlotsViewBody> {
   int _selectedFloor = 0;
+  String _userName = 'User';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+
+  Future<void> _loadUserName() async {
+    try {
+      final user = await sl<AuthLocalDataSource>().getCachedUser();
+      if (user != null && mounted) {
+        setState(() {
+          _userName = user.name;
+        });
+      }
+    } catch (_) {}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +44,7 @@ class _SlotsViewBodyState extends State<SlotsViewBody> {
           padding: const EdgeInsets.all(20),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              const GreetingHeader(userName: 'User'),
+              GreetingHeader(userName: _userName),
               const SizedBox(height: 6),
               FloorSelector(
                 selectedFloor: _selectedFloor,

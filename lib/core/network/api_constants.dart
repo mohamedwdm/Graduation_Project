@@ -11,24 +11,26 @@ abstract class ApiConstants {
   static const String login = '/auth/login';
   static const String register = '/auth/register';
   static const String verifyEmail = '/auth/verify-email';
-  static const String profile = '/auth/profile';
+  static const String profile = '/users/me';
   static const String logout = '/auth/logout';
   static const String loginGuest = '/auth/login/guest';
-  static const String savedCars = '/user/cars';
+  static const String savedCars = '/vehicles/user/me';
+  static const String addVehicle = '/vehicles/';
 
   // Car Slots
-  static const String slots = '/slots';
+  static const String slots = '/slots/all';
+  static const String availableSlots = '/slots/available';
   static const String reserveSlot = '/slots/reserve';
 
   // Profile
-  static const String updateProfile = '/auth/profile/update';
+  static const String updateProfile = '/users/me';
   static const String uploadAvatar = '/auth/profile/avatar';
 
   // Find Car
-  static const String findCar = '/find-car';
+  static const String findCar = '/vehicles/user/me';
 
   // Dashboard
-  static const String dashboard = '/dashboard/summary';
+  static const String dashboard = '/admin/summary';
 
   // Admin
   static const String adminParkingOverview = '/admin/parking/overview';

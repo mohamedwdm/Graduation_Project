@@ -12,14 +12,43 @@ class SlotModel extends SlotEntity {
   });
 
   factory SlotModel.fromJson(Map<String, dynamic> json) {
+    int parsedFloor = 0;
+    if (json['floor'] is int) {
+      parsedFloor = json['floor'] as int;
+    } else {
+      final sectionData = json['section'];
+      if (sectionData is Map) {
+        final floorData = sectionData['floor'];
+        if (floorData is Map) {
+          final floorVal = floorData['floor_code'] ?? floorData['floor_name'] ?? '';
+          parsedFloor = int.tryParse(floorVal.toString().replaceAll(RegExp(r'\D'), '')) ?? 0;
+        }
+      }
+    }
+
+    String parsedLocation = '';
+    final sectionData = json['section'];
+    if (sectionData is Map) {
+      parsedLocation = (sectionData['section_name'] ?? sectionData['section_code'] ?? '').toString();
+    } else {
+      parsedLocation = (json['location'] ?? '').toString();
+    }
+
+    SlotStatus parsedStatus = SlotStatus.available;
+    if (json['is_occupied'] == true) {
+      parsedStatus = SlotStatus.occupied;
+    } else if (json['status'] != null) {
+      parsedStatus = _parseSlotStatus(json['status']?.toString());
+    }
+
     return SlotModel(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      floor: json['floor'] ?? 0,
-      status: _parseSlotStatus(json['status']),
-      location: json['location'] ?? '',
-      isEV: json['isEV'] ?? false,
-      isAccessible: json['isAccessible'] ?? false,
+      id: (json['id'] ?? '').toString(),
+      name: (json['name'] ?? json['slot_code'] ?? '').toString(),
+      floor: parsedFloor,
+      status: parsedStatus,
+      location: parsedLocation,
+      isEV: json['isEV'] as bool? ?? json['has_ev_charging'] as bool? ?? false,
+      isAccessible: json['isAccessible'] as bool? ?? json['is_accessible'] as bool? ?? false,
     );
   }
 

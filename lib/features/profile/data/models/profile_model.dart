@@ -11,9 +11,9 @@ class ProfileModel extends ProfileEntity {
 
   factory ProfileModel.fromJson(JsonMap json) {
     return ProfileModel(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      email: json['email'] as String,
+      id: (json['id'] ?? json['userid'] ?? '').toString(),
+      name: json['name'] as String? ?? '',
+      email: json['email'] as String? ?? '',
       avatarUrl: json['avatar_url'] as String?,
     );
   }

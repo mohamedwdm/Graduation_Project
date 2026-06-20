@@ -14,7 +14,8 @@ class UserModel extends UserEntity {
       userid: json['userid']?.toString() ?? json['id']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
       email: json['email']?.toString() ?? '',
-      role: json['role']?.toString() ?? 'user',
+      role: json['role']?.toString() ?? 
+            ((json['is_admin'] == true) ? 'admin' : 'user'),
     );
   }
 

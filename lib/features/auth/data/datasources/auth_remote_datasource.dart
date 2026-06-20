@@ -29,18 +29,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<AuthResponseModel> login({required String email, required String password}) async {
-    // Simulated remote call
-    await Future.delayed(const Duration(seconds: 1));
-    
-    return AuthResponseModel(
-      token: 'mock_jwt_token_for_${email.split('@')[0]}',
-      user: UserModel.fromJson({
-        'userid': 'user_123',
-        'name': email.split('@')[0],
+    final response = await _apiClient.post(
+      ApiConstants.login,
+      data: {
         'email': email,
-        'role': email == 'admin@go2car.com' ? 'admin' : 'user',
-      }),
+        'password': password,
+      },
     );
+    return AuthResponseModel.fromJson(response.data as Map<String, dynamic>);
   }
 
   @override
@@ -49,9 +45,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
     required String name,
   }) async {
-    // Simulated remote call
-    await Future.delayed(const Duration(seconds: 1));
-    return;
+    await _apiClient.post(
+      ApiConstants.register,
+      data: {
+        'email': email,
+        'password': password,
+        'name': name,
+      },
+    );
   }
 
   @override

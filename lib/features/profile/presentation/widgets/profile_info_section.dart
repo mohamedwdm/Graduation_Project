@@ -64,9 +64,10 @@ class ProfileInfoSection extends StatelessWidget {
 
   void _showEditNameDialog(BuildContext context) {
     final controller = TextEditingController(text: name);
+    final profileCubit = context.read<ProfileCubit>();
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
@@ -87,7 +88,7 @@ class ProfileInfoSection extends StatelessWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: Text(
               'Cancel',
               style: GoogleFonts.spaceGrotesk(color: const Color(0xFF64748B)),
@@ -96,9 +97,9 @@ class ProfileInfoSection extends StatelessWidget {
           TextButton(
             onPressed: () {
               if (controller.text.isNotEmpty) {
-                context.read<ProfileCubit>().updateName(controller.text);
+                profileCubit.updateName(controller.text);
               }
-              Navigator.pop(context);
+              Navigator.pop(dialogContext);
             },
             child: Text(
               'Save',

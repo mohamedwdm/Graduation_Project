@@ -1,3 +1,6 @@
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
+
 enum Environment { dev, staging, prod }
 
 class EnvConfig {
@@ -18,9 +21,10 @@ class EnvConfig {
   static void initialize(Environment env) {
     switch (env) {
       case Environment.dev:
+        final localHost = kIsWeb ? 'localhost:8000' : (Platform.isAndroid ? '10.0.2.2:8000' : '127.0.0.1:8000');
         _instance = EnvConfig._(
-          apiBaseUrl: 'https://go2car-dev.herokuapp.com/api/v1',
-          socketBaseUrl: 'ws://go2car-dev.herokuapp.com/ws',
+          apiBaseUrl: 'http://$localHost',
+          socketBaseUrl: 'ws://$localHost/ws',
           enableLogging: true,
           environment: Environment.dev,
         );

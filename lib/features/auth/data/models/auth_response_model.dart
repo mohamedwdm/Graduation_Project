@@ -11,8 +11,15 @@ class AuthResponseModel {
   });
 
   factory AuthResponseModel.fromJson(JsonMap json) {
+    final tokenData = json['token'];
+    String tokenStr = '';
+    if (tokenData is Map) {
+      tokenStr = tokenData['access_token']?.toString() ?? '';
+    } else {
+      tokenStr = json['access_token']?.toString() ?? json['token']?.toString() ?? '';
+    }
     return AuthResponseModel(
-      token: json['access_token']?.toString() ?? json['token']?.toString() ?? '',
+      token: tokenStr,
       user: UserModel.fromJson(json['user'] as JsonMap? ?? json),
     );
   }

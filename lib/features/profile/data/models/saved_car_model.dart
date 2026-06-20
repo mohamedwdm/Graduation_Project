@@ -11,10 +11,10 @@ class SavedCarModel extends SavedCarEntity {
 
   factory SavedCarModel.fromJson(JsonMap json) {
     return SavedCarModel(
-      id: json['id'] as String,
-      model: json['model'] as String,
-      color: json['color'] as String,
-      plateNumber: json['plate_number'] as String,
+      id: (json['id'] ?? json['plate_number'] ?? '').toString(),
+      model: (json['vehicle_type'] ?? json['model'] ?? '').toString(),
+      color: (json['color'] ?? '').toString(),
+      plateNumber: (json['plate_number'] ?? '').toString(),
     );
   }
 
@@ -29,10 +29,9 @@ class SavedCarModel extends SavedCarEntity {
 
   JsonMap toJson() {
     return {
-      'id': id,
-      'model': model,
-      'color': color,
       'plate_number': plateNumber,
+      'color': color,
+      'vehicle_type': model,
     };
   }
 }
