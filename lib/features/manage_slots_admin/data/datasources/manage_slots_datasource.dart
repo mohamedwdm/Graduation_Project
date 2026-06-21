@@ -13,10 +13,10 @@ class ManageSlotsRemoteDataSourceImpl implements ManageSlotsDataSource {
 
   @override
   Future<List<SlotModel>> getSlots(int floor) async {
-    // TODO: Implement actual API call when backend is ready
-    // final response = await apiClient.get('/admin/slots?floor=$floor');
-    // return (response.data as List).map((e) => SlotModel.fromJson(e)).toList();
-    throw UnimplementedError('Remote data source not implemented');
+    final response = await apiClient.get('/slots/all');
+    final List dataList = response.data as List;
+    final List<SlotModel> allSlots = dataList.map((e) => SlotModel.fromJson(e as Map<String, dynamic>)).toList();
+    return allSlots.where((slot) => slot.floor == floor).toList();
   }
 }
 

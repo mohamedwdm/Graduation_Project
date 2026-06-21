@@ -37,8 +37,21 @@ class FindCarView extends StatelessWidget {
   }
 }
 
-class _FindCarBody extends StatelessWidget {
+class _FindCarBody extends StatefulWidget {
   const _FindCarBody();
+
+  @override
+  State<_FindCarBody> createState() => _FindCarBodyState();
+}
+
+class _FindCarBodyState extends State<_FindCarBody> {
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +75,8 @@ class _FindCarBody extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: TextField(
-                    onChanged: (query) => context.read<FindCarCubit>().getUserCars(), // simplified for now
+                    controller: _searchController,
+                    onChanged: (query) => context.read<FindCarCubit>().searchCars(query),
                     decoration: InputDecoration(
                       hintText: "License plate, model, color...",
                       hintStyle: GoogleFonts.spaceGrotesk(
@@ -75,14 +89,20 @@ class _FindCarBody extends StatelessWidget {
                     ),
                   ),
                 ),
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFE2E8F0),
-                    shape: BoxShape.circle,
+                GestureDetector(
+                  onTap: () {
+                    _searchController.clear();
+                    context.read<FindCarCubit>().searchCars('');
+                  },
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFE2E8F0),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.close, size: 20, color: Color(0xFF475569)),
                   ),
-                  child: const Icon(Icons.close, size: 20, color: Color(0xFF475569)),
                 ),
               ],
             ),

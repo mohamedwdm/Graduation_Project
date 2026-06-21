@@ -17,9 +17,7 @@ class EditSavedCarView extends StatefulWidget {
 
 class _EditSavedCarViewState extends State<EditSavedCarView> {
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _modelController;
   late final TextEditingController _plateController;
-  late final TextEditingController _yearController;
   late final TextEditingController _colorController;
   String _selectedCarType = 'Sedan';
 
@@ -34,17 +32,14 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
   @override
   void initState() {
     super.initState();
-    _modelController = TextEditingController(text: widget.car.model);
     _plateController = TextEditingController(text: widget.car.plateNumber);
     _colorController = TextEditingController(text: widget.car.color);
-    _yearController = TextEditingController(text: '2024'); // default since not in entity
+    _selectedCarType = _carTypes.contains(widget.car.model) ? widget.car.model : 'Sedan';
   }
 
   @override
   void dispose() {
-    _modelController.dispose();
     _plateController.dispose();
-    _yearController.dispose();
     _colorController.dispose();
     super.dispose();
   }
@@ -53,7 +48,7 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
     if (_formKey.currentState!.validate()) {
       final updatedCar = SavedCarEntity(
         id: widget.car.id,
-        model: _modelController.text,
+        model: _selectedCarType,
         color: _colorController.text,
         plateNumber: _plateController.text,
       );
@@ -121,7 +116,7 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'Update your vehicle information to ensure accurate parking slot matching and charging compatibility.',
+                          'Update your vehicle information to ensure accurate parking slot matching.',
                           style: GoogleFonts.manrope(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -134,104 +129,55 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                _buildLabel('Car Model'),
+                _buildLabel('License Plate'),
                 _buildTextField(
-                  controller: _modelController,
+                  controller: _plateController,
                   validator: (val) => val == null || val.isEmpty ? 'Required' : null,
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildLabel('License Plate'),
-                          _buildTextField(
-                            controller: _plateController,
-                            validator: (val) => val == null || val.isEmpty ? 'Required' : null,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildLabel('Year'),
-                          _buildTextField(
-                            controller: _yearController,
-                            keyboardType: TextInputType.number,
-                            validator: (val) => val == null || val.isEmpty ? 'Required' : null,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                _buildLabel('Color'),
+                _buildTextField(
+                  controller: _colorController,
+                  validator: (val) => val == null || val.isEmpty ? 'Required' : null,
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildLabel('Color'),
-                          _buildTextField(
-                            controller: _colorController,
-                            validator: (val) => val == null || val.isEmpty ? 'Required' : null,
-                          ),
-                        ],
+                _buildLabel('Car Type'),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildLabel('Car Type'),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.05),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButtonFormField<String>(
-                                value: _selectedCarType,
-                                decoration: const InputDecoration(border: InputBorder.none),
-                                items: _carTypes.map((type) {
-                                  return DropdownMenuItem(
-                                    value: type,
-                                    child: Text(
-                                      type,
-                                      style: GoogleFonts.manrope(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                                onChanged: (val) {
-                                  if (val != null) {
-                                    setState(() => _selectedCarType = val);
-                                  }
-                                },
-                              ),
+                    ],
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButtonFormField<String>(
+                      value: _selectedCarType,
+                      decoration: const InputDecoration(border: InputBorder.none),
+                      items: _carTypes.map((type) {
+                        return DropdownMenuItem(
+                          value: type,
+                          child: Text(
+                            type,
+                            style: GoogleFonts.manrope(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ],
-                      ),
+                        );
+                      }).toList(),
+                      onChanged: (val) {
+                        if (val != null) {
+                          setState(() => _selectedCarType = val);
+                        }
+                      },
                     ),
-                  ],
+                  ),
                 ),
                 const SizedBox(height: 40),
                 BlocBuilder<SavedCarFormCubit, SavedCarFormState>(

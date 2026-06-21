@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:go2car/features/analysis_admin/data/datasources/analysis_datasource.dart';
+import 'package:go2car/features/analysis_admin/data/datasources/analysis_remote_datasource_impl.dart';
 import 'package:go2car/features/analysis_admin/data/repositories/analysis_repository_impl.dart';
 import 'package:go2car/features/analysis_admin/domain/repositories/analysis_repository.dart';
 import 'package:go2car/features/analysis_admin/domain/usecases/get_analysis_data_usecase.dart';
@@ -116,7 +117,7 @@ Future<void> initDependencies() async {
     () => SlotsRemoteDataSourceImpl(apiClient: sl()),
   );
   sl.registerLazySingleton<SlotsSocketDataSource>(
-    () => SlotsSocketDataSourceImpl(socketManager: sl()),
+    () => SlotsSocketDataSourceImpl(apiClient: sl()),
   );
 
   // Repository
@@ -210,16 +211,9 @@ Future<void> initDependencies() async {
   // Parking Overview Admin Feature
   // ─────────────────────────────────────────────────────────────
 
-  // Data Sources
-  // [ACTIVE] Mock — returns dummy data during development
   sl.registerLazySingleton<ParkingOverviewDataSource>(
-    () => ParkingOverviewMockDataSourceImpl(),
+    () => ParkingOverviewRemoteDataSourceImpl(apiClient: sl()),
   );
-
-  // [SWAP WHEN BACKEND READY] Un-comment below & comment out mock above:
-  // sl.registerLazySingleton<ParkingOverviewDataSource>(
-  //   () => ParkingOverviewRemoteDataSourceImpl(apiClient: sl()),
-  // );
 
   // Repository
   sl.registerLazySingleton<ParkingOverviewRepository>(
@@ -243,7 +237,7 @@ Future<void> initDependencies() async {
 
   // Data Sources
   sl.registerLazySingleton<AnalysisDataSource>(
-    () => AnalysisMockDataSourceImpl(),
+    () => AnalysisRemoteDataSourceImpl(apiClient: sl()),
   );
 
   // Repository
@@ -266,16 +260,9 @@ Future<void> initDependencies() async {
   // Manage Slots Admin Feature
   // ─────────────────────────────────────────────────────────────
 
-  // Data Sources
-  // [ACTIVE] Mock
   sl.registerLazySingleton<ManageSlotsDataSource>(
-    () => ManageSlotsMockDataSourceImpl(),
+    () => ManageSlotsRemoteDataSourceImpl(apiClient: sl()),
   );
-
-  // [REMOTE] Uncomment when ready
-  // sl.registerLazySingleton<ManageSlotsDataSource>(
-  //   () => ManageSlotsRemoteDataSourceImpl(apiClient: sl()),
-  // );
 
   // Repository
   sl.registerLazySingleton<ManageSlotsRepository>(

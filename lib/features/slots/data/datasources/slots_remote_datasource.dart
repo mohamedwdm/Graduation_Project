@@ -14,41 +14,14 @@ class SlotsRemoteDataSourceImpl implements SlotsRemoteDataSource {
 
   @override
   Future<List<SlotModel>> fetchAllSlots() async {
-    // Simulated remote call
-    await Future.delayed(const Duration(milliseconds: 600));
-    
-    final List<Map<String, dynamic>> mockSlots = List.generate(24, (index) {
-      final floor = (index / 10).floor() + 1;
-      final section = String.fromCharCode(65 + (index % 3)); // A, B, C
-      return {
-        'id': 'slot_$index',
-        'label': '$section-${index + 1}',
-        'is_occupied': index % 3 == 0,
-        'floor': floor,
-        'section': 'Section $section',
-        'has_ev_charging': index % 5 == 0,
-        'is_accessible': index % 8 == 0,
-        'last_updated': DateTime.now().subtract(Duration(minutes: index * 5)).toIso8601String(),
-      };
-    });
-    
-    return mockSlots.map((json) => SlotModel.fromJson(json)).toList();
+    final response = await _apiClient.get(ApiConstants.slots);
+    final List dataList = response.data as List;
+    return dataList.map((e) => SlotModel.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   @override
   Future<SlotModel> fetchSlotById(String id) async {
-    // Simulated remote call
-    await Future.delayed(const Duration(milliseconds: 300));
-    
-    return SlotModel.fromJson({
-      'id': id,
-      'label': 'A-1',
-      'is_occupied': false,
-      'floor': 1,
-      'section': 'Section A',
-      'has_ev_charging': true,
-      'is_accessible': true,
-      'last_updated': DateTime.now().toIso8601String(),
-    });
+    final response = await _apiClient.get('/slots/$id');
+    return SlotModel.fromJson(response.data as Map<String, dynamic>);
   }
 }

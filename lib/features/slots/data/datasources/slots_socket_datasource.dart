@@ -1,4 +1,5 @@
-import '../../../../core/websocket/socket_manager.dart';
+import '../../../../core/network/api_client.dart';
+import '../../../../core/network/api_constants.dart';
 import '../models/slot_model.dart';
 
 abstract class SlotsSocketDataSource {
@@ -8,47 +9,32 @@ abstract class SlotsSocketDataSource {
 }
 
 class SlotsSocketDataSourceImpl implements SlotsSocketDataSource {
-  final SocketManager _socketManager;
+  final ApiClient _apiClient;
 
-  SlotsSocketDataSourceImpl({required SocketManager socketManager})
-      : _socketManager = socketManager;
+  SlotsSocketDataSourceImpl({required ApiClient apiClient})
+      : _apiClient = apiClient;
 
   @override
   void connect() {
-    _socketManager.connect();
+    // No-op since backend doesn't support WebSockets yet, using HTTP polling instead
   }
 
   @override
   void disconnect() {
-    _socketManager.disconnect();
+    // No-op
   }
 
   @override
-  Stream<List<SlotModel>> watchSlotUpdates() {
-    // Simulated remote stream
-    return Stream.periodic(const Duration(seconds: 5), (tick) {
-      final List<Map<String, dynamic>> mockSlots = List.generate(24, (index) {
-        final floor = (index / 10).floor() + 1;
-        final section = String.fromCharCode(65 + (index % 3));
-        
-        // Randomly flip occupancy for one slot every 5 seconds to simulate activity
-        bool isOccupied = index % 3 == 0;
-        if (tick % 24 == index) {
-          isOccupied = !isOccupied;
-        }
-        
-        return {
-          'id': 'slot_$index',
-          'label': '$section-${index + 1}',
-          'is_occupied': isOccupied,
-          'floor': floor,
-          'section': 'Section $section',
-          'has_ev_charging': index % 5 == 0,
-          'is_accessible': index % 8 == 0,
-          'last_updated': DateTime.now().toIso8601String(),
-        };
-      });
-      return mockSlots.map((json) => SlotModel.fromSocketEvent(json)).toList();
-    }).asBroadcastStream();
+  Stream<List<SlotModel>> watchSlotUpdates() async* {
+    while (true) {
+      try {
+        final response = await _apiClient.get(ApiConstants.slots);
+        final List dataList = response.data as List;
+        yield dataList.map((e) => SlotModel.fromJson(e as Map<String, dynamic>)).toList();
+      } catch (_) {
+        // Yield empty or keep polling
+      }
+      await Future.delayed(const Duration(seconds: 5));
+    }
   }
 }

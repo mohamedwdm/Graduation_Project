@@ -16,7 +16,7 @@ class SlotsViewBody extends StatefulWidget {
 }
 
 class _SlotsViewBodyState extends State<SlotsViewBody> {
-  int _selectedFloor = 0;
+  int _selectedFloor = 1;
   String _userName = 'User';
 
   @override
@@ -47,11 +47,12 @@ class _SlotsViewBodyState extends State<SlotsViewBody> {
               GreetingHeader(userName: _userName),
               const SizedBox(height: 6),
               FloorSelector(
-                selectedFloor: _selectedFloor,
+                selectedFloor: _selectedFloor - 1,
                 onFloorSelected: (index) {
-                  if (_selectedFloor != index) {
+                  final floorNum = index + 1;
+                  if (_selectedFloor != floorNum) {
                     setState(() {
-                      _selectedFloor = index;
+                      _selectedFloor = floorNum;
                     });
                   }
                 },

@@ -15,9 +15,7 @@ class AddSavedCarView extends StatefulWidget {
 
 class _AddSavedCarViewState extends State<AddSavedCarView> {
   final _formKey = GlobalKey<FormState>();
-  final _modelController = TextEditingController();
   final _plateController = TextEditingController();
-  final _yearController = TextEditingController();
   final _colorController = TextEditingController();
   String _selectedCarType = 'Sedan';
 
@@ -31,19 +29,16 @@ class _AddSavedCarViewState extends State<AddSavedCarView> {
 
   @override
   void dispose() {
-    _modelController.dispose();
     _plateController.dispose();
-    _yearController.dispose();
     _colorController.dispose();
     super.dispose();
   }
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      // Create a temporary ID or let the backend handle it
       final car = SavedCarEntity(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
-        model: _modelController.text,
+        model: _selectedCarType,
         color: _colorController.text,
         plateNumber: _plateController.text,
       );
@@ -98,47 +93,12 @@ class _AddSavedCarViewState extends State<AddSavedCarView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildLabel('Car Model'),
+                _buildLabel('License Plate'),
                 _buildTextField(
-                  controller: _modelController,
-                  hint: 'e.g. Tesla Model 3',
+                  controller: _plateController,
+                  hint: 'e.g. ABC-1234',
                   validator: (val) =>
                       val == null || val.isEmpty ? 'Required' : null,
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildLabel('License Plate'),
-                          _buildTextField(
-                            controller: _plateController,
-                            hint: 'ABC-1234',
-                            validator: (val) =>
-                                val == null || val.isEmpty ? 'Required' : null,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildLabel('Year'),
-                          _buildTextField(
-                            controller: _yearController,
-                            hint: '2024',
-                            keyboardType: TextInputType.number,
-                            validator: (val) =>
-                                val == null || val.isEmpty ? 'Required' : null,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
                 ),
                 const SizedBox(height: 20),
                 _buildLabel('Color'),
