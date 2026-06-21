@@ -72,21 +72,25 @@ Future<void> initDependencies() async {
   sl.registerSingleton(sharedPreferences);
   sl.registerLazySingleton(() => module.connectivity);
 
+  // Auth Feature - Local Data Source registered early
+  sl.registerLazySingleton<AuthLocalDataSource>(() => AuthLocalDataSourceImpl(sl()));
+
   // Core
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
   
   sl.registerLazySingleton(() => ApiClient(
         baseUrl: EnvConfig.instance.apiBaseUrl,
+        authToken: sl<AuthLocalDataSource>().getToken(),
       ));
 
   sl.registerLazySingleton(() => SocketManager(
         baseUrl: EnvConfig.instance.socketBaseUrl,
+        authToken: sl<AuthLocalDataSource>().getToken(),
       ));
 
   // Auth Feature
   // Data Sources
   sl.registerLazySingleton<AuthRemoteDataSource>(() => AuthRemoteDataSourceImpl(sl()));
-  sl.registerLazySingleton<AuthLocalDataSource>(() => AuthLocalDataSourceImpl(sl()));
 
   // Repository
   sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(
