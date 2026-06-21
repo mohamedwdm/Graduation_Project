@@ -85,10 +85,13 @@ class ApiClient {
 
     if (e.response != null) {
       final statusCode = e.response?.statusCode;
-      final message = e.response?.data?['message'] ?? 'Server Error';
+      final message = e.response?.data?['detail'] ?? e.response?.data?['message'] ?? 'Server Error';
       
       if (statusCode == 401) {
-        return const UnauthorizedException();
+        return UnauthorizedException(message.toString());
+      }
+      if (statusCode == 403) {
+        return ForbiddenException(message.toString());
       }
       
       return ServerException(

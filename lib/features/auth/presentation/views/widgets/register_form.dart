@@ -124,7 +124,11 @@ class _RegisterFormState extends State<RegisterForm> {
             child: BlocConsumer<AuthCubit, AuthState>(
               listener: (context, state) {
                 if (state is RegisterSuccess) {
-                  showSnackBar(context, "Registered Successfully");
+                  showSnackBar(
+                    context,
+                    "Registered Successfully",
+                    backgroundColor: const Color(0xff00A24F),
+                  );
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(

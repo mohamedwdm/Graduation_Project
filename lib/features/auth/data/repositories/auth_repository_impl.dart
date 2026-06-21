@@ -60,6 +60,10 @@ class AuthRepositoryImpl implements AuthRepository {
       return left(ServerFailure(e.message, statusCode: e.statusCode));
     } on UnauthorizedException catch (e) {
       return left(AuthFailure(e.message));
+    } on ForbiddenException catch (e) {
+      return left(AuthFailure(e.message));
+    } on AppException catch (e) {
+      return left(ServerFailure(e.message));
     } on Exception catch (e) {
       return left(ServerFailure(e.toString()));
     }
@@ -84,6 +88,8 @@ class AuthRepositoryImpl implements AuthRepository {
       return right(null);
     } on ServerException catch (e) {
       return left(ServerFailure(e.message, statusCode: e.statusCode));
+    } on AppException catch (e) {
+      return left(ServerFailure(e.message));
     } on Exception catch (e) {
       return left(ServerFailure(e.toString()));
     }

@@ -95,7 +95,11 @@ class _LoginFormState extends State<LoginForm> {
                   );
                   _emailController.clear();
                   _passwordController.clear();
-                  showSnackBar(context, "Logged Successfully");
+                  showSnackBar(
+                    context,
+                    "Logged Successfully",
+                    backgroundColor: const Color(0xff00A24F),
+                  );
                 } else if (state is AuthFailureState) {
                   showSnackBar(context, state.message);
                 }

@@ -46,6 +46,48 @@ class _AddSavedCarViewState extends State<AddSavedCarView> {
     }
   }
 
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Row(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.redAccent, size: 28),
+            const SizedBox(width: 10),
+            Text(
+              'Error',
+              style: GoogleFonts.spaceGrotesk(
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF0F172A),
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          message,
+          style: GoogleFonts.spaceGrotesk(
+            color: const Color(0xFF475569),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'OK',
+              style: GoogleFonts.spaceGrotesk(
+                color: const Color(0xFF1152D4),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<SavedCarFormCubit, SavedCarFormState>(
@@ -53,12 +95,7 @@ class _AddSavedCarViewState extends State<AddSavedCarView> {
         if (state is SavedCarFormSuccess) {
           context.pop(true);
         } else if (state is SavedCarFormError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.red,
-            ),
-          );
+          _showErrorDialog(context, state.message);
         }
       },
       child: Scaffold(
