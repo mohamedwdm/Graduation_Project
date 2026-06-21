@@ -11,27 +11,24 @@ class FindCarView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<FindCarCubit>()..getUserCars(),
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF6F8F6),
-        appBar: AppBar(
-          title: Text(
-            "Find My Car",
-            style: GoogleFonts.spaceGrotesk(
-              fontWeight: FontWeight.w700,
-              fontSize: 24,
-              letterSpacing: -0.36,
-              color: const Color(0xFF0F172A),
-            ),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF6F8F6),
+      appBar: AppBar(
+        title: Text(
+          "Find My Car",
+          style: GoogleFonts.spaceGrotesk(
+            fontWeight: FontWeight.w700,
+            fontSize: 24,
+            letterSpacing: -0.36,
+            color: const Color(0xFF0F172A),
           ),
-          backgroundColor: const Color(0xFFF6F8F6),
-          elevation: 0,
-          centerTitle: false,
         ),
-        body: const SafeArea(
-          child: _FindCarBody(),
-        ),
+        backgroundColor: const Color(0xFFF6F8F6),
+        elevation: 0,
+        centerTitle: false,
+      ),
+      body: const SafeArea(
+        child: _FindCarBody(),
       ),
     );
   }
@@ -125,6 +122,47 @@ class _FindCarBodyState extends State<_FindCarBody> {
         Expanded(
           child: BlocBuilder<FindCarCubit, FindCarState>(
             builder: (context, state) {
+              if (state is FindCarInitial) {
+                return Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.search_outlined,
+                          size: 64,
+                          color: Color(0xFF94A3B8),
+                        ),
+                        const SizedBox(height: 16),
+                        Center(
+                          child: Text(
+                            "Search by Plate Number or Vehicle attributes",
+                            style: GoogleFonts.spaceGrotesk(
+                              fontSize: 19,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF475569),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                          child: Text(
+                            "Enter a full or partial plate number or color or  Vehicle type to locate the vehicle's parking spot.",
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.spaceGrotesk(
+                              fontSize: 14,
+                              color: const Color(0xFF64748B),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
               if (state is FindCarLoading) {
                 return const Center(child: CircularProgressIndicator());
               }

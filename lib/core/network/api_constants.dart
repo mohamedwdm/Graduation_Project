@@ -28,6 +28,8 @@ abstract class ApiConstants {
 
   // Find Car
   static const String findCar = '/vehicles/user/me';
+  static const String searchPlate = '/vehicles/search/plate';
+  static const String searchAttributes = '/vehicles/search/attributes';
 
   // Dashboard
   static const String dashboard = '/admin/summary';

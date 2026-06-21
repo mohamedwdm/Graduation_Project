@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/di/injection_container.dart';
 import '../manager/profile_cubit/profile_cubit.dart';
 import '../manager/profile_cubit/profile_state.dart';
-import '../manager/saved_cars_cubit/saved_cars_cubit.dart';
 import '../widgets/profile_header_widget.dart';
 import '../widgets/profile_info_section.dart';
 import '../widgets/saved_cars_section.dart';
@@ -15,15 +14,8 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => sl<ProfileCubit>()..loadProfile(),
-        ),
-        BlocProvider(
-          create: (context) => sl<SavedCarsCubit>()..loadSavedCars(),
-        ),
-      ],
+    return BlocProvider(
+      create: (context) => sl<ProfileCubit>()..loadProfile(),
       child: Scaffold(
         backgroundColor: const Color(0xFFF6F8F6),
         appBar: AppBar(

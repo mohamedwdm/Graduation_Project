@@ -11,6 +11,8 @@ import 'package:go2car/features/analysis_admin/presentation/manager/analysis_cub
 import 'package:go2car/features/manage_slots_admin/presentation/views/manage_slots_view.dart';
 import 'package:go2car/features/manage_slots_admin/presentation/manager/manage_slots_cubit/manage_slots_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go2car/features/find_car/presentation/manager/find_car_cubit/find_car_cubit.dart';
+import 'package:go2car/features/profile/presentation/manager/saved_cars_cubit/saved_cars_cubit.dart';
 import 'package:go2car/core/di/injection_container.dart';
 
 class MainLayout extends StatefulWidget {
@@ -113,6 +115,9 @@ class _MainLayoutState extends State<MainLayout> {
           setState(() {
             currentIndex = index;
           });
+          if (index == 3 && !(widget.user?.isAdmin ?? false)) {
+            context.read<SavedCarsCubit>().loadSavedCars();
+          }
         },
         items: items,
       ),

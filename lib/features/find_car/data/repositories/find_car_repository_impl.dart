@@ -19,32 +19,12 @@ class FindCarRepositoryImpl implements FindCarRepository {
   })  : _remoteDataSource = remoteDataSource,
         _networkInfo = networkInfo;
 
+
+
   @override
-  FutureEither<List<CarEntity>> getUserCars() async {
+  FutureEither<List<CarEntity>> searchCars(String query) async {
     if (isMockMode) {
-      return const Right([
-        CarEntity(
-          id: '1',
-          model: 'Tesla Model S',
-          color: 'Red',
-          plateNumber: 'ABC-1234',
-          parkingLocation: 'Parking Lot A, Slot 32',
-        ),
-        CarEntity(
-          id: '2',
-          model: 'Ford Mustang',
-          color: 'White',
-          plateNumber: 'XYZ-9876',
-          parkingLocation: 'Parking Lot C, Slot 11',
-        ),
-        CarEntity(
-          id: '3',
-          model: 'BMW i8',
-          color: 'Blue',
-          plateNumber: 'CAR-5555',
-          parkingLocation: 'Parking Garage B, Level 2',
-        ),
-      ]);
+      return const Right([]);
     }
 
     if (!await _networkInfo.isConnected) {
@@ -52,7 +32,7 @@ class FindCarRepositoryImpl implements FindCarRepository {
     }
 
     try {
-      final cars = await _remoteDataSource.getUserCars();
+      final cars = await _remoteDataSource.searchCars(query);
       return Right(cars);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message, statusCode: e.statusCode));

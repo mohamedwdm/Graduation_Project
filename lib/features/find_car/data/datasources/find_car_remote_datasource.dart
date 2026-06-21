@@ -1,10 +1,9 @@
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/api_constants.dart';
-import '../../../../core/utils/typedefs.dart';
 import '../models/car_model.dart';
 
 abstract class FindCarRemoteDataSource {
-  Future<List<CarModel>> getUserCars();
+  Future<List<CarModel>> searchCars(String query);
 }
 
 class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
@@ -13,37 +12,69 @@ class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
   FindCarRemoteDataSourceImpl(this._apiClient);
 
   @override
-  Future<List<CarModel>> getUserCars() async {
-    final response = await _apiClient.get(ApiConstants.findCar);
-    final List vehiclesList = response.data['data'] as List;
+  Future<List<CarModel>> searchCars(String query) async {
+    final List<CarModel> allResults = [];
+    final Set<String> uniquePlates = {};
 
-    final List<CarModel> cars = [];
-    for (final v in vehiclesList) {
-      final json = v as Map<String, dynamic>;
-      final plate = json['plate_number'] as String? ?? '';
-      
-      String parkingLocation = 'Not parked';
-      try {
-        final locRes = await _apiClient.get('/vehicles/$plate/location');
-        if (locRes.statusCode == 200 && locRes.data != null && locRes.data['data'] != null) {
-          final locData = locRes.data['data'];
-          final floor = locData['floor'] ?? '';
-          final section = locData['section'] ?? '';
-          final slot = locData['slot'] ?? '';
-          parkingLocation = '$floor, $section - Slot $slot';
+    void addCars(List dataList) {
+      for (final item in dataList) {
+        final json = item as Map<String, dynamic>;
+        final plate = json['plate_number'] as String? ?? '';
+        if (plate.isNotEmpty && !uniquePlates.contains(plate)) {
+          uniquePlates.add(plate);
+          final floor = json['floor'] ?? '';
+          final section = json['section'] ?? '';
+          final slot = json['slot'] ?? '';
+          allResults.add(CarModel(
+            id: plate,
+            model: json['vehicle_type'] as String? ?? 'Unknown',
+            color: json['vehicle_color'] as String? ?? 'Unknown',
+            plateNumber: plate,
+            parkingLocation: '$floor, $section - Slot $slot',
+          ));
         }
-      } catch (_) {
-        // Safe to ignore, defaults to 'Not parked' if vehicle not found or not parked
       }
-
-      cars.add(CarModel(
-        id: plate,
-        model: json['vehicle_type'] as String? ?? 'Unknown',
-        color: json['color'] as String? ?? 'Unknown',
-        plateNumber: plate,
-        parkingLocation: parkingLocation,
-      ));
     }
-    return cars;
+
+    // 1. Query by Plate
+    try {
+      final response = await _apiClient.get(
+        ApiConstants.searchPlate,
+        queryParameters: {'plate': query},
+      );
+      if (response.data != null && response.data['data'] != null) {
+        addCars(response.data['data'] as List);
+      }
+    } catch (_) {
+      // Ignore errors / no records found
+    }
+
+    // 2. Query by Color attribute
+    try {
+      final response = await _apiClient.get(
+        ApiConstants.searchAttributes,
+        queryParameters: {'color': query},
+      );
+      if (response.data != null && response.data['data'] != null) {
+        addCars(response.data['data'] as List);
+      }
+    } catch (_) {
+      // Ignore errors / no records found
+    }
+
+    // 3. Query by Vehicle Type attribute
+    try {
+      final response = await _apiClient.get(
+        ApiConstants.searchAttributes,
+        queryParameters: {'vehicle_type': query},
+      );
+      if (response.data != null && response.data['data'] != null) {
+        addCars(response.data['data'] as List);
+      }
+    } catch (_) {
+      // Ignore errors / no records found
+    }
+
+    return allResults;
   }
 }
