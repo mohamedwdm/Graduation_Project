@@ -10,7 +10,8 @@ import '../widgets/saved_cars_section.dart';
 import '../widgets/settings_section.dart';
 
 class ProfileView extends StatelessWidget {
-  const ProfileView({super.key});
+  final bool isAdmin;
+  const ProfileView({super.key, this.isAdmin = false});
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +78,7 @@ class ProfileView extends StatelessWidget {
                       // In the new CSS, there wasn't a separate "Personal Information" section with tiles,
                       // but I'll keep it refactored to match the aesthetic.
                       ProfileInfoSection(name: profile.name),
-                      const SavedCarsSection(),
+                      if (!isAdmin) const SavedCarsSection(),
                       const SettingsSection(),
                     ],
                   ),

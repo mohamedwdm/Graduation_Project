@@ -45,22 +45,21 @@ class CarCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                     
                       Text(
                         car.plateNumber,
-                        style: GoogleFonts.spaceGrotesk(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                          color: const Color(0xFF475569),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                       Text(
-                        car.model,
                         style: GoogleFonts.spaceGrotesk(
                           fontWeight: FontWeight.w700,
                           fontSize: 18,
                           color: const Color(0xFF0F172A),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        car.model,
+                        style: GoogleFonts.spaceGrotesk(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                          color: const Color(0xFF475569),
                         ),
                       ),
                       const SizedBox(height: 2),

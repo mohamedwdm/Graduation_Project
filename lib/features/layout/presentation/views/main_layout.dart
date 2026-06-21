@@ -28,74 +28,80 @@ class _MainLayoutState extends State<MainLayout> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pages = [
-      const HomeView(),
-      const SlotsView(),
-      const FindCarView(),
-    ];
-
-    final List<BottomNavigationBarItem> items = [
-      const BottomNavigationBarItem(
-        icon: Icon(Icons.home_outlined),
-        label: "Home",
-      ),
-      const BottomNavigationBarItem(
-        icon: Icon(Icons.local_parking_outlined),
-        label: "Slots",
-      ),
-      const BottomNavigationBarItem(
-        icon: Icon(Icons.directions_car_outlined),
-        label: "Find Car",
-      ),
-    ];
+    final List<Widget> pages = [];
+    final List<BottomNavigationBarItem> items = [];
 
     if (widget.user?.isAdmin ?? false) {
-      pages.add(
+      pages.addAll([
+       // const SlotsView(),
+        const FindCarView(),
         BlocProvider(
           create: (context) => sl<ParkingOverviewCubit>(),
           child: const ParkingOverviewView(),
         ),
-      );
-      items.add(
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.dashboard_outlined),
-          label: "Overview",
-        ),
-      );
-      
-      pages.add(
         BlocProvider(
           create: (context) => sl<AnalysisCubit>(),
           child: const AnalysisDashboardView(),
         ),
-      );
-      items.add(
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.analytics_outlined),
-          label: "Analyze",
-        ),
-      );
-
-      pages.add(
         BlocProvider(
           create: (context) => sl<ManageSlotsCubit>(),
           child: const ManageSlotsView(),
         ),
-      );
-      items.add(
+        const ProfileView(isAdmin: true),
+      ]);
+
+      items.addAll([
+        // const BottomNavigationBarItem(
+        //   icon: Icon(Icons.local_parking_outlined),
+        //   label: "Slots",
+        // ),
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.directions_car_outlined),
+          label: "Find Car",
+        ),
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.dashboard_outlined),
+          label: "Overview",
+        ),
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.analytics_outlined),
+          label: "Analyze",
+        ),
         const BottomNavigationBarItem(
           icon: Icon(Icons.settings_suggest_outlined),
           label: "Manage",
         ),
-      );
-    } else {
-      pages.add(const ProfileView());
-      items.add(
         const BottomNavigationBarItem(
           icon: Icon(Icons.person_outline),
           label: "Profile",
         ),
-      );
+      ]);
+    } else {
+      pages.addAll([
+        const HomeView(),
+        const SlotsView(),
+        const FindCarView(),
+        const ProfileView(isAdmin: false),
+      ]);
+
+      items.addAll([
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.home_outlined),
+          label: "Home",
+        ),
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.local_parking_outlined),
+          label: "Slots",
+        ),
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.directions_car_outlined),
+          label: "Find Car",
+        ),
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.person_outline),
+          label: "Profile",
+        ),
+      ]);
     }
 
     return Scaffold(
