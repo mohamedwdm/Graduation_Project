@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/config/app_router.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../auth/presentation/manager/auth_cubit/auth_cubit.dart';
 
@@ -105,7 +107,7 @@ class SettingsSection extends StatelessWidget {
   void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
@@ -118,16 +120,19 @@ class SettingsSection extends StatelessWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: Text(
               'Cancel',
               style: GoogleFonts.spaceGrotesk(color: const Color(0xFF64748B)),
             ),
           ),
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              sl<AuthCubit>().logout();
+            onPressed: () async {
+              Navigator.pop(dialogContext);
+              await sl<AuthCubit>().logout();
+              if (context.mounted) {
+                context.go(AppRouter.loginPath);
+              }
             },
             child: Text(
               'Logout',

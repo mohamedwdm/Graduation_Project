@@ -6,7 +6,9 @@ class AuthInterceptor extends Interceptor {
 
   AuthInterceptor(this._token);
 
-  void updateToken(String token) => _token = token;
+  String? get token => _token;
+
+  void updateToken(String? token) => _token = token;
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {

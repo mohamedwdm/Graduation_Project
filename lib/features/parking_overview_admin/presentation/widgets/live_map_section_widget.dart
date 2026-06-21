@@ -11,6 +11,7 @@ class LiveMapSectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final imagePath = mapImageUrl.isEmpty ? 'assets/images/parking_map_placeholder.png' : mapImageUrl;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -32,14 +33,18 @@ class LiveMapSectionWidget extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: mapImageUrl.startsWith('assets/')
+            child: imagePath.startsWith('assets/')
                 ? Image.asset(
-                    mapImageUrl,
+                    imagePath,
                     fit: BoxFit.cover,
                   )
                 : Image.network(
-                    mapImageUrl,
+                    imagePath,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Image.asset(
+                      'assets/images/parking_map_placeholder.png',
+                      fit: BoxFit.cover,
+                    ),
                   ),
           ),
         ),

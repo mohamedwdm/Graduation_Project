@@ -101,10 +101,14 @@ class AuthRepositoryImpl implements AuthRepository {
       await _remoteDataSource.logout();
       await _localDataSource.clearUser();
       await _localDataSource.clearToken();
+      _apiClient.updateAuthToken(null);
+      _socketManager.updateToken(null);
       return right(null);
     } catch (e) {
       await _localDataSource.clearUser();
       await _localDataSource.clearToken();
+      _apiClient.updateAuthToken(null);
+      _socketManager.updateToken(null);
       return right(null);
     }
   }

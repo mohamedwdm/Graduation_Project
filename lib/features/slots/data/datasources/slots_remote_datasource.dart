@@ -14,7 +14,11 @@ class SlotsRemoteDataSourceImpl implements SlotsRemoteDataSource {
 
   @override
   Future<List<SlotModel>> fetchAllSlots() async {
-    final response = await _apiClient.get(ApiConstants.slots);
+    if (!_apiClient.hasToken) {
+      return [];
+    }
+    final path = _apiClient.isGuest ? ApiConstants.availableSlots : ApiConstants.slots;
+    final response = await _apiClient.get(path);
     final List dataList = response.data as List;
     return dataList.map((e) => SlotModel.fromJson(e as Map<String, dynamic>)).toList();
   }

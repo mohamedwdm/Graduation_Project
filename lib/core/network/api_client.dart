@@ -25,11 +25,28 @@ class ApiClient {
     ]);
   }
 
-  void updateAuthToken(String token) {
+  void updateAuthToken(String? token) {
     final authInterceptors = _dio.interceptors.whereType<AuthInterceptor>().toList();
     if (authInterceptors.isNotEmpty) {
       authInterceptors.first.updateToken(token);
     }
+  }
+
+  bool get hasToken {
+    final authInterceptors = _dio.interceptors.whereType<AuthInterceptor>().toList();
+    if (authInterceptors.isNotEmpty) {
+      final token = authInterceptors.first.token;
+      return token != null && token.isNotEmpty;
+    }
+    return false;
+  }
+
+  bool get isGuest {
+    final authInterceptors = _dio.interceptors.whereType<AuthInterceptor>().toList();
+    if (authInterceptors.isNotEmpty) {
+      return authInterceptors.first.token == 'guest_token_from_server';
+    }
+    return false;
   }
 
   Future<Response> get(String path, {Map<String, dynamic>? queryParameters}) async {

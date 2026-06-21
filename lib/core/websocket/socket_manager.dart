@@ -26,7 +26,7 @@ class SocketManager {
   Stream<SocketConnectionState> get state$ => _stateController.stream;
   SocketConnectionState get currentState => _state;
 
-  void updateToken(String token) {
+  void updateToken(String? token) {
     _authToken = token;
     if (_state == SocketConnectionState.connected) {
       reconnect();

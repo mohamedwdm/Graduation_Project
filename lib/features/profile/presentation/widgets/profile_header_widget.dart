@@ -26,7 +26,7 @@ class ProfileHeaderWidget extends StatelessWidget {
               height: 96,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                image: avatarUrl != null
+                image: avatarUrl != null && avatarUrl!.isNotEmpty
                     ? DecorationImage(
                         image: NetworkImage(avatarUrl!),
                         fit: BoxFit.cover,
@@ -34,7 +34,7 @@ class ProfileHeaderWidget extends StatelessWidget {
                     : null,
                 color: const Color(0xFFE2E8F0),
               ),
-              child: avatarUrl == null
+              child: avatarUrl == null || avatarUrl!.isEmpty
                   ? const Icon(Icons.person, size: 48, color: Color(0xFF64748B))
                   : null,
             ),

@@ -19,12 +19,26 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
   @override
   Future<ProfileModel> fetchProfile() async {
+    if (!_apiClient.hasToken || _apiClient.isGuest) {
+      return const ProfileModel(
+        id: 'guest_id_from_server',
+        name: 'Guest User',
+        email: 'guest@go2car.com',
+      );
+    }
     final response = await _apiClient.get(ApiConstants.profile);
     return ProfileModel.fromJson(response.data as Map<String, dynamic>);
   }
 
   @override
   Future<ProfileModel> updateProfileName(String newName) async {
+    if (!_apiClient.hasToken || _apiClient.isGuest) {
+      return const ProfileModel(
+        id: 'guest_id_from_server',
+        name: 'Guest User',
+        email: 'guest@go2car.com',
+      );
+    }
     final response = await _apiClient.put(
       ApiConstants.updateProfile,
       data: {
@@ -36,6 +50,9 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
   @override
   Future<List<SavedCarModel>> fetchSavedCars() async {
+    if (!_apiClient.hasToken || _apiClient.isGuest) {
+      return [];
+    }
     final response = await _apiClient.get(ApiConstants.savedCars);
     final List dataList = response.data['data'] as List;
     return dataList.map((e) => SavedCarModel.fromJson(e as Map<String, dynamic>)).toList();
