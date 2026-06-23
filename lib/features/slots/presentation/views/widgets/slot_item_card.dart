@@ -14,7 +14,7 @@ class SlotItemCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
+        border: Border.all(color: const Color(0xFFE2E8F0), width: 2),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.02),
@@ -60,10 +60,9 @@ class SlotItemCard extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color:
-                      slot.isAvailable
-                          ? const Color(0xFFDCFCE7)
-                          : const Color(0xFFFEE2E2),
+                  color: slot.isAvailable
+                      ? const Color(0xFFDCFCE7)
+                      : const Color(0xFFFEE2E2),
                   borderRadius: BorderRadius.circular(9999),
                 ),
                 child: Row(
@@ -71,10 +70,9 @@ class SlotItemCard extends StatelessWidget {
                     Icon(
                       slot.isAvailable ? Icons.check_circle : Icons.cancel,
                       size: 16,
-                      color:
-                          slot.isAvailable
-                              ? const Color(0xFF15803D)
-                              : const Color(0xFFDC2626),
+                      color: slot.isAvailable
+                          ? const Color(0xFF15803D)
+                          : const Color(0xFFDC2626),
                     ),
                     const SizedBox(width: 4),
                     Text(
@@ -83,10 +81,9 @@ class SlotItemCard extends StatelessWidget {
                         fontFamily: 'Space Grotesk',
                         fontWeight: FontWeight.w500,
                         fontSize: 14,
-                        color:
-                            slot.isAvailable
-                                ? const Color(0xFF15803D)
-                                : const Color(0xFFDC2626),
+                        color: slot.isAvailable
+                            ? const Color(0xFF15803D)
+                            : const Color(0xFFDC2626),
                       ),
                     ),
                   ],

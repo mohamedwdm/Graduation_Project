@@ -15,12 +15,12 @@ class SlotCardWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xffE2E8F0)),
+        border: Border.all(color: const Color(0xFFE2E8F0), width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 2,
-            offset: const Offset(0, 1),
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -30,62 +30,55 @@ class SlotCardWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Text(
-                    "Slot ${slot.name}",
-                    style: GoogleFonts.spaceGrotesk(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 18,
-                      color: const Color(0xff0F172A),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Icon(
-                    Icons.location_on_outlined,
-                    size: 18,
-                    color: Colors.grey.shade400,
-                  ),
-                ],
+              Text(
+                "Slot ${slot.name}",
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF0F172A),
+                ),
               ),
               _StatusBadge(status: slot.status),
             ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            slot.location,
-            style: GoogleFonts.spaceGrotesk(
-              fontWeight: FontWeight.w400,
-              fontSize: 14,
-              color: const Color(0xff64748B),
-            ),
+          const SizedBox(height: 12),
+          _InfoRow(
+            icon: Icons.layers_outlined,
+            label: 'Floor',
+            value: slot.floor.toString(),
           ),
+          const SizedBox(height: 4),
+          _InfoRow(
+            icon: Icons.location_on_outlined,
+            label: 'Location',
+            value: slot.location,
+          ),
+          // const SizedBox(height: 12),
+          // Row(
+          //   children: [
+          //     if (slot.isEV)
+          //       _FeatureChip(
+          //         icon: Icons.electric_bolt,
+          //         label: "EV Charging",
+          //       ),
+          //     if (slot.isEV && slot.isAccessible) const SizedBox(width: 12),
+          //     if (slot.isAccessible)
+          //       _FeatureChip(
+          //         icon: Icons.accessible,
+          //         label: "Accessible",
+          //       ),
+          //     if (!slot.isEV && !slot.isAccessible)
+          //       Text(
+          //         "No additional features",
+          //         style: GoogleFonts.spaceGrotesk(
+          //           fontWeight: FontWeight.w400,
+          //           fontSize: 12,
+          //           color: const Color(0xff94A3B8),
+          //         ),
+          //       ),
+          //   ],
+          // ),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              if (slot.isEV)
-                _FeatureChip(
-                  icon: Icons.electric_bolt,
-                  label: "EV Charging",
-                ),
-              if (slot.isEV && slot.isAccessible) const SizedBox(width: 12),
-              if (slot.isAccessible)
-                _FeatureChip(
-                  icon: Icons.accessible,
-                  label: "Accessible",
-                ),
-              if (!slot.isEV && !slot.isAccessible)
-                Text(
-                  "No additional features",
-                  style: GoogleFonts.spaceGrotesk(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 12,
-                    color: const Color(0xff94A3B8),
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 24),
           Row(
             children: [
               Expanded(
@@ -111,7 +104,8 @@ class SlotCardWidget extends StatelessWidget {
                   onPressed: () {},
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    side: const BorderSide(color: Color(0xff0F172A), width: 2),
+                    side:
+                        const BorderSide(color: Color(0xff0F172A), width: 1.3),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -119,7 +113,8 @@ class SlotCardWidget extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.info_outline, size: 16, color: Color(0xff0F172A)),
+                      const Icon(Icons.info_outline,
+                          size: 16, color: Color(0xff0F172A)),
                       const SizedBox(width: 4),
                       Text(
                         "Status",
@@ -148,78 +143,55 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color bgColor;
-    Color textColor;
-    String label;
-    IconData icon;
+    Color statusColor;
+    String statusText;
+    IconData statusIcon;
 
     switch (status) {
       case SlotStatus.available:
-        bgColor = const Color(0xffDCFCE7);
-        textColor = const Color(0xff15803D);
-        label = "Available";
-        icon = Icons.check_circle_outline;
+        statusColor = const Color(0xFF15803D);
+        statusText = "Available";
+        statusIcon = Icons.check_circle;
         break;
       case SlotStatus.maintenance:
-        bgColor = const Color(0xffFEF3C7);
-        textColor = const Color(0xffB45309);
-        label = "Maintenance";
-        icon = Icons.settings_outlined;
+        statusColor = const Color(0xFFF59E0B);
+        statusText = "Maintenance";
+        statusIcon = Icons.info_outline;
         break;
       case SlotStatus.occupied:
-        bgColor = const Color(0xffEF4444).withOpacity(0.61);
-        textColor = const Color(0xff334155);
-        label = "Occupied";
-        icon = Icons.block_flipped;
+        statusColor =  const Color(0xFFDC2626);
+        statusText = "Occupied";
+        statusIcon = Icons.cancel;
         break;
     }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(9999),
+        color: statusColor.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          CustomPaint(
-            size: const Size(16, 16),
-            painter: StatusPulsePainter(color: textColor),
-            child: Icon(icon, size: 14, color: textColor),
+          Icon(
+            statusIcon,
+            size: 14,
+            color: statusColor,
           ),
           const SizedBox(width: 4),
           Text(
-            label,
+            statusText,
             style: GoogleFonts.spaceGrotesk(
+              color: statusColor,
               fontWeight: FontWeight.w500,
               fontSize: 14,
-              color: textColor,
             ),
           ),
         ],
       ),
     );
   }
-}
-
-class StatusPulsePainter extends CustomPainter {
-  final Color color;
-
-  StatusPulsePainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    // Simple pulse effect - could be animated, but here we just draw a subtle aura
-    final Paint paint = Paint()
-      ..color = color.withOpacity(0.2)
-      ..style = PaintingStyle.fill;
-
-    canvas.drawCircle(Offset(size.width / 2, size.height / 2), size.width * 0.7, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _FeatureChip extends StatelessWidget {
@@ -281,6 +253,43 @@ class _ActionButton extends StatelessWidget {
           fontSize: 12,
         ),
       ),
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+
+  const _InfoRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 14, color: const Color(0xFF64748B)),
+        const SizedBox(width: 6),
+        Text(
+          '$label: ',
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 13,
+            color: const Color(0xFF64748B),
+          ),
+        ),
+        Text(
+          value,
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF1E293B),
+          ),
+        ),
+      ],
     );
   }
 }

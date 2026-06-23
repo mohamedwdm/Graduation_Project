@@ -46,7 +46,7 @@ class _MainLayoutState extends State<MainLayout> {
         BlocProvider(
           create: (context) => sl<ManageSlotsCubit>(),
           child: const ManageSlotsView(),
-        ),
+        ), 
         const ProfileView(isAdmin: true),
       ]);
 
