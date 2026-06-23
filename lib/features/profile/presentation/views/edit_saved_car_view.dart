@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import '../widgets/drag_drop_color_selector.dart';
 import '../../domain/entities/saved_car_entity.dart';
 import '../manager/saved_car_form_cubit/saved_car_form_cubit.dart';
 import '../manager/saved_car_form_cubit/saved_car_form_state.dart';
@@ -54,6 +55,62 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
       );
       context.read<SavedCarFormCubit>().updateCar(updatedCar);
     }
+  }
+
+  void _showDeleteConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Text(
+          'Delete Car',
+          style: GoogleFonts.manrope(
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF0F172A),
+          ),
+        ),
+        content: Text(
+          'Are you sure you want to delete this car (${widget.car.plateNumber})? This action cannot be undone.',
+          style: GoogleFonts.manrope(
+            color: const Color(0xFF475569),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.manrope(
+                color: const Color(0xFF64748B),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              context.read<SavedCarFormCubit>().deleteCar(widget.car.id);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              elevation: 0,
+            ),
+            child: Text(
+              'Delete',
+              style: GoogleFonts.manrope(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -136,9 +193,38 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
                 ),
                 const SizedBox(height: 20),
                 _buildLabel('Color'),
-                _buildTextField(
-                  controller: _colorController,
-                  validator: (val) => val == null || val.isEmpty ? 'Required' : null,
+                FormField<String>(
+                  validator: (value) {
+                    if (_colorController.text.isEmpty) {
+                      return 'Required';
+                    }
+                    return null;
+                  },
+                  builder: (formState) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        DragDropColorSelector(
+                          controller: _colorController,
+                          onChanged: () {
+                            formState.didChange(_colorController.text);
+                          },
+                        ),
+                        if (formState.hasError)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0, left: 4.0),
+                            child: Text(
+                              formState.errorText!,
+                              style: GoogleFonts.manrope(
+                                color: Colors.red,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
                 ),
                 const SizedBox(height: 20),
                 _buildLabel('Car Type'),
@@ -221,9 +307,7 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: () {
-                      context.read<SavedCarFormCubit>().deleteCar(widget.car.id);
-                    },
+                    onPressed: _showDeleteConfirmationDialog,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.red,

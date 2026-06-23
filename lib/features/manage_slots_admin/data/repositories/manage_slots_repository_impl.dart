@@ -25,4 +25,24 @@ class ManageSlotsRepositoryImpl implements ManageSlotsRepository {
       return Left(ServerFailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> addSlot({required String slotCode, required int sectionId}) async {
+    try {
+      await dataSource.addSlot(slotCode: slotCode, sectionId: sectionId);
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Map<String, dynamic>>>> getSections() async {
+    try {
+      final sections = await dataSource.getSections();
+      return Right(sections);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
 }

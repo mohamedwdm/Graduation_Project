@@ -70,14 +70,20 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
   @override
   Future<SavedCarModel> updateSavedCar(SavedCarModel car) async {
-    // API updated logic simulated as the backend doesn't expose a vehicle update endpoint
-    await Future.delayed(const Duration(milliseconds: 300));
-    return car;
+    final identifier = car.id.isNotEmpty ? car.id : car.plateNumber;
+    final response = await _apiClient.patch(
+      '/vehicles/$identifier',
+      queryParameters: {
+        'color': car.color,
+        'vehicle_type': car.model,
+      },
+    );
+    final vehicleJson = response.data['data'] as Map<String, dynamic>;
+    return SavedCarModel.fromJson(vehicleJson);
   }
 
   @override
   Future<void> deleteSavedCar(String id) async {
-    // API delete logic simulated as the backend doesn't expose a vehicle delete endpoint
-    await Future.delayed(const Duration(milliseconds: 300));
+    await _apiClient.delete('/vehicles/$id');
   }
 }

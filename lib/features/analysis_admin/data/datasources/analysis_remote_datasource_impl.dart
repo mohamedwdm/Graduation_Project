@@ -45,10 +45,10 @@ class AnalysisRemoteDataSourceImpl implements AnalysisDataSource {
           return map['is_active'] == false;
         }).length;
 
-        // Calculate some simulated change percent for UI presentation
+        // Calculate some simulated change percent for UI presentation///////////////////
         final carsParkedChange = carsParkedTotal > 0 ? 5.2 : 0.0;
         final carsLeftChange = carsLeftTotal > 0 ? 2.1 : 0.0;
-
+        ////////////////////////////////////////////////////////////////////////////////
         return AnalysisDataModel(
           occupancyPercent: occupancyPercent,
           occupiedCount: occupiedCount,

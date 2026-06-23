@@ -9,9 +9,9 @@ class AddSlotButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 48,
+      height: 45,
       decoration: BoxDecoration(
-        color: const Color(0xff13EC5B),
+        color: const Color.fromARGB(255, 73, 212, 119),
         borderRadius: BorderRadius.circular(9999),
         boxShadow: [
           BoxShadow(

@@ -54,6 +54,8 @@ import 'package:go2car/features/manage_slots_admin/data/datasources/manage_slots
 import 'package:go2car/features/manage_slots_admin/data/repositories/manage_slots_repository_impl.dart';
 import 'package:go2car/features/manage_slots_admin/domain/repositories/manage_slots_repository.dart';
 import 'package:go2car/features/manage_slots_admin/domain/usecases/get_manage_slots_usecase.dart';
+import 'package:go2car/features/manage_slots_admin/domain/usecases/add_slot_usecase.dart';
+import 'package:go2car/features/manage_slots_admin/domain/usecases/get_sections_usecase.dart';
 import 'package:go2car/features/manage_slots_admin/presentation/manager/manage_slots_cubit/manage_slots_cubit.dart';
 import '../config/env_config.dart';
 import '../network/api_client.dart';
@@ -277,9 +279,13 @@ Future<void> initDependencies() async {
 
   // Use Case
   sl.registerLazySingleton(() => GetManageSlotsUseCase(sl()));
+  sl.registerLazySingleton(() => AddSlotUseCase(sl()));
+  sl.registerLazySingleton(() => GetSectionsUseCase(sl()));
 
   // Cubit
   sl.registerFactory(() => ManageSlotsCubit(
         getManageSlotsUseCase: sl(),
+        addSlotUseCase: sl(),
+        getSectionsUseCase: sl(),
       ));
 }

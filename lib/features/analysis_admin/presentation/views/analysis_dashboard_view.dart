@@ -202,7 +202,7 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
                         child: TrafficFlowCard(
                           title: 'Cars Parked',
                           count: data.carsParkedTotal.toString(),
-                          trend: '+${(data.carsParkedChange * 100).toInt()}%',
+                          trend: '+${(data.carsParkedChange)}%',
                           icon: Icons.login,
                           iconBackgroundColor: const Color(0xff1152D4).withOpacity(0.1),
                           iconColor: const Color(0xff1152D4),
@@ -213,7 +213,7 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
                         child: TrafficFlowCard(
                           title: 'Cars Left',
                           count: data.carsLeftTotal.toString(),
-                          trend: '+${(data.carsLeftChange * 100).toInt()}%',
+                          trend: '+${data.carsLeftChange}%',
                           icon: Icons.logout,
                           iconBackgroundColor: const Color(0xffFFEDD5),
                           iconColor: const Color(0xffEA580C),

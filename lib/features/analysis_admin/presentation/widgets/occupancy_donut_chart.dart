@@ -26,7 +26,8 @@ class OccupancyDonutChart extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '${(percent * 100).toInt()}%',
+                //'${(percent).toStringAsFixed(0)}%',
+                '${percent}%',
                 style: GoogleFonts.manrope(
                   fontSize: 24,
                   fontWeight: FontWeight.w800,
@@ -79,7 +80,7 @@ class _DonutPainter extends CustomPainter {
     canvas.drawArc(
       rect,
       -pi / 2, // Start from top (-90 degrees)
-      2 * pi * percent,
+      2 * pi * (percent / 100.0),
       false,
       progressPaint,
     );

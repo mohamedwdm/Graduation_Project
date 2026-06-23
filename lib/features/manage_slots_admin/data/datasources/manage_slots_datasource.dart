@@ -4,6 +4,8 @@ import '../../domain/entities/slot_entity.dart';
 
 abstract class ManageSlotsDataSource {
   Future<List<SlotModel>> getSlots(int floor);
+  Future<void> addSlot({required String slotCode, required int sectionId});
+  Future<List<Map<String, dynamic>>> getSections();
 }
 
 class ManageSlotsRemoteDataSourceImpl implements ManageSlotsDataSource {
@@ -17,6 +19,21 @@ class ManageSlotsRemoteDataSourceImpl implements ManageSlotsDataSource {
     final List dataList = response.data as List;
     final List<SlotModel> allSlots = dataList.map((e) => SlotModel.fromJson(e as Map<String, dynamic>)).toList();
     return allSlots.where((slot) => slot.floor == floor).toList();
+  }
+
+  @override
+  Future<void> addSlot({required String slotCode, required int sectionId}) async {
+    await apiClient.post('/slots/', data: {
+      'slot_code': slotCode,
+      'section_id': sectionId,
+    });
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getSections() async {
+    final response = await apiClient.get('/sections/all');
+    final List dataList = response.data as List;
+    return dataList.map((e) => e as Map<String, dynamic>).toList();
   }
 }
 
@@ -99,5 +116,47 @@ class ManageSlotsMockDataSourceImpl implements ManageSlotsDataSource {
         ),
       ];
     }
+  }
+
+  @override
+  Future<void> addSlot({required String slotCode, required int sectionId}) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getSections() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    return [
+      {
+        'id': 1,
+        'section_code': 'A',
+        'section_name': 'Section A',
+        'floor': {
+          'id': 1,
+          'floor_code': '1',
+          'floor_name': 'Floor 1',
+        }
+      },
+      {
+        'id': 2,
+        'section_code': 'B',
+        'section_name': 'Section B',
+        'floor': {
+          'id': 2,
+          'floor_code': '2',
+          'floor_name': 'Floor 2',
+        }
+      },
+      {
+        'id': 3,
+        'section_code': 'C',
+        'section_name': 'Section C',
+        'floor': {
+          'id': 3,
+          'floor_code': '3',
+          'floor_name': 'Floor 3',
+        }
+      },
+    ];
   }
 }
