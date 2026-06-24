@@ -18,9 +18,9 @@ class ProfileView extends StatelessWidget {
     return BlocProvider(
       create: (context) => sl<ProfileCubit>()..loadProfile(),
       child: Scaffold(
-        backgroundColor: const Color(0xFFF6F8F6),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
-          backgroundColor: const Color(0xFFF6F8F6),
+          backgroundColor: Colors.transparent,
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           title: Text(
@@ -28,7 +28,7 @@ class ProfileView extends StatelessWidget {
             style: GoogleFonts.spaceGrotesk(
               fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF0F172A),
+              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : const Color(0xFF0F172A),
               letterSpacing: -0.3,
             ),
           ),

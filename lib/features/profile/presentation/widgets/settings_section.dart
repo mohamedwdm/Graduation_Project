@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/config/app_router.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../auth/presentation/manager/auth_cubit/auth_cubit.dart';
+import '../manager/theme_cubit/theme_cubit.dart';
 
 class SettingsSection extends StatelessWidget {
   const SettingsSection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9);
+    final borderColor = isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
+    final textColor = isDark ? Colors.white : const Color(0xFF0F172A);
+    final tileTextColor = isDark ? Colors.white70 : const Color(0xFF1E293B);
+    final tileIconColor = isDark ? Colors.white60 : const Color(0xFF475569);
+    final dividerColor = isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -20,7 +30,7 @@ class SettingsSection extends StatelessWidget {
             style: GoogleFonts.spaceGrotesk(
               fontSize: 18,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF0F172A),
+              color: textColor,
               letterSpacing: -0.27,
             ),
           ),
@@ -28,30 +38,52 @@ class SettingsSection extends StatelessWidget {
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: const Color(0xFFF1F5F9),
+            color: backgroundColor,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
+            border: Border.all(color: borderColor),
           ),
           child: Column(
             children: [
               _buildSettingTile(
                 icon: Icons.notifications_none_outlined,
                 title: 'Notifications',
+                titleColor: tileTextColor,
+                iconColor: tileIconColor,
                 onTap: () {},
               ),
-              _buildDivider(),
+              _buildDivider(dividerColor),
               _buildSettingTile(
-                icon: Icons.privacy_tip_outlined,
-                title: 'Privacy Settings',
+                icon: Icons.credit_card_outlined,
+                title: 'Payment Methods',
+                titleColor: tileTextColor,
+                iconColor: tileIconColor,
                 onTap: () {},
               ),
-              _buildDivider(),
+              _buildDivider(dividerColor),
+              _buildSettingTile(
+                icon: Icons.palette_outlined,
+                title: 'App Appearance',
+                titleColor: tileTextColor,
+                iconColor: tileIconColor,
+                onTap: () => _showThemeSelectionDialog(context),
+              ),
+              _buildDivider(dividerColor),
+              _buildSettingTile(
+                icon: Icons.receipt_long_outlined,
+                title: 'Booking History',
+                titleColor: tileTextColor,
+                iconColor: tileIconColor,
+                onTap: () {},
+              ),
+              _buildDivider(dividerColor),
               _buildSettingTile(
                 icon: Icons.security_outlined,
                 title: 'Account Security',
+                titleColor: tileTextColor,
+                iconColor: tileIconColor,
                 onTap: () {},
               ),
-              _buildDivider(),
+              _buildDivider(dividerColor),
               _buildSettingTile(
                 icon: Icons.logout_outlined,
                 title: 'Logout',
@@ -72,8 +104,8 @@ class SettingsSection extends StatelessWidget {
     required IconData icon,
     required String title,
     required VoidCallback onTap,
-    Color titleColor = const Color(0xFF1E293B),
-    Color iconColor = const Color(0xFF475569),
+    required Color titleColor,
+    required Color iconColor,
     bool showChevron = true,
   }) {
     return ListTile(
@@ -94,13 +126,78 @@ class SettingsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildDivider() {
-    return const Divider(
+  Widget _buildDivider(Color color) {
+    return Divider(
       height: 1,
       thickness: 1,
       indent: 1,
       endIndent: 1,
-      color: Color(0xFFE2E8F0),
+      color: color,
+    );
+  }
+
+  void _showThemeSelectionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        final themeCubit = context.read<ThemeCubit>();
+        return BlocBuilder<ThemeCubit, ThemeMode>(
+          bloc: themeCubit,
+          builder: (context, currentMode) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              title: Text(
+                'App Appearance',
+                style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.w700),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RadioListTile<ThemeMode>(
+                    title: Text(
+                      'System Default',
+                      style: GoogleFonts.spaceGrotesk(),
+                    ),
+                    value: ThemeMode.system,
+                    groupValue: currentMode,
+                    activeColor: const Color(0xFF00A24F),
+                    onChanged: (mode) {
+                      if (mode != null) themeCubit.setThemeMode(mode);
+                      Navigator.pop(dialogContext);
+                    },
+                  ),
+                  RadioListTile<ThemeMode>(
+                    title: Text(
+                      'Light Mode',
+                      style: GoogleFonts.spaceGrotesk(),
+                    ),
+                    value: ThemeMode.light,
+                    groupValue: currentMode,
+                    activeColor: const Color(0xFF00A24F),
+                    onChanged: (mode) {
+                      if (mode != null) themeCubit.setThemeMode(mode);
+                      Navigator.pop(dialogContext);
+                    },
+                  ),
+                  RadioListTile<ThemeMode>(
+                    title: Text(
+                      'Dark Mode',
+                      style: GoogleFonts.spaceGrotesk(),
+                    ),
+                    value: ThemeMode.dark,
+                    groupValue: currentMode,
+                    activeColor: const Color(0xFF00A24F),
+                    onChanged: (mode) {
+                      if (mode != null) themeCubit.setThemeMode(mode);
+                      Navigator.pop(dialogContext);
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -108,7 +205,7 @@ class SettingsSection extends StatelessWidget {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).dialogBackgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           'Logout',

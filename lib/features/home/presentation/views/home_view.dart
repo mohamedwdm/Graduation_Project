@@ -11,9 +11,9 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<HomeCubit>()..loadDashboard(),
-      child: const Scaffold(
-        body: SafeArea(child: HomeViewBody()),
-        backgroundColor: Color(0xffFFFFFF),
+      child: Scaffold(
+        body: const SafeArea(child: HomeViewBody()),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
     );
   }

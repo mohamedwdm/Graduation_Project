@@ -11,8 +11,9 @@ class FindCarView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F8F6),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
           "Find My Car",
@@ -20,10 +21,10 @@ class FindCarView extends StatelessWidget {
             fontWeight: FontWeight.w700,
             fontSize: 24,
             letterSpacing: -0.36,
-            color: const Color(0xFF0F172A),
+            color: isDark ? Colors.white : const Color(0xFF0F172A),
           ),
         ),
-        backgroundColor: const Color(0xFFF6F8F6),
+        backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
       ),
@@ -52,6 +53,16 @@ class _FindCarBodyState extends State<_FindCarBody> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final searchBgColor = isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9);
+    final borderColor = isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1);
+    final iconColor = isDark ? Colors.white70 : const Color(0xFF64748B);
+    final textColor = isDark ? Colors.white : const Color(0xFF0F172A);
+    final hintColor = isDark ? Colors.white54 : const Color(0xFF64748B);
+    final closeBgColor = isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
+    final closeIconColor = isDark ? Colors.white70 : const Color(0xFF475569);
+    final headingColor = isDark ? Colors.white70 : const Color(0xFF475569);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -61,23 +72,24 @@ class _FindCarBodyState extends State<_FindCarBody> {
           child: Container(
             height: 50,
             decoration: BoxDecoration(
-              color: const Color(0xFFF1F5F9),
-              border: Border.all(color: const Color(0xFFCBD5E1)),
+              color: searchBgColor,
+              border: Border.all(color: borderColor),
               borderRadius: BorderRadius.circular(9999),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               children: [
-                const Icon(Icons.search, color: Color(0xFF64748B), size: 24),
+                Icon(Icons.search, color: iconColor, size: 24),
                 const SizedBox(width: 12),
                 Expanded(
                   child: TextField(
                     controller: _searchController,
+                    style: GoogleFonts.spaceGrotesk(color: textColor, fontSize: 16),
                     onChanged: (query) => context.read<FindCarCubit>().searchCars(query),
                     decoration: InputDecoration(
                       hintText: "License plate, model, color...",
                       hintStyle: GoogleFonts.spaceGrotesk(
-                        color: const Color(0xFF64748B),
+                        color: hintColor,
                         fontSize: 16,
                       ),
                       border: InputBorder.none,
@@ -94,11 +106,11 @@ class _FindCarBodyState extends State<_FindCarBody> {
                   child: Container(
                     width: 32,
                     height: 32,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFE2E8F0),
+                    decoration: BoxDecoration(
+                      color: closeBgColor,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.close, size: 20, color: Color(0xFF475569)),
+                    child: Icon(Icons.close, size: 20, color: closeIconColor),
                   ),
                 ),
               ],
@@ -114,7 +126,7 @@ class _FindCarBodyState extends State<_FindCarBody> {
               fontWeight: FontWeight.w700,
               fontSize: 14,
               letterSpacing: 0.7,
-              color: const Color(0xFF475569),
+              color: headingColor,
             ),
           ),
         ),
@@ -123,6 +135,9 @@ class _FindCarBodyState extends State<_FindCarBody> {
           child: BlocBuilder<FindCarCubit, FindCarState>(
             builder: (context, state) {
               if (state is FindCarInitial) {
+                final isDarkInit = Theme.of(context).brightness == Brightness.dark;
+                final initHeadingColor = isDarkInit ? Colors.white : const Color(0xFF475569);
+                final initSubColor = isDarkInit ? Colors.white70 : const Color(0xFF64748B);
                 return Center(
                   child: SingleChildScrollView(
                     child: Column(
@@ -141,7 +156,7 @@ class _FindCarBodyState extends State<_FindCarBody> {
                             style: GoogleFonts.spaceGrotesk(
                               fontSize: 19,
                               fontWeight: FontWeight.w600,
-                              color: const Color(0xFF475569),
+                              color: initHeadingColor,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -154,7 +169,7 @@ class _FindCarBodyState extends State<_FindCarBody> {
                             textAlign: TextAlign.center,
                             style: GoogleFonts.spaceGrotesk(
                               fontSize: 14,
-                              color: const Color(0xFF64748B),
+                              color: initSubColor,
                             ),
                           ),
                         ),
@@ -164,7 +179,11 @@ class _FindCarBodyState extends State<_FindCarBody> {
                 );
               }
               if (state is FindCarLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: Color(0xff00A24F),
+                  ),
+                );
               }
               if (state is FindCarError) {
                 return Center(child: Text(state.message));

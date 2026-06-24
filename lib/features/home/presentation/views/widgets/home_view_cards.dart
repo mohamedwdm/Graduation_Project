@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:go2car/features/home/presentation/views/widgets/home_view_big_card.dart';
 import 'package:go2car/features/home/presentation/views/widgets/home_view_small_card.dart';
 
@@ -17,7 +18,9 @@ class HomeViewCards extends StatelessWidget {
     return Column(
       children: [
         HomeViewBigCard(
-          onTap: () {},
+          onTap: () {
+            context.push('/reserve-slot');
+          },
           availableSlots: availableSlots,
           totalSlots: totalSlots,
         ),
@@ -26,20 +29,22 @@ class HomeViewCards extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             HomeViewSmallCard(
-              onTap: (){},
+              onTap: () {},
               title: 'Find My Car',
               subTitle: "Navigate back to your vehicle",
               icon: Icons.place_outlined,
-              iconBackgroundColor: Color(0xffF0FDF1),
+              iconBackgroundColor: const Color(0xffF0FDF1),
               iconColor: Colors.green,
             ),
             HomeViewSmallCard(
-              onTap: (){},
-              title: 'Settings & Profile',
-              subTitle: 'Manage preferences',
-              icon: Icons.settings_outlined,
-              iconBackgroundColor: Color(0xffF8FAFC),
-              iconColor: Color(0xff475569),
+              onTap: () {
+                context.push('/reserve-slot');
+              },
+              title: 'Reserve Slot',
+              subTitle: 'Book your slot in advance',
+              icon: Icons.bookmark_add_outlined,
+              iconBackgroundColor: const Color(0xffEAFAF1),
+              iconColor: const Color(0xff00A24F),
             ),
           ],
         ),
@@ -47,4 +52,3 @@ class HomeViewCards extends StatelessWidget {
     );
   }
 }
-

@@ -16,7 +16,7 @@ class HomeViewBigCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: onTap,
       child: Container(
         height: MediaQuery.of(context).size.height * 0.22,
         padding: const EdgeInsets.all(20),

@@ -10,6 +10,14 @@ class ProfileInfoSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9);
+    final borderColor = isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
+    final textColor = isDark ? Colors.white : const Color(0xFF0F172A);
+    final tileTextColor = isDark ? Colors.white70 : const Color(0xFF1E293B);
+    final subtitleColor = isDark ? Colors.white70 : const Color(0xFF64748B);
+    final iconColor = isDark ? Colors.white60 : const Color(0xFF475569);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -20,7 +28,7 @@ class ProfileInfoSection extends StatelessWidget {
             style: GoogleFonts.spaceGrotesk(
               fontSize: 18,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF0F172A),
+              color: textColor,
               letterSpacing: -0.27,
             ),
           ),
@@ -28,31 +36,31 @@ class ProfileInfoSection extends StatelessWidget {
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: const Color(0xFFF1F5F9),
+            color: backgroundColor,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
+            border: Border.all(color: borderColor),
           ),
           child: ListTile(
             onTap: () => _showEditNameDialog(context),
-            leading: const Icon(Icons.person_outline, color: Color(0xFF475569)),
+            leading: Icon(Icons.person_outline, color: iconColor),
             title: Text(
               'Name',
               style: GoogleFonts.spaceGrotesk(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: const Color(0xFF1E293B),
+                color: tileTextColor,
               ),
             ),
             subtitle: Text(
               name,
               style: GoogleFonts.spaceGrotesk(
                 fontSize: 14,
-                color: const Color(0xFF64748B),
+                color: subtitleColor,
               ),
             ),
-            trailing: const Icon(
+            trailing: Icon(
               Icons.edit_outlined,
-              color: Color(0xFF64748B),
+              color: subtitleColor,
               size: 20,
             ),
           ),
@@ -68,7 +76,7 @@ class ProfileInfoSection extends StatelessWidget {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).dialogBackgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           'Edit Name',

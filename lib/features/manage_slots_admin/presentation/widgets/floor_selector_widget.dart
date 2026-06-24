@@ -13,12 +13,15 @@ class FloorSelectorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final containerBgColor = isDark ? const Color(0xFF1E293B) : const Color(0xffF1F5F9);
+
     return Container(
       height: 44,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: const Color(0xffF1F5F9),
+        color: containerBgColor,
         borderRadius: BorderRadius.circular(9999),
       ),
       child: Row(
@@ -57,18 +60,24 @@ class _FloorButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final selectedBgColor = isDark ? const Color(0xFF334155) : Colors.white;
+    final selectedTextColor = isDark ? Colors.white : const Color(0xff0F172A);
+    final unselectedTextColor = isDark ? Colors.white60 : const Color(0xff64748B);
+    final shadowColor = isDark ? Colors.transparent : Colors.black.withOpacity(0.1);
+
     return Expanded(
       child: GestureDetector(
         onTap: onPressed,
         child: Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isSelected ? Colors.white : Colors.transparent,
+            color: isSelected ? selectedBgColor : Colors.transparent,
             borderRadius: BorderRadius.circular(9999),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: shadowColor,
                       blurRadius: 3,
                       offset: const Offset(0, 1),
                     ),
@@ -80,7 +89,7 @@ class _FloorButton extends StatelessWidget {
             style: GoogleFonts.spaceGrotesk(
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
               fontSize: 14,
-              color: isSelected ? const Color(0xff0F172A) : const Color(0xff64748B),
+              color: isSelected ? selectedTextColor : unselectedTextColor,
             ),
           ),
         ),

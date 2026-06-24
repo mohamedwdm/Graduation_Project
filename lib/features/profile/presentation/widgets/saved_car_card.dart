@@ -15,27 +15,35 @@ class SavedCarCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBgColor = isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9);
+    final borderColor = isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
+    final iconBgColor = isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
+    final iconColor = isDark ? Colors.white70 : const Color(0xFF475569);
+    final modelColor = isDark ? Colors.white : const Color(0xFF1E293B);
+    final plateColor = isDark ? Colors.white70 : const Color(0xFF64748B);
+
     return Container(
       height: 75,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       padding: const EdgeInsets.symmetric(horizontal: 13),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F5F9),
+        color: cardBgColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        border: Border.all(color: borderColor),
       ),
       child: Row(
         children: [
           Container(
             width: 40,
             height: 40,
-            decoration: const BoxDecoration(
-              color: Color(0xFFE2E8F0),
+            decoration: BoxDecoration(
+              color: iconBgColor,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.directions_car_outlined,
-              color: Color(0xFF475569),
+              color: iconColor,
               size: 20,
             ),
           ),
@@ -50,7 +58,7 @@ class SavedCarCard extends StatelessWidget {
                   style: GoogleFonts.spaceGrotesk(
                     fontSize: 17,
                     fontWeight: FontWeight.w500,
-                    color: const Color(0xFF1E293B),
+                    color: modelColor,
                     height: 1.5,
                   ),
                 ),
@@ -61,7 +69,7 @@ class SavedCarCard extends StatelessWidget {
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
-                        color: const Color(0xFF64748B),
+                        color: plateColor,
                         height: 1.43,
                       ),
                     ),
@@ -70,7 +78,7 @@ class SavedCarCard extends StatelessWidget {
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
-                        color: const Color(0xFF64748B),
+                        color: plateColor,
                         height: 1.43,
                       ),
                     ),
@@ -80,9 +88,9 @@ class SavedCarCard extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.near_me_outlined,
-              color: Color(0xFF64748B),
+              color: plateColor,
               size: 20,
             ),
             onPressed: () async {
@@ -151,17 +159,17 @@ class SavedCarCard extends StatelessWidget {
             },
           ),
           IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.edit_outlined,
-              color: Color(0xFF64748B),
+              color: plateColor,
               size: 20,
             ),
             onPressed: () async {
-              await context.push(
+              final result = await context.push<bool>(
                 '/edit-saved-car',
                 extra: car,
               );
-              if (context.mounted) {
+              if (result == true && context.mounted) {
                 context.read<SavedCarsCubit>().loadSavedCars();
               }
             },
@@ -172,9 +180,11 @@ class SavedCarCard extends StatelessWidget {
   }
 
   void _showNotParkedDialog(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).dialogBackgroundColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
@@ -182,13 +192,13 @@ class SavedCarCard extends StatelessWidget {
           'Car Not Parked',
           style: GoogleFonts.spaceGrotesk(
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF0F172A),
+            color: isDark ? Colors.white : const Color(0xFF0F172A),
           ),
         ),
         content: Text(
           'This vehicle (${car.plateNumber}) is not currently detected in any parking slot.',
           style: GoogleFonts.spaceGrotesk(
-            color: const Color(0xFF475569),
+            color: isDark ? Colors.white70 : const Color(0xFF475569),
           ),
         ),
         actions: [

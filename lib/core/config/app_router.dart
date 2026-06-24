@@ -11,6 +11,10 @@ import '../../features/profile/presentation/views/add_saved_car_view.dart';
 import '../../features/profile/presentation/views/edit_saved_car_view.dart';
 import '../../features/profile/domain/entities/saved_car_entity.dart';
 import '../../features/profile/presentation/manager/saved_car_form_cubit/saved_car_form_cubit.dart';
+import '../../features/reservation/presentation/views/reserve_slot_view.dart';
+import '../../features/reservation/presentation/manager/reservation_cubit/reservation_cubit.dart';
+import '../../features/profile/presentation/manager/saved_cars_cubit/saved_cars_cubit.dart';
+import '../../features/slots/presentation/manager/slots_cubit/slots_cubit.dart';
 abstract class AppRouter {
   static const String loginPath = '/';
   static const String registerPath = '/register';
@@ -61,6 +65,20 @@ abstract class AppRouter {
           return BlocProvider(
             create: (context) => sl<SavedCarFormCubit>(),
             child: EditSavedCarView(car: car),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/reserve-slot',
+        builder: (context, state) {
+          final slotCode = state.uri.queryParameters['slotCode'];
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (context) => sl<ReservationCubit>()),
+              BlocProvider(create: (context) => sl<SavedCarsCubit>()),
+              BlocProvider(create: (context) => sl<SlotsCubit>()),
+            ],
+            child: ReserveSlotView(preselectedSlotCode: slotCode),
           );
         },
       ),

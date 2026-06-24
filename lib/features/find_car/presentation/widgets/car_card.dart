@@ -9,12 +9,34 @@ class CarCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    // Theme colors
+    final cardBgColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final borderColor = isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
+    final imageBgColor = isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9);
+    final imageIconColor = isDark ? Colors.white70 : const Color(0xFF64748B);
+    final titleTextColor = isDark ? Colors.white : const Color(0xFF0F172A);
+    final modelTextColor = isDark ? Colors.white70 : const Color(0xFF475569);
+    final detailTextColor = isDark ? Colors.white60 : const Color(0xFF64748B);
+    final dividerColor = isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
+    final buttonTextColor = isDark ? Colors.white70 : const Color(0xFF334155);
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        color: cardBgColor,
+        border: Border.all(color: borderColor),
         borderRadius: BorderRadius.circular(12),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
       child: Column(
         children: [
@@ -28,13 +50,13 @@ class CarCard extends StatelessWidget {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF1F5F9),
+                    color: imageBgColor,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Icon(
                       Icons.directions_car,
-                      color: Color(0xFF64748B),
+                      color: imageIconColor,
                       size: 40,
                     ),
                   ),
@@ -50,7 +72,7 @@ class CarCard extends StatelessWidget {
                         style: GoogleFonts.spaceGrotesk(
                           fontWeight: FontWeight.w700,
                           fontSize: 18,
-                          color: const Color(0xFF0F172A),
+                          color: titleTextColor,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -59,7 +81,7 @@ class CarCard extends StatelessWidget {
                         style: GoogleFonts.spaceGrotesk(
                           fontWeight: FontWeight.w500,
                           fontSize: 16,
-                          color: const Color(0xFF475569),
+                          color: modelTextColor,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -68,7 +90,7 @@ class CarCard extends StatelessWidget {
                         style: GoogleFonts.spaceGrotesk(
                           fontWeight: FontWeight.w400,
                           fontSize: 13,
-                          color: const Color(0xFF64748B),
+                          color: detailTextColor,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -77,7 +99,7 @@ class CarCard extends StatelessWidget {
                         style: GoogleFonts.spaceGrotesk(
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
-                          color: const Color(0xFF64748B),
+                          color: detailTextColor,
                         ),
                       ),
                     ],
@@ -89,7 +111,7 @@ class CarCard extends StatelessWidget {
           // Horizontal Border
           Container(
             height: 1,
-            color: const Color(0xFFE2E8F0),
+            color: dividerColor,
           ),
           // Action Buttons
           Row(
@@ -104,15 +126,15 @@ class CarCard extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.map_outlined,
-                            size: 18, color: Color(0xFF334155)),
+                        Icon(Icons.map_outlined,
+                            size: 18, color: buttonTextColor),
                         const SizedBox(width: 8),
                         Text(
                           "View on map",
                           style: GoogleFonts.spaceGrotesk(
                             fontWeight: FontWeight.w500,
                             fontSize: 16,
-                            color: const Color(0xFF334155),
+                            color: buttonTextColor,
                           ),
                         ),
                       ],
@@ -121,7 +143,7 @@ class CarCard extends StatelessWidget {
                 ),
               ),
               // vertical separator
-              Container(width: 1, height: 52, color: const Color(0xFFE2E8F0)),
+              Container(width: 1, height: 52, color: dividerColor),
               // Navigate
               Expanded(
                 child: InkWell(

@@ -58,9 +58,16 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
   }
 
   void _showDeleteConfirmationDialog() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final dialogBg = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final titleColor = isDark ? Colors.white : const Color(0xFF0F172A);
+    final contentColor = isDark ? Colors.white70 : const Color(0xFF475569);
+    final cancelColor = isDark ? Colors.white70 : const Color(0xFF64748B);
+
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
+        backgroundColor: dialogBg,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
@@ -68,13 +75,13 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
           'Delete Car',
           style: GoogleFonts.manrope(
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF0F172A),
+            color: titleColor,
           ),
         ),
         content: Text(
           'Are you sure you want to delete this car (${widget.car.plateNumber})? This action cannot be undone.',
           style: GoogleFonts.manrope(
-            color: const Color(0xFF475569),
+            color: contentColor,
           ),
         ),
         actions: [
@@ -83,7 +90,7 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
             child: Text(
               'Cancel',
               style: GoogleFonts.manrope(
-                color: const Color(0xFF64748B),
+                color: cancelColor,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -115,6 +122,24 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scaffoldBgColor = isDark ? const Color(0xFF0F172A) : const Color(0xFFF6F6F8);
+    final appBarBgColor = isDark ? const Color(0xFF1E293B) : Colors.white.withOpacity(0.9);
+    final titleColor = isDark ? Colors.white : const Color(0xFF0D121B);
+    final backButtonColor = isDark ? Colors.white : const Color(0xFF1152D4);
+    
+    // Info Container
+    final infoBgColor = isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF);
+    final infoTextColor = isDark ? const Color(0xFF60A5FA) : const Color(0xFF1152D4);
+    
+    // Dropdown styling
+    final dropdownBgColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final dropdownTextColor = isDark ? Colors.white : Colors.black;
+
+    // Delete Button styling
+    final deleteButtonBg = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final deleteButtonBorder = isDark ? const Color(0xFF7F1D1D) : const Color(0xFFFEE2E2);
+
     return BlocListener<SavedCarFormCubit, SavedCarFormState>(
       listener: (context, state) {
         if (state is SavedCarFormSuccess) {
@@ -129,12 +154,12 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF6F6F8),
+        backgroundColor: scaffoldBgColor,
         appBar: AppBar(
-          backgroundColor: Colors.white.withOpacity(0.9),
+          backgroundColor: appBarBgColor,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Color(0xFF1152D4)),
+            icon: Icon(Icons.arrow_back, color: backButtonColor),
             onPressed: () => context.pop(),
           ),
           title: Text(
@@ -142,7 +167,7 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
             style: GoogleFonts.manrope(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF0D121B),
+              color: titleColor,
             ),
           ),
           centerTitle: true,
@@ -163,13 +188,13 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFEFF6FF),
+                    color: infoBgColor,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.info, color: Color(0xFF1152D4), size: 20),
+                      Icon(Icons.info, color: infoTextColor, size: 20),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
@@ -177,7 +202,7 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
                           style: GoogleFonts.manrope(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
-                            color: const Color(0xFF1152D4),
+                            color: infoTextColor,
                             height: 1.5,
                           ),
                         ),
@@ -231,19 +256,23 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: dropdownBgColor,
                     borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    border: isDark ? Border.all(color: const Color(0xFF334155)) : null,
+                    boxShadow: isDark
+                        ? null
+                        : [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButtonFormField<String>(
                       value: _selectedCarType,
+                      dropdownColor: dropdownBgColor,
                       decoration: const InputDecoration(border: InputBorder.none),
                       items: _carTypes.map((type) {
                         return DropdownMenuItem(
@@ -253,6 +282,7 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
                             style: GoogleFonts.manrope(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
+                              color: dropdownTextColor,
                             ),
                           ),
                         );
@@ -309,11 +339,11 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
                   child: ElevatedButton(
                     onPressed: _showDeleteConfirmationDialog,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
+                      backgroundColor: deleteButtonBg,
                       foregroundColor: Colors.red,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
-                        side: const BorderSide(color: Color(0xFFFEE2E2)),
+                        side: BorderSide(color: deleteButtonBorder),
                       ),
                       elevation: 0,
                     ),
@@ -344,6 +374,8 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
   }
 
   Widget _buildLabel(String text) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final labelColor = isDark ? Colors.white70 : const Color(0xFF64748B);
     return Padding(
       padding: const EdgeInsets.only(left: 4, bottom: 6),
       child: Text(
@@ -351,7 +383,7 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
         style: GoogleFonts.manrope(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: const Color(0xFF64748B),
+          color: labelColor,
           letterSpacing: 0.5,
         ),
       ),
@@ -363,17 +395,24 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
     TextInputType? keyboardType,
     String? Function(String?)? validator,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBgColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardBgColor,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: isDark ? Border.all(color: const Color(0xFF334155)) : null,
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
       child: TextFormField(
         controller: controller,
@@ -382,6 +421,7 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
         style: GoogleFonts.manrope(
           fontSize: 16,
           fontWeight: FontWeight.bold,
+          color: textColor,
         ),
         decoration: const InputDecoration(
           border: InputBorder.none,

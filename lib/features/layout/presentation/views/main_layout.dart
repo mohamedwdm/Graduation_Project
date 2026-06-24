@@ -13,6 +13,7 @@ import 'package:go2car/features/manage_slots_admin/presentation/manager/manage_s
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go2car/features/find_car/presentation/manager/find_car_cubit/find_car_cubit.dart';
 import 'package:go2car/features/profile/presentation/manager/saved_cars_cubit/saved_cars_cubit.dart';
+import 'package:go2car/features/profile/presentation/manager/saved_cars_cubit/saved_cars_state.dart';
 import 'package:go2car/core/di/injection_container.dart';
 
 class MainLayout extends StatefulWidget {
@@ -104,7 +105,12 @@ class _MainLayoutState extends State<MainLayout> {
       ]);
     }
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final navBgColor = isDark ? const Color(0xFF1E293B) : const Color(0xFFFFFFFF);
+    final unselectedColor = isDark ? Colors.white60 : Colors.grey;
+
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: IndexedStack(
         index: currentIndex,
         children: pages,
@@ -114,15 +120,18 @@ class _MainLayoutState extends State<MainLayout> {
         type: BottomNavigationBarType.fixed,
         currentIndex: currentIndex,
         selectedItemColor: const Color(0xff00A24F),
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: unselectedColor,
         showUnselectedLabels: true,
-        backgroundColor: const Color(0xffFFFFFF),
+        backgroundColor: navBgColor,
         onTap: (index) {
           setState(() {
             currentIndex = index;
           });
           if (index == 3 && !(widget.user?.isAdmin ?? false)) {
-            context.read<SavedCarsCubit>().loadSavedCars();
+            final savedCarsCubit = context.read<SavedCarsCubit>();
+            if (savedCarsCubit.state is SavedCarsInitial || savedCarsCubit.state is SavedCarsError) {
+              savedCarsCubit.loadSavedCars();
+            }
           }
         },
         items: items,

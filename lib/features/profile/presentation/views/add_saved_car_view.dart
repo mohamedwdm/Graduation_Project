@@ -48,9 +48,16 @@ class _AddSavedCarViewState extends State<AddSavedCarView> {
   }
 
   void _showErrorDialog(BuildContext context, String message) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final dialogBg = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final titleColor = isDark ? Colors.white : const Color(0xFF0F172A);
+    final contentColor = isDark ? Colors.white70 : const Color(0xFF475569);
+    final buttonColor = isDark ? const Color(0xFF60A5FA) : const Color(0xFF1152D4);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: dialogBg,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
@@ -62,7 +69,7 @@ class _AddSavedCarViewState extends State<AddSavedCarView> {
               'Error',
               style: GoogleFonts.spaceGrotesk(
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF0F172A),
+                color: titleColor,
               ),
             ),
           ],
@@ -70,7 +77,7 @@ class _AddSavedCarViewState extends State<AddSavedCarView> {
         content: Text(
           message,
           style: GoogleFonts.spaceGrotesk(
-            color: const Color(0xFF475569),
+            color: contentColor,
           ),
         ),
         actions: [
@@ -79,7 +86,7 @@ class _AddSavedCarViewState extends State<AddSavedCarView> {
             child: Text(
               'OK',
               style: GoogleFonts.spaceGrotesk(
-                color: const Color(0xFF1152D4),
+                color: buttonColor,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -91,6 +98,16 @@ class _AddSavedCarViewState extends State<AddSavedCarView> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scaffoldBgColor = isDark ? const Color(0xFF0F172A) : const Color(0xFFF6F6F8);
+    final appBarBgColor = isDark ? const Color(0xFF1E293B) : Colors.white.withValues(alpha: 0.9);
+    final titleColor = isDark ? Colors.white : const Color(0xFF0D121B);
+    final backButtonColor = isDark ? Colors.white : const Color(0xFF1152D4);
+    
+    // Dropdown styling
+    final dropdownBgColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final dropdownTextColor = isDark ? Colors.white : Colors.black;
+
     return BlocListener<SavedCarFormCubit, SavedCarFormState>(
       listener: (context, state) {
         if (state is SavedCarFormSuccess) {
@@ -100,12 +117,12 @@ class _AddSavedCarViewState extends State<AddSavedCarView> {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF6F6F8),
+        backgroundColor: scaffoldBgColor,
         appBar: AppBar(
-          backgroundColor: Colors.white.withValues(alpha: 0.9),
+          backgroundColor: appBarBgColor,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Color(0xFF1152D4)),
+            icon: Icon(Icons.arrow_back, color: backButtonColor),
             onPressed: () => context.pop(),
           ),
           title: Text(
@@ -113,7 +130,7 @@ class _AddSavedCarViewState extends State<AddSavedCarView> {
             style: GoogleFonts.manrope(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF0D121B),
+              color: titleColor,
             ),
           ),
           centerTitle: true,
@@ -178,19 +195,23 @@ class _AddSavedCarViewState extends State<AddSavedCarView> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: dropdownBgColor,
                     borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    border: isDark ? Border.all(color: const Color(0xFF334155)) : null,
+                    boxShadow: isDark
+                        ? null
+                        : [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButtonFormField<String>(
                       value: _selectedCarType,
+                      dropdownColor: dropdownBgColor,
                       decoration:
                           const InputDecoration(border: InputBorder.none),
                       items: _carTypes.map((type) {
@@ -201,6 +222,7 @@ class _AddSavedCarViewState extends State<AddSavedCarView> {
                             style: GoogleFonts.manrope(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
+                              color: dropdownTextColor,
                             ),
                           ),
                         );
@@ -262,6 +284,8 @@ class _AddSavedCarViewState extends State<AddSavedCarView> {
   }
 
   Widget _buildLabel(String text) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final labelColor = isDark ? Colors.white70 : const Color(0xFF64748B);
     return Padding(
       padding: const EdgeInsets.only(left: 4, bottom: 6),
       child: Text(
@@ -269,7 +293,7 @@ class _AddSavedCarViewState extends State<AddSavedCarView> {
         style: GoogleFonts.manrope(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: const Color(0xFF64748B),
+          color: labelColor,
           letterSpacing: 0.5,
         ),
       ),
@@ -282,29 +306,37 @@ class _AddSavedCarViewState extends State<AddSavedCarView> {
     TextInputType? keyboardType,
     String? Function(String?)? validator,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBgColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black;
+    final hintColor = isDark ? Colors.white54 : Colors.grey.shade400;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardBgColor,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: isDark ? Border.all(color: const Color(0xFF334155)) : null,
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
         validator: validator,
         style: GoogleFonts.manrope(
-            fontSize: 14, fontWeight: FontWeight.w500, color: Colors.black),
+            fontSize: 14, fontWeight: FontWeight.w500, color: textColor),
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: GoogleFonts.manrope(
             fontSize: 14,
-            color: Colors.grey.shade400,
+            color: hintColor,
           ),
           border: InputBorder.none,
           contentPadding:

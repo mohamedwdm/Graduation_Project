@@ -11,9 +11,9 @@ class SlotsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<SlotsCubit>()..loadSlots(),
-      child: const Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: const SafeArea(
           child: SlotsViewBody(),
         ),
       ),

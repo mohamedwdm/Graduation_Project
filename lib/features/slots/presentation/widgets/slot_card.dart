@@ -8,13 +8,18 @@ class SlotCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBgColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final titleTextColor = isDark ? Colors.white : const Color(0xFF0F172A);
+    final shadowColor = isDark ? Colors.transparent : Colors.black.withOpacity(0.05);
+
     final Color statusColor = slot.isOccupied ? const Color(0xFFEF4444) : const Color(0xFF10B981);
     final String statusText = slot.isOccupied ? 'Occupied' : 'Available';
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardBgColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: statusColor.withOpacity(0.3),
@@ -22,7 +27,7 @@ class SlotCard extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: shadowColor,
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -36,11 +41,11 @@ class SlotCard extends StatelessWidget {
             children: [
               Text(
                 slot.label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Space Grotesk',
-                  color: Color(0xFF0F172A),
+                  color: titleTextColor,
                 ),
               ),
               Container(
@@ -106,23 +111,28 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final iconColor = isDark ? Colors.white60 : const Color(0xFF64748B);
+    final labelTextColor = isDark ? Colors.white70 : const Color(0xFF64748B);
+    final valueTextColor = isDark ? Colors.white : const Color(0xFF1E293B);
+
     return Row(
       children: [
-        Icon(icon, size: 14, color: const Color(0xFF64748B)),
+        Icon(icon, size: 14, color: iconColor),
         const SizedBox(width: 6),
         Text(
           '$label: ',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13,
-            color: Color(0xFF64748B),
+            color: labelTextColor,
           ),
         ),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF1E293B),
+            color: valueTextColor,
           ),
         ),
       ],

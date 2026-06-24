@@ -15,6 +15,13 @@ class ProfileHeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final nameTextColor = isDark ? Colors.white : const Color(0xFF0F172A);
+    final emailTextColor = isDark ? Colors.white70 : const Color(0xFF64748B);
+    final avatarBgColor = isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
+    final avatarIconColor = isDark ? Colors.white60 : const Color(0xFF64748B);
+    final cameraBorderColor = isDark ? const Color(0xFF1E293B) : const Color(0xFFF6F8F6);
+
     return Column(
       children: [
         const SizedBox(height: 24),
@@ -32,10 +39,10 @@ class ProfileHeaderWidget extends StatelessWidget {
                         fit: BoxFit.cover,
                       )
                     : null,
-                color: const Color(0xFFE2E8F0),
+                color: avatarBgColor,
               ),
               child: avatarUrl == null || avatarUrl!.isEmpty
-                  ? const Icon(Icons.person, size: 48, color: Color(0xFF64748B))
+                  ? Icon(Icons.person, size: 48, color: avatarIconColor)
                   : null,
             ),
             Positioned(
@@ -49,7 +56,7 @@ class ProfileHeaderWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: const Color(0xFF1E293B),
                     shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0xFFF6F8F6), width: 2),
+                    border: Border.all(color: cameraBorderColor, width: 2),
                   ),
                   child: const Icon(
                     Icons.camera_alt_outlined,
@@ -67,7 +74,7 @@ class ProfileHeaderWidget extends StatelessWidget {
           style: GoogleFonts.spaceGrotesk(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: const Color(0xFF0F172A),
+            color: nameTextColor,
             height: 1.56,
           ),
         ),
@@ -77,7 +84,7 @@ class ProfileHeaderWidget extends StatelessWidget {
           style: GoogleFonts.spaceGrotesk(
             fontSize: 14,
             fontWeight: FontWeight.w400,
-            color: const Color(0xFF64748B),
+            color: emailTextColor,
             height: 1.43,
           ),
         ),
@@ -89,24 +96,27 @@ class ProfileHeaderWidget extends StatelessWidget {
   void _showPicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).bottomSheetTheme.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (BuildContext bc) {
+        final isDarkSheet = Theme.of(context).brightness == Brightness.dark;
+        final sheetIconColor = isDarkSheet ? Colors.white70 : const Color(0xFF1E293B);
+        final sheetTextColor = isDarkSheet ? Colors.white : const Color(0xFF1E293B);
         return SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
             child: Wrap(
               children: <Widget>[
                 ListTile(
-                  leading: const Icon(Icons.photo_library_outlined, color: Color(0xFF1E293B)),
-                  title: Text('Gallery', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.w500)),
+                  leading: Icon(Icons.photo_library_outlined, color: sheetIconColor),
+                  title: Text('Gallery', style: GoogleFonts.spaceGrotesk(color: sheetTextColor, fontWeight: FontWeight.w500)),
                   onTap: () => Navigator.of(context).pop(),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.photo_camera_outlined, color: Color(0xFF1E293B)),
-                  title: Text('Camera', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.w500)),
+                  leading: Icon(Icons.photo_camera_outlined, color: sheetIconColor),
+                  title: Text('Camera', style: GoogleFonts.spaceGrotesk(color: sheetTextColor, fontWeight: FontWeight.w500)),
                   onTap: () => Navigator.of(context).pop(),
                 ),
               ],

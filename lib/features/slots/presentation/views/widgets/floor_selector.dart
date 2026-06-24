@@ -14,11 +14,18 @@ class FloorSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final containerBgColor = isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9);
+    final indicatorBgColor = isDark ? const Color(0xFF334155) : Colors.white;
+    final selectedTextColor = isDark ? Colors.white : const Color(0xFF0F172A);
+    final unselectedTextColor = isDark ? Colors.white60 : const Color(0xFF64748B);
+    final shadowColor = isDark ? Colors.transparent : Colors.black.withOpacity(0.08);
+
     return Container(
       height: 44,
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F5F9),
+        color: containerBgColor,
         borderRadius: BorderRadius.circular(9999),
       ),
       child: LayoutBuilder(
@@ -38,11 +45,11 @@ class FloorSelector extends StatelessWidget {
                   width: itemWidth,
                   margin: const EdgeInsets.all(2),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: indicatorBgColor,
                     borderRadius: BorderRadius.circular(9999),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
+                        color: shadowColor,
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
@@ -71,8 +78,8 @@ class FloorSelector extends StatelessWidget {
                                 isSelected ? FontWeight.w700 : FontWeight.w500,
                             color:
                                 isSelected
-                                    ? const Color(0xFF0F172A)
-                                    : const Color(0xFF64748B),
+                                    ? selectedTextColor
+                                    : unselectedTextColor,
                           ),
                           child: Text(_floors[index]),
                         ),

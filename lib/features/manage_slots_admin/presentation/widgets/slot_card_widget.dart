@@ -9,16 +9,31 @@ class SlotCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBgColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final borderColor = isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
+    final shadowColor = isDark ? Colors.transparent : Colors.black.withValues(alpha: 0.05);
+    final titleTextColor = isDark ? Colors.white : const Color(0xFF0F172A);
+
+    final navigateBtnBgColor = isDark ? const Color(0xFF334155) : const Color(0xff0F172A);
+    final navigateBtnTextColor = Colors.white;
+
+    final viewMapBtnBgColor = isDark ? const Color(0xFF334155) : const Color(0xffE2E8F0);
+    final viewMapBtnTextColor = isDark ? Colors.white : const Color(0xff0F172A);
+
+    final statusOutlineBorderColor = isDark ? Colors.white54 : const Color(0xff0F172A);
+    final statusOutlineTextColor = isDark ? Colors.white : const Color(0xff0F172A);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardBgColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E8F0), width: 2),
+        border: Border.all(color: borderColor, width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: shadowColor,
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -35,7 +50,7 @@ class SlotCardWidget extends StatelessWidget {
                 style: GoogleFonts.spaceGrotesk(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF0F172A),
+                  color: titleTextColor,
                 ),
               ),
               _StatusBadge(status: slot.status),
@@ -53,31 +68,6 @@ class SlotCardWidget extends StatelessWidget {
             label: 'Location',
             value: slot.location,
           ),
-          // const SizedBox(height: 12),
-          // Row(
-          //   children: [
-          //     if (slot.isEV)
-          //       _FeatureChip(
-          //         icon: Icons.electric_bolt,
-          //         label: "EV Charging",
-          //       ),
-          //     if (slot.isEV && slot.isAccessible) const SizedBox(width: 12),
-          //     if (slot.isAccessible)
-          //       _FeatureChip(
-          //         icon: Icons.accessible,
-          //         label: "Accessible",
-          //       ),
-          //     if (!slot.isEV && !slot.isAccessible)
-          //       Text(
-          //         "No additional features",
-          //         style: GoogleFonts.spaceGrotesk(
-          //           fontWeight: FontWeight.w400,
-          //           fontSize: 12,
-          //           color: const Color(0xff94A3B8),
-          //         ),
-          //       ),
-          //   ],
-          // ),
           const SizedBox(height: 16),
           Row(
             children: [
@@ -85,8 +75,8 @@ class SlotCardWidget extends StatelessWidget {
                 child: _ActionButton(
                   label: "Navigate",
                   onPressed: () {},
-                  backgroundColor: const Color(0xff0F172A),
-                  textColor: Colors.white,
+                  backgroundColor: navigateBtnBgColor,
+                  textColor: navigateBtnTextColor,
                 ),
               ),
               const SizedBox(width: 8),
@@ -94,8 +84,8 @@ class SlotCardWidget extends StatelessWidget {
                 child: _ActionButton(
                   label: "View Map",
                   onPressed: () {},
-                  backgroundColor: const Color(0xffE2E8F0),
-                  textColor: const Color(0xff0F172A),
+                  backgroundColor: viewMapBtnBgColor,
+                  textColor: viewMapBtnTextColor,
                 ),
               ),
               const SizedBox(width: 8),
@@ -104,8 +94,7 @@ class SlotCardWidget extends StatelessWidget {
                   onPressed: () {},
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    side:
-                        const BorderSide(color: Color(0xff0F172A), width: 1.3),
+                    side: BorderSide(color: statusOutlineBorderColor, width: 1.3),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -113,15 +102,14 @@ class SlotCardWidget extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.info_outline,
-                          size: 16, color: Color(0xff0F172A)),
+                      Icon(Icons.info_outline, size: 16, color: statusOutlineTextColor),
                       const SizedBox(width: 4),
                       Text(
                         "Status",
                         style: GoogleFonts.spaceGrotesk(
                           fontWeight: FontWeight.w700,
                           fontSize: 12,
-                          color: const Color(0xff0F172A),
+                          color: statusOutlineTextColor,
                         ),
                       ),
                     ],
@@ -270,15 +258,20 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final iconColor = isDark ? Colors.white60 : const Color(0xFF64748B);
+    final labelTextColor = isDark ? Colors.white70 : const Color(0xFF64748B);
+    final valueTextColor = isDark ? Colors.white : const Color(0xFF1E293B);
+
     return Row(
       children: [
-        Icon(icon, size: 14, color: const Color(0xFF64748B)),
+        Icon(icon, size: 14, color: iconColor),
         const SizedBox(width: 6),
         Text(
           '$label: ',
           style: GoogleFonts.spaceGrotesk(
             fontSize: 13,
-            color: const Color(0xFF64748B),
+            color: labelTextColor,
           ),
         ),
         Text(
@@ -286,7 +279,7 @@ class _InfoRow extends StatelessWidget {
           style: GoogleFonts.spaceGrotesk(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: const Color(0xFF1E293B),
+            color: valueTextColor,
           ),
         ),
       ],

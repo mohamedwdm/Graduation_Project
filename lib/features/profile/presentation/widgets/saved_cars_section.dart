@@ -24,14 +24,14 @@ class SavedCarsSection extends StatelessWidget {
                 style: GoogleFonts.spaceGrotesk(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  color: const Color(0xFF0F172A),
+                  color: Theme.of(context).brightness == Brightness.dark ? Colors.white : const Color(0xFF0F172A),
                   letterSpacing: -0.27,
                 ),
               ),
               InkWell(
                 onTap: () async {
-                  await context.push('/add-saved-car');
-                  if (context.mounted) {
+                  final result = await context.push<bool>('/add-saved-car');
+                  if (result == true && context.mounted) {
                     context.read<SavedCarsCubit>().loadSavedCars();
                   }
                 },
@@ -70,7 +70,7 @@ class SavedCarsSection extends StatelessWidget {
                   padding: const EdgeInsets.all(20.0),
                   child: Text(
                     'No cars saved yet',
-                    style: GoogleFonts.spaceGrotesk(color: const Color(0xFF64748B)),
+                    style: GoogleFonts.spaceGrotesk(color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : const Color(0xFF64748B)),
                   ),
                 ),
               );

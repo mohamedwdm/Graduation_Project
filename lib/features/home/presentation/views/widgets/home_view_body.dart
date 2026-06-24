@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:go2car/features/home/presentation/manager/home_cubit/home_cubit.dart';
 import 'package:go2car/features/home/presentation/manager/home_cubit/home_state.dart';
 import '../../../../../core/widgets/greeting_header.dart';
@@ -37,6 +38,7 @@ class HomeViewBody extends StatelessWidget {
                   style: GoogleFonts.spaceGrotesk(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
+                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : const Color(0xFF0F172A),
                   ),
                 ),
                 const SizedBox(height: 15),

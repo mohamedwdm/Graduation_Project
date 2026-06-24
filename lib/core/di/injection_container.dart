@@ -57,11 +57,19 @@ import 'package:go2car/features/manage_slots_admin/domain/usecases/get_manage_sl
 import 'package:go2car/features/manage_slots_admin/domain/usecases/add_slot_usecase.dart';
 import 'package:go2car/features/manage_slots_admin/domain/usecases/get_sections_usecase.dart';
 import 'package:go2car/features/manage_slots_admin/presentation/manager/manage_slots_cubit/manage_slots_cubit.dart';
+import 'package:go2car/features/reservation/data/datasources/reservation_remote_datasource.dart';
+import 'package:go2car/features/reservation/data/repositories/reservation_repository_impl.dart';
+import 'package:go2car/features/reservation/domain/repositories/reservation_repository.dart';
+import 'package:go2car/features/reservation/domain/usecases/cancel_reservation_usecase.dart';
+import 'package:go2car/features/reservation/domain/usecases/create_reservation_usecase.dart';
+import 'package:go2car/features/reservation/domain/usecases/get_my_reservations_usecase.dart';
+import 'package:go2car/features/reservation/presentation/manager/reservation_cubit/reservation_cubit.dart';
 import '../config/env_config.dart';
 import '../network/api_client.dart';
 import '../network/network_info.dart';
 import '../websocket/socket_manager.dart';
 import 'register_module.dart';
+import 'package:go2car/features/profile/presentation/manager/theme_cubit/theme_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -212,6 +220,27 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => GetDashboardSummaryUseCase(sl()));
   sl.registerFactory(() => HomeCubit(sl()));
 
+  // Reservation Feature
+  sl.registerLazySingleton<ReservationRemoteDataSource>(
+    () => ReservationRemoteDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<ReservationRepository>(
+    () => ReservationRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+  sl.registerLazySingleton(() => CreateReservationUseCase(sl()));
+  sl.registerLazySingleton(() => GetMyReservationsUseCase(sl()));
+  sl.registerLazySingleton(() => CancelReservationUseCase(sl()));
+  sl.registerFactory(
+    () => ReservationCubit(
+      createReservationUseCase: sl(),
+      getMyReservationsUseCase: sl(),
+      cancelReservationUseCase: sl(),
+    ),
+  );
+
   // ─────────────────────────────────────────────────────────────
   // Parking Overview Admin Feature
   // ─────────────────────────────────────────────────────────────
@@ -288,4 +317,6 @@ Future<void> initDependencies() async {
         addSlotUseCase: sl(),
         getSectionsUseCase: sl(),
       ));
+
+  sl.registerLazySingleton(() => ThemeCubit(sl()));
 }
