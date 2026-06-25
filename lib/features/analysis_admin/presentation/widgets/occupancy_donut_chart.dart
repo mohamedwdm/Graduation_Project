@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class OccupancyDonutChart extends StatelessWidget {
-  final double percent; // 0.0 to 1.0
+  final double percent; // 0.0 to 100.0 (percentage value)
 
   const OccupancyDonutChart({
     super.key,
@@ -12,6 +12,11 @@ class OccupancyDonutChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final percentTextColor = isDark ? Colors.white : const Color(0xff0D121B);
+    final bgCircleColor = isDark ? const Color(0xff334155) : const Color(0xffF3F4F6);
+    final cleanPercent = (percent.isNaN || percent.isInfinite) ? 0.0 : percent.clamp(0.0, 100.0);
+
     return SizedBox(
       width: 128,
       height: 128,
@@ -20,18 +25,17 @@ class OccupancyDonutChart extends StatelessWidget {
         children: [
           CustomPaint(
             size: const Size(128, 128),
-            painter: _DonutPainter(percent: percent),
+            painter: _DonutPainter(percent: cleanPercent, bgCircleColor: bgCircleColor),
           ),
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                //'${(percent).toStringAsFixed(0)}%',
-                '${percent}%',
+                '${cleanPercent.toStringAsFixed(1)}%',
                 style: GoogleFonts.manrope(
                   fontSize: 24,
                   fontWeight: FontWeight.w800,
-                  color: const Color(0xff0D121B),
+                  color: percentTextColor,
                 ),
               ),
               Text(
@@ -53,8 +57,9 @@ class OccupancyDonutChart extends StatelessWidget {
 
 class _DonutPainter extends CustomPainter {
   final double percent;
+  final Color bgCircleColor;
 
-  _DonutPainter({required this.percent});
+  _DonutPainter({required this.percent, required this.bgCircleColor});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -64,7 +69,7 @@ class _DonutPainter extends CustomPainter {
 
     // Background circle
     final bgPaint = Paint()
-      ..color = const Color(0xffF3F4F6)
+      ..color = bgCircleColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth;
     canvas.drawCircle(center, radius, bgPaint);
@@ -88,6 +93,6 @@ class _DonutPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _DonutPainter oldDelegate) {
-    return oldDelegate.percent != percent;
+    return oldDelegate.percent != percent || oldDelegate.bgCircleColor != bgCircleColor;
   }
 }

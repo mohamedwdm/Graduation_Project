@@ -24,10 +24,25 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scaffoldBg = isDark ? const Color(0xff0F172A) : const Color(0xffF6F6F8);
+    final appBarBg = isDark ? const Color(0xff0F172A) : Colors.white;
+    final titleTextColor = isDark ? Colors.white : const Color(0xff1152D4);
+    final cardBgColor = isDark ? const Color(0xff1E293B) : Colors.white;
+    final calendarIconBg = isDark ? const Color(0xff1152D4).withOpacity(0.2) : const Color(0xff1152D4).withOpacity(0.1);
+    final calendarIconColor = isDark ? const Color(0xff4facfe) : const Color(0xff1152D4);
+    final textPeriodTitleColor = isDark ? const Color(0xff94A3B8) : const Color(0xff64748B);
+    final textPeriodValueColor = isDark ? Colors.white : const Color(0xff0D121B);
+    final tuneIconColor = isDark ? const Color(0xff94A3B8) : const Color(0xff64748B);
+    final dividerColor = isDark ? const Color(0xff334155) : const Color(0xffF3F4F6);
+    final totalCapacityTitleColor = isDark ? const Color(0xff94A3B8) : const Color(0xff64748B);
+    final totalCapacityValueColor = isDark ? Colors.white : const Color(0xff0D121B);
+    final freeMetricColor = isDark ? const Color(0xff334155) : const Color(0xffE5E7EB);
+
     return Scaffold(
-      backgroundColor: const Color(0xffF6F6F8),
+      backgroundColor: scaffoldBg,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: appBarBg,
         elevation: 0.5,
         centerTitle: false,
         title: Text(
@@ -35,7 +50,7 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
           style: GoogleFonts.manrope(
             fontSize: 20,
             fontWeight: FontWeight.w700,
-            color: const Color(0xff1152D4),
+            color: titleTextColor,
             letterSpacing: -0.5,
           ),
         ),
@@ -82,11 +97,11 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
                     height: 70,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: cardBgColor,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
                           blurRadius: 20,
                           offset: const Offset(0, 4),
                         ),
@@ -98,11 +113,11 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
                           width: 36,
                           height: 44,
                           decoration: BoxDecoration(
-                            color: const Color(0xff1152D4).withOpacity(0.1),
+                            color: calendarIconBg,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: const Icon(Icons.calendar_today_outlined,
-                              size: 20, color: Color(0xff1152D4)),
+                          child: Icon(Icons.calendar_today_outlined,
+                              size: 20, color: calendarIconColor),
                         ),
                         const SizedBox(width: 16),
                         Column(
@@ -114,7 +129,7 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
                               style: GoogleFonts.manrope(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
-                                color: const Color(0xff64748B),
+                                color: textPeriodTitleColor,
                                 letterSpacing: 0.6,
                               ),
                             ),
@@ -123,13 +138,13 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
                               style: GoogleFonts.manrope(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
-                                color: const Color(0xff0D121B),
+                                color: textPeriodValueColor,
                               ),
                             ),
                           ],
                         ),
                         const Spacer(),
-                        const Icon(Icons.tune, color: Color(0xff64748B)),
+                        Icon(Icons.tune, color: tuneIconColor),
                       ],
                     ),
                   ),
@@ -141,11 +156,11 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: cardBgColor,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
+                          color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -160,10 +175,10 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
                             children: [
                               _buildMetricRow('Occupied', data.occupiedCount, const Color(0xff1152D4)),
                               const SizedBox(height: 16),
-                              _buildMetricRow('Free', data.freeCount, const Color(0xffE5E7EB)),
-                              const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 16),
-                                child: Divider(height: 1, color: Color(0xffF3F4F6)),
+                              _buildMetricRow('Free', data.freeCount, freeMetricColor),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                child: Divider(height: 1, color: dividerColor),
                               ),
                               Row(
                                 children: [
@@ -171,7 +186,7 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
                                     'Total Capacity',
                                     style: GoogleFonts.manrope(
                                       fontSize: 12,
-                                      color: const Color(0xff64748B),
+                                      color: totalCapacityTitleColor,
                                     ),
                                   ),
                                   const Spacer(),
@@ -180,7 +195,7 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
                                     style: GoogleFonts.manrope(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w700,
-                                      color: const Color(0xff0D121B),
+                                      color: totalCapacityValueColor,
                                     ),
                                   ),
                                 ],
@@ -215,7 +230,7 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
                           count: data.carsLeftTotal.toString(),
                           trend: '+${data.carsLeftChange}%',
                           icon: Icons.logout,
-                          iconBackgroundColor: const Color(0xffFFEDD5),
+                          iconBackgroundColor: isDark ? const Color(0xffEA580C).withOpacity(0.2) : const Color(0xffFFEDD5),
                           iconColor: const Color(0xffEA580C),
                         ),
                       ),
@@ -229,11 +244,11 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: cardBgColor,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
+                          color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -272,6 +287,7 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
   }
 
   Widget _buildSectionHeader(String title, String subtitle) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -280,7 +296,7 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
           style: GoogleFonts.manrope(
             fontSize: 16,
             fontWeight: FontWeight.w700,
-            color: const Color(0xff0D121B),
+            color: isDark ? Colors.white : const Color(0xff0D121B),
           ),
         ),
         Text(
@@ -288,7 +304,7 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
           style: GoogleFonts.manrope(
             fontSize: 12,
             fontWeight: FontWeight.w400,
-            color: const Color(0xff64748B),
+            color: isDark ? const Color(0xff94A3B8) : const Color(0xff64748B),
           ),
         ),
       ],
@@ -296,6 +312,7 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
   }
 
   Widget _buildMetricRow(String label, int count, Color color) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
         Container(
@@ -312,7 +329,7 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
           style: GoogleFonts.manrope(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: const Color(0xff64748B),
+            color: isDark ? const Color(0xff94A3B8) : const Color(0xff64748B),
           ),
         ),
         const Spacer(),
@@ -321,7 +338,7 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
           style: GoogleFonts.manrope(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: const Color(0xff0D121B),
+            color: isDark ? Colors.white : const Color(0xff0D121B),
           ),
         ),
       ],

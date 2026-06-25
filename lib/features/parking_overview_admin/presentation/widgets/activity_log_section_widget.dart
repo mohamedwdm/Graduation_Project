@@ -14,6 +14,9 @@ class ActivityLogSectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final titleColor = isDark ? Colors.white : const Color(0xff0F172A);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -22,7 +25,7 @@ class ActivityLogSectionWidget extends StatelessWidget {
           style: GoogleFonts.spaceGrotesk(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: const Color(0xff0F172A),
+            color: titleColor,
           ),
         ),
         const SizedBox(height: 16),

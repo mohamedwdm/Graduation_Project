@@ -32,14 +32,16 @@ class _ManageSlotsViewState extends State<ManageSlotsView> {
   void _showAddSlotDialog(BuildContext context) async {
     final cubit = context.read<ManageSlotsCubit>();
     final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = isDark ? const Color(0xff10B981) : const Color(0xff0F172A);
     
     // Show a loading dialog first while we load sections
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(
+      builder: (context) => Center(
         child: CircularProgressIndicator(
-          color: Color(0xff0F172A),
+          color: primaryColor,
         ),
       ),
     );
@@ -67,13 +69,25 @@ class _ManageSlotsViewState extends State<ManageSlotsView> {
     
     if (!context.mounted) return;
 
+    final dialogBg = isDark ? const Color(0xff1E293B) : Colors.white;
+    final dialogTitleColor = isDark ? Colors.white : const Color(0xff0F172A);
+    final fieldLabelColor = isDark ? const Color(0xff94A3B8) : const Color(0xff64748B);
+    final inputBorderColor = isDark ? const Color(0xff334155) : const Color(0xffE2E8F0);
+    final inputTextColor = isDark ? Colors.white : const Color(0xff0F172A);
+    final inputHintColor = isDark ? const Color(0xff475569) : const Color(0xff94A3B8);
+    final focusBorderColor = isDark ? const Color(0xff10B981) : const Color(0xff0F172A);
+    final dropdownBg = isDark ? const Color(0xff1E293B) : Colors.white;
+    final cancelButtonBorderColor = isDark ? const Color(0xff334155) : const Color(0xffE2E8F0);
+    final cancelButtonTextColor = isDark ? const Color(0xff94A3B8) : const Color(0xff64748B);
+    final addButtonBgColor = isDark ? const Color(0xff10B981) : const Color(0xff0F172A);
+
     showDialog(
       context: context,
       builder: (dialogContext) {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              backgroundColor: Colors.white,
+              backgroundColor: dialogBg,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
               ),
@@ -82,7 +96,7 @@ class _ManageSlotsViewState extends State<ManageSlotsView> {
                 style: GoogleFonts.spaceGrotesk(
                   fontWeight: FontWeight.w700,
                   fontSize: 20,
-                  color: const Color(0xff0F172A),
+                  color: dialogTitleColor,
                 ),
               ),
               content: Form(
@@ -97,7 +111,7 @@ class _ManageSlotsViewState extends State<ManageSlotsView> {
                         style: GoogleFonts.spaceGrotesk(
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
-                          color: const Color(0xff64748B),
+                          color: fieldLabelColor,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -105,23 +119,23 @@ class _ManageSlotsViewState extends State<ManageSlotsView> {
                         decoration: InputDecoration(
                           hintText: "e.g. A-05",
                           hintStyle: GoogleFonts.manrope(
-                            color: const Color(0xff94A3B8),
+                            color: inputHintColor,
                           ),
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xffE2E8F0)),
+                            borderSide: BorderSide(color: inputBorderColor),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xffE2E8F0)),
+                            borderSide: BorderSide(color: inputBorderColor),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xff0F172A), width: 1.5),
+                            borderSide: BorderSide(color: focusBorderColor, width: 1.5),
                           ),
                         ),
-                        style: GoogleFonts.manrope(color: const Color(0xff0F172A)),
+                        style: GoogleFonts.manrope(color: inputTextColor),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
                             return 'Please enter a slot code';
@@ -136,7 +150,7 @@ class _ManageSlotsViewState extends State<ManageSlotsView> {
                         style: GoogleFonts.spaceGrotesk(
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
-                          color: const Color(0xff64748B),
+                          color: fieldLabelColor,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -146,19 +160,19 @@ class _ManageSlotsViewState extends State<ManageSlotsView> {
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xffE2E8F0)),
+                            borderSide: BorderSide(color: inputBorderColor),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xffE2E8F0)),
+                            borderSide: BorderSide(color: inputBorderColor),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xff0F172A), width: 1.5),
+                            borderSide: BorderSide(color: focusBorderColor, width: 1.5),
                           ),
                         ),
-                        dropdownColor: Colors.white,
-                        style: GoogleFonts.manrope(color: const Color(0xff0F172A), fontSize: 16),
+                        dropdownColor: dropdownBg,
+                        style: GoogleFonts.manrope(color: inputTextColor, fontSize: 16),
                         items: sections.map((sec) {
                           final floorMap = sec['floor'] as Map?;
                           final floorName = floorMap != null ? (floorMap['floor_name'] ?? floorMap['floor_code'] ?? '') : '';
@@ -190,7 +204,7 @@ class _ManageSlotsViewState extends State<ManageSlotsView> {
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
-                            side: const BorderSide(color: Color(0xffE2E8F0)),
+                            side: BorderSide(color: cancelButtonBorderColor),
                           ),
                         ),
                         child: Text(
@@ -198,7 +212,7 @@ class _ManageSlotsViewState extends State<ManageSlotsView> {
                           style: GoogleFonts.spaceGrotesk(
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
-                            color: const Color(0xff64748B),
+                            color: cancelButtonTextColor,
                           ),
                         ),
                       ),
@@ -215,9 +229,9 @@ class _ManageSlotsViewState extends State<ManageSlotsView> {
                             showDialog(
                               context: context,
                               barrierDismissible: false,
-                              builder: (context) => const Center(
+                              builder: (context) => Center(
                                 child: CircularProgressIndicator(
-                                  color: Color(0xff0F172A),
+                                  color: primaryColor,
                                 ),
                               ),
                             );
@@ -250,7 +264,7 @@ class _ManageSlotsViewState extends State<ManageSlotsView> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xff0F172A),
+                          backgroundColor: addButtonBgColor,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
@@ -280,8 +294,12 @@ class _ManageSlotsViewState extends State<ManageSlotsView> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scaffoldBg = isDark ? const Color(0xff0F172A) : const Color(0xffF6F8F6);
+    final primaryColor = isDark ? const Color(0xff10B981) : const Color(0xff0F172A);
+
     return Scaffold(
-      backgroundColor: const Color(0xffF6F8F6),
+      backgroundColor: scaffoldBg,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -295,9 +313,9 @@ class _ManageSlotsViewState extends State<ManageSlotsView> {
               child: BlocBuilder<ManageSlotsCubit, ManageSlotsState>(
                 builder: (context, state) {
                   if (state is ManageSlotsLoading) {
-                    return const Center(
+                    return Center(
                       child: CircularProgressIndicator(
-                        color: Color(0xff0F172A),
+                        color: primaryColor,
                       ),
                     );
                   } else if (state is ManageSlotsError) {
@@ -327,6 +345,11 @@ class _ManageSlotsViewState extends State<ManageSlotsView> {
   }
 
   Widget _buildHeader() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final titleColor = isDark ? Colors.white : const Color(0xff0F172A);
+    final subtitleColor = isDark ? const Color(0xff94A3B8) : const Color(0xff64748B);
+    final plusBtnColor = isDark ? const Color(0xff10B981) : const Color.fromARGB(255, 20, 218, 86);
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Row(
@@ -340,7 +363,7 @@ class _ManageSlotsViewState extends State<ManageSlotsView> {
                 style: GoogleFonts.spaceGrotesk(
                   fontWeight: FontWeight.w500,
                   fontSize: 14,
-                  color: const Color(0xff64748B),
+                  color: subtitleColor,
                 ),
               ),
               Text(
@@ -349,7 +372,7 @@ class _ManageSlotsViewState extends State<ManageSlotsView> {
                   fontWeight: FontWeight.w700,
                   fontSize: 20,
                   letterSpacing: -0.3,
-                  color: const Color(0xff0F172A),
+                  color: titleColor,
                 ),
               ),
             ],
@@ -359,8 +382,8 @@ class _ManageSlotsViewState extends State<ManageSlotsView> {
             child: Container(
               width: 40,
               height: 40,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 20, 218, 86),
+              decoration: BoxDecoration(
+                color: plusBtnColor,
                 shape: BoxShape.circle,
               ),
               child: const Icon(

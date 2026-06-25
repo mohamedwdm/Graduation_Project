@@ -19,6 +19,11 @@ class AnalysisStatusBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final labelColor = isDark ? Colors.white : const Color(0xff0D121B);
+    final trackColor = isDark ? const Color(0xff334155) : const Color(0xffF3F4F6);
+    final cleanProgress = (progress.isNaN || progress.isInfinite) ? 0.0 : progress.clamp(0.0, 1.0);
+
     return Column(
       children: [
         Row(
@@ -44,7 +49,7 @@ class AnalysisStatusBarWidget extends StatelessWidget {
               style: GoogleFonts.manrope(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: const Color(0xff0D121B),
+                color: labelColor,
               ),
             ),
             const Spacer(),
@@ -65,12 +70,12 @@ class AnalysisStatusBarWidget extends StatelessWidget {
               height: 8,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: const Color(0xffF3F4F6),
+                color: trackColor,
                 borderRadius: BorderRadius.circular(9999),
               ),
             ),
             FractionallySizedBox(
-              widthFactor: progress,
+              widthFactor: cleanProgress,
               child: Container(
                 height: 8,
                 decoration: BoxDecoration(

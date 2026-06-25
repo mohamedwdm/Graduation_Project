@@ -21,14 +21,18 @@ class TrafficFlowCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBgColor = isDark ? const Color(0xff1E293B) : Colors.white;
+    final countTextColor = isDark ? Colors.white : const Color(0xff0D121B);
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardBgColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -65,7 +69,7 @@ class TrafficFlowCard extends StatelessWidget {
             style: GoogleFonts.manrope(
               fontSize: 24,
               fontWeight: FontWeight.w800,
-              color: const Color(0xff0D121B),
+              color: countTextColor,
             ),
           ),
           const SizedBox(height: 12),

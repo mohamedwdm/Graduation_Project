@@ -19,7 +19,7 @@ class HomeViewCards extends StatelessWidget {
       children: [
         HomeViewBigCard(
           onTap: () {
-            context.push('/reserve-slot');
+           // context.push('/reserve-slot');
           },
           availableSlots: availableSlots,
           totalSlots: totalSlots,

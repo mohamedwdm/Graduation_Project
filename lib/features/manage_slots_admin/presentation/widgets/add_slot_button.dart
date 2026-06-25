@@ -8,14 +8,18 @@ class AddSlotButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final btnBgColor = isDark ? const Color(0xff10B981) : const Color.fromARGB(255, 73, 212, 119);
+    final contentColor = isDark ? Colors.white : const Color(0xff0F172A);
+
     return Container(
       height: 45,
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 73, 212, 119),
+        color: btnBgColor,
         borderRadius: BorderRadius.circular(9999),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xff13EC5B).withOpacity(0.3),
+            color: (isDark ? const Color(0xff10B981) : const Color(0xff13EC5B)).withOpacity(0.3),
             blurRadius: 15,
             spreadRadius: -3,
             offset: const Offset(0, 10),
@@ -32,14 +36,14 @@ class AddSlotButton extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.add_circle_outline, color: Color(0xff0F172A)),
+                Icon(Icons.add_circle_outline, color: contentColor),
                 const SizedBox(width: 8),
                 Text(
                   "Add Slot",
                   style: GoogleFonts.spaceGrotesk(
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
-                    color: const Color(0xff0F172A),
+                    color: contentColor,
                   ),
                 ),
               ],

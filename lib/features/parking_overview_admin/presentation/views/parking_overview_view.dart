@@ -25,10 +25,30 @@ class _ParkingOverviewViewState extends State<ParkingOverviewView> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scaffoldBg = isDark ? const Color(0xff0F172A) : const Color(0xffF6F8F6);
+    final appBarBg = isDark ? const Color(0xff0F172A) : const Color(0xffF6F8F6);
+    final titleColor = isDark ? Colors.white : const Color(0xff0F172A);
+    final avatarBg = isDark ? const Color(0xff1E293B) : const Color(0xffE2E8F0);
+    final iconColor = isDark ? Colors.white70 : const Color(0xff0F172A);
+
+    // Card Colors
+    final defaultCardBg = isDark ? const Color(0xff1E293B) : const Color(0xffF1F5F9);
+    final defaultCardBorder = isDark ? const Color(0xff334155) : const Color(0xffE2E8F0);
+    final defaultCardTitle = isDark ? const Color(0xff94A3B8) : const Color(0xff475569);
+
+    final greenCardBg = const Color(0xff22C55E).withOpacity(isDark ? 0.15 : 0.1);
+    final greenCardBorder = const Color(0xff22C55E).withOpacity(isDark ? 0.3 : 0.2);
+    final greenCardTitle = isDark ? const Color(0xff4ADE80) : const Color(0xff166534);
+
+    final redCardBg = const Color(0xffEF4444).withOpacity(isDark ? 0.15 : 0.1);
+    final redCardBorder = const Color(0xffEF4444).withOpacity(isDark ? 0.3 : 0.2);
+    final redCardTitle = isDark ? const Color(0xffF87171) : const Color(0xff991B1B);
+
     return Scaffold(
-      backgroundColor: const Color(0xffF6F8F6),
+      backgroundColor: scaffoldBg,
       appBar: AppBar(
-        backgroundColor: const Color(0xffF6F8F6),
+        backgroundColor: appBarBg,
         elevation: 0,
         centerTitle: false,
         title: Text(
@@ -36,7 +56,7 @@ class _ParkingOverviewViewState extends State<ParkingOverviewView> {
           style: GoogleFonts.spaceGrotesk(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: const Color(0xff0F172A),
+            color: titleColor,
           ),
         ),
         actions: [
@@ -44,10 +64,10 @@ class _ParkingOverviewViewState extends State<ParkingOverviewView> {
             padding: const EdgeInsets.only(right: 16.0),
             child: CircleAvatar(
               radius: 20,
-              backgroundColor: const Color(0xffE2E8F0),
-              child: const Icon(
+              backgroundColor: avatarBg,
+              child: Icon(
                 Icons.notifications_none_outlined,
-                color: Color(0xff0F172A),
+                color: iconColor,
                 size: 24,
               ),
             ),
@@ -87,30 +107,30 @@ class _ParkingOverviewViewState extends State<ParkingOverviewView> {
                       StatCardWidget(
                         title: 'Total Slots',
                         value: overview.totalSlots.toString(),
-                        backgroundColor: const Color(0xffF1F5F9),
-                        borderColor: const Color(0xffE2E8F0),
-                        titleColor: const Color(0xff475569),
+                        backgroundColor: defaultCardBg,
+                        borderColor: defaultCardBorder,
+                        titleColor: defaultCardTitle,
                       ),
                       StatCardWidget(
                         title: 'Free Slots',
                         value: overview.freeSlots.toString(),
-                        backgroundColor: const Color(0xff22C55E).withOpacity(0.1),
-                        borderColor: const Color(0xff22C55E).withOpacity(0.2),
-                        titleColor: const Color(0xff166534),
+                        backgroundColor: greenCardBg,
+                        borderColor: greenCardBorder,
+                        titleColor: greenCardTitle,
                       ),
                       StatCardWidget(
                         title: 'Occupied Slots',
                         value: overview.occupiedSlots.toString(),
-                        backgroundColor: const Color(0xffEF4444).withOpacity(0.1),
-                        borderColor: const Color(0xffEF4444).withOpacity(0.2),
-                        titleColor: const Color(0xff991B1B),
+                        backgroundColor: redCardBg,
+                        borderColor: redCardBorder,
+                        titleColor: redCardTitle,
                       ),
                       StatCardWidget(
                         title: 'Cameras',
                         value: overview.cameraCount.toString(),
-                        backgroundColor: const Color(0xffF1F5F9),
-                        borderColor: const Color(0xffE2E8F0),
-                        titleColor: const Color(0xff475569),
+                        backgroundColor: defaultCardBg,
+                        borderColor: defaultCardBorder,
+                        titleColor: defaultCardTitle,
                       ),
                     ],
                   ),

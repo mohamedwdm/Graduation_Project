@@ -11,13 +11,19 @@ class CameraStatusTileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final containerBgColor = isDark ? const Color(0xff1E293B) : const Color(0xffF1F5F9);
+    final borderColor = isDark ? const Color(0xff334155) : const Color(0xffE2E8F0);
+    final labelColor = isDark ? Colors.white : const Color(0xff1E293B);
+    final timeColor = isDark ? Colors.white60 : const Color(0xff64748B);
+
     return Container(
       height: 70,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: const Color(0xffF1F5F9),
+        color: containerBgColor,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xffE2E8F0)),
+        border: Border.all(color: borderColor),
       ),
       child: Row(
         children: [
@@ -40,18 +46,18 @@ class CameraStatusTileWidget extends StatelessWidget {
               children: [
                 Text(
                   camera.label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xff1E293B),
+                    color: labelColor,
                   ),
                 ),
                 Text(
                   camera.timeAgo,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
-                    color: Color(0xff64748B),
+                    color: timeColor,
                   ),
                 ),
               ],

@@ -131,23 +131,24 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     Color statusColor;
     String statusText;
     IconData statusIcon;
 
     switch (status) {
       case SlotStatus.available:
-        statusColor = const Color(0xFF15803D);
+        statusColor = isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D);
         statusText = "Available";
         statusIcon = Icons.check_circle;
         break;
       case SlotStatus.maintenance:
-        statusColor = const Color(0xFFF59E0B);
+        statusColor = isDark ? const Color(0xFFFBBF24) : const Color(0xFFF59E0B);
         statusText = "Maintenance";
         statusIcon = Icons.info_outline;
         break;
       case SlotStatus.occupied:
-        statusColor =  const Color(0xFFDC2626);
+        statusColor = isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626);
         statusText = "Occupied";
         statusIcon = Icons.cancel;
         break;
@@ -190,6 +191,9 @@ class _FeatureChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white70 : const Color(0xff475569);
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -200,7 +204,7 @@ class _FeatureChip extends StatelessWidget {
           style: GoogleFonts.spaceGrotesk(
             fontWeight: FontWeight.w400,
             fontSize: 14,
-            color: const Color(0xff475569),
+            color: textColor,
           ),
         ),
       ],
