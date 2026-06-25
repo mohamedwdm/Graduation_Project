@@ -25,6 +25,8 @@ import '../../features/find_car/data/datasources/find_car_remote_datasource.dart
 import '../../features/find_car/data/repositories/find_car_repository_impl.dart';
 import '../../features/find_car/domain/repositories/find_car_repository.dart';
 import '../../features/find_car/domain/usecases/search_cars_usecase.dart';
+import '../../features/find_car/domain/usecases/get_floors_usecase.dart';
+import '../../features/find_car/domain/usecases/get_sections_usecase.dart';
 import '../../features/find_car/presentation/manager/find_car_cubit/find_car_cubit.dart';
 import '../../features/profile/data/datasources/profile_local_datasource.dart';
 import '../../features/profile/data/datasources/profile_remote_datasource.dart';
@@ -166,8 +168,12 @@ Future<void> initDependencies() async {
     ),
   );
   sl.registerLazySingleton(() => SearchCarsUseCase(sl()));
+  sl.registerLazySingleton(() => FindCarGetFloorsUseCase(sl()));
+  sl.registerLazySingleton(() => FindCarGetSectionsUseCase(sl()));
   sl.registerFactory(() => FindCarCubit(
         searchCarsUseCase: sl(),
+        getFloorsUseCase: sl(),
+        getSectionsUseCase: sl(),
       ));
 
   // Profile Feature

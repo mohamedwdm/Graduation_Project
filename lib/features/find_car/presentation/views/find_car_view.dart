@@ -87,7 +87,7 @@ class _FindCarBodyState extends State<_FindCarBody> {
                     style: GoogleFonts.spaceGrotesk(color: textColor, fontSize: 16),
                     onChanged: (query) => context.read<FindCarCubit>().searchCars(query),
                     decoration: InputDecoration(
-                      hintText: "License plate, model, color...",
+                      hintText: "Plate number, model or color",
                       hintStyle: GoogleFonts.spaceGrotesk(
                         color: hintColor,
                         fontSize: 16,
@@ -101,7 +101,7 @@ class _FindCarBodyState extends State<_FindCarBody> {
                 GestureDetector(
                   onTap: () {
                     _searchController.clear();
-                    context.read<FindCarCubit>().searchCars('');
+                    context.read<FindCarCubit>().clearSearch();
                   },
                   child: Container(
                     width: 32,
@@ -117,9 +117,73 @@ class _FindCarBodyState extends State<_FindCarBody> {
             ),
           ),
         ),
+        // Filters Row
+        BlocBuilder<FindCarCubit, FindCarState>(
+          builder: (context, state) {
+            final cubit = context.read<FindCarCubit>();
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _buildFilterDropdown<String?>(
+                      context: context,
+                      value: cubit.floor,
+                      hint: "All Floors",
+                      icon: Icons.layers_outlined,
+                      items: [
+                        const DropdownMenuItem(value: null, child: Text("All Floors")),
+                        ...cubit.floorsList.map(
+                          (floorVal) => DropdownMenuItem(
+                            value: floorVal,
+                            child: Text(floorVal),
+                          ),
+                        ),
+                        if (cubit.floor != null && !cubit.floorsList.contains(cubit.floor))
+                          DropdownMenuItem(
+                            value: cubit.floor,
+                            child: Text(cubit.floor!),
+                          ),
+                      ],
+                      onChanged: (val) {
+                        cubit.updateFloor(val);
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildFilterDropdown<String?>(
+                      context: context,
+                      value: cubit.section,
+                      hint: "All Sections",
+                      icon: Icons.grid_view_outlined,
+                      items: [
+                        const DropdownMenuItem(value: null, child: Text("All Sections")),
+                        ...cubit.sectionsList.map(
+                          (sectionVal) => DropdownMenuItem(
+                            value: sectionVal,
+                            child: Text(sectionVal.length == 1 ? "Sec $sectionVal" : sectionVal),
+                          ),
+                        ),
+                        if (cubit.section != null && !cubit.sectionsList.contains(cubit.section))
+                          DropdownMenuItem(
+                            value: cubit.section,
+                            child: Text(cubit.section!.length == 1 ? "Sec ${cubit.section!}" : cubit.section!),
+                          ),
+                      ],
+                      onChanged: (val) {
+                        cubit.updateSection(val);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
         // Heading "RESULTS"
         Padding(
-          padding: const EdgeInsets.only(left: 16.0, top: 24.0, bottom: 12.0),
+          padding: const EdgeInsets.only(left: 16.0, top: 16.0, bottom: 12.0),
           child: Text(
             "RESULTS",
             style: GoogleFonts.spaceGrotesk(
@@ -152,7 +216,7 @@ class _FindCarBodyState extends State<_FindCarBody> {
                         const SizedBox(height: 16),
                         Center(
                           child: Text(
-                            "Search by Plate Number or Vehicle attributes",
+                            "Search by Plate number or Car attributes",
                             style: GoogleFonts.spaceGrotesk(
                               fontSize: 19,
                               fontWeight: FontWeight.w600,
@@ -165,7 +229,7 @@ class _FindCarBodyState extends State<_FindCarBody> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 32.0),
                           child: Text(
-                            "Enter a full or partial plate number or color or  Vehicle type to locate the vehicle's parking spot.",
+                            "Enter a plate number, color, vehicle type to locate the vehicle's parking spot.",
                             textAlign: TextAlign.center,
                             style: GoogleFonts.spaceGrotesk(
                               fontSize: 14,
@@ -205,6 +269,58 @@ class _FindCarBodyState extends State<_FindCarBody> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildFilterDropdown<T>({
+    required BuildContext context,
+    required T value,
+    required String hint,
+    required IconData icon,
+    required List<DropdownMenuItem<T>> items,
+    required ValueChanged<T?> onChanged,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9);
+    final borderColor = isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1);
+    final textColor = isDark ? Colors.white : const Color(0xFF0F172A);
+    final iconColor = isDark ? Colors.white70 : const Color(0xFF64748B);
+
+    return Container(
+      height: 46,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: borderColor),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: iconColor, size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<T>(
+                value: value,
+                items: items,
+                onChanged: onChanged,
+                icon: Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: iconColor,
+                  size: 20,
+                ),
+                style: GoogleFonts.spaceGrotesk(
+                  color: textColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+                dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -3,7 +3,9 @@ import '../../../../core/network/api_constants.dart';
 import '../models/car_model.dart';
 
 abstract class FindCarRemoteDataSource {
-  Future<List<CarModel>> searchCars(String query);
+  Future<List<CarModel>> searchCars(String query, {String? floor, String? section});
+  Future<List<String>> getFloors();
+  Future<List<String>> getSections();
 }
 
 class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
@@ -12,7 +14,7 @@ class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
   FindCarRemoteDataSourceImpl(this._apiClient);
 
   @override
-  Future<List<CarModel>> searchCars(String query) async {
+  Future<List<CarModel>> searchCars(String query, {String? floor, String? section}) async {
     final List<CarModel> allResults = [];
     final Set<String> uniquePlates = {};
 
@@ -22,59 +24,94 @@ class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
         final plate = json['plate_number'] as String? ?? '';
         if (plate.isNotEmpty && !uniquePlates.contains(plate)) {
           uniquePlates.add(plate);
-          final floor = json['floor'] ?? '';
-          final section = json['section'] ?? '';
-          final slot = json['slot'] ?? '';
+          final floorVal = json['floor'] ?? '';
+          final sectionVal = json['section'] ?? '';
+          final slotVal = json['slot'] ?? '';
           allResults.add(CarModel(
             id: plate,
-            model: json['vehicle_type'] as String? ?? 'Unknown',
-            color: json['vehicle_color'] as String? ?? 'Unknown',
+            model: (json['type'] ?? json['vehicle_type']) as String? ?? 'Unknown',
+            color: (json['color'] ?? json['vehicle_color']) as String? ?? 'Unknown',
             plateNumber: plate,
-            parkingLocation: '$floor, $section - Slot $slot',
+            parkingLocation: '$floorVal, $sectionVal - Slot $slotVal',
           ));
         }
       }
     }
 
-    // 1. Query by Plate
-    try {
-      final response = await _apiClient.get(
-        ApiConstants.searchPlate,
-        queryParameters: {'plate': query},
-      );
-      if (response.data != null && response.data['data'] != null) {
-        addCars(response.data['data'] as List);
+    Future<List<dynamic>> queryField(Map<String, String> extraParams) async {
+      try {
+        final Map<String, String> queryParameters = {};
+        if (floor != null && floor.isNotEmpty) {
+          queryParameters['floor'] = floor;
+        }
+        if (section != null && section.isNotEmpty) {
+          queryParameters['section'] = section;
+        }
+        queryParameters.addAll(extraParams);
+
+        final response = await _apiClient.get(
+          ApiConstants.searchAdvanced,
+          queryParameters: queryParameters,
+        );
+        if (response.data != null && response.data['data'] != null) {
+          return response.data['data'] as List;
+        }
+      } catch (_) {
+        // Ignore 404 or connection errors
       }
-    } catch (_) {
-      // Ignore errors / no records found
+      return [];
     }
 
-    // 2. Query by Color attribute
-    try {
-      final response = await _apiClient.get(
-        ApiConstants.searchAttributes,
-        queryParameters: {'color': query},
-      );
-      if (response.data != null && response.data['data'] != null) {
-        addCars(response.data['data'] as List);
-      }
-    } catch (_) {
-      // Ignore errors / no records found
+    final List<Future<List<dynamic>>> futures = [];
+
+    if (query.isNotEmpty) {
+      futures.add(queryField({'plate_number': query}));
+      futures.add(queryField({'color': query}));
+      futures.add(queryField({'type': query}));
+    } else {
+      futures.add(queryField({}));
     }
 
-    // 3. Query by Vehicle Type attribute
-    try {
-      final response = await _apiClient.get(
-        ApiConstants.searchAttributes,
-        queryParameters: {'vehicle_type': query},
-      );
-      if (response.data != null && response.data['data'] != null) {
-        addCars(response.data['data'] as List);
-      }
-    } catch (_) {
-      // Ignore errors / no records found
+    final results = await Future.wait(futures);
+
+    for (final list in results) {
+      addCars(list);
     }
 
     return allResults;
+  }
+
+  @override
+  Future<List<String>> getFloors() async {
+    try {
+      final response = await _apiClient.get(ApiConstants.floors);
+      if (response.data != null) {
+        final List list = response.data is List ? response.data : (response.data['data'] ?? []);
+        return list
+            .map((item) => (item['floor_name'] as String? ?? '').trim())
+            .where((name) => name.isNotEmpty)
+            .toList();
+      }
+    } catch (_) {
+      // Return empty list on error
+    }
+    return [];
+  }
+
+  @override
+  Future<List<String>> getSections() async {
+    try {
+      final response = await _apiClient.get(ApiConstants.sections);
+      if (response.data != null) {
+        final List list = response.data is List ? response.data : (response.data['data'] ?? []);
+        return list
+            .map((item) => (item['section_name'] as String? ?? '').trim())
+            .where((name) => name.isNotEmpty)
+            .toList();
+      }
+    } catch (_) {
+      // Return empty list on error
+    }
+    return [];
   }
 }
