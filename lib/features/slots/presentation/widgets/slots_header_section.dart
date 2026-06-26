@@ -35,26 +35,26 @@ class SlotsHeaderSection extends StatelessWidget {
               ),
             ],
           ),
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: const Color(0xFFE2E8F0),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                )
-              ],
-            ),
-            child: const Icon(
-              Icons.person_outline,
-              color: Color(0xFF0F172A),
-              size: 24,
-            ),
-          ),
+          // Container(
+          //   width: 48,
+          //   height: 48,
+          //   decoration: BoxDecoration(
+          //     color: const Color(0xFFE2E8F0),
+          //     shape: BoxShape.circle,
+          //     boxShadow: [
+          //       BoxShadow(
+          //         color: Colors.black.withOpacity(0.05),
+          //         blurRadius: 10,
+          //         offset: const Offset(0, 4),
+          //       )
+          //     ],
+          //   ),
+          //   child: const Icon(
+          //     Icons.person_outline,
+          //     color: Color(0xFF0F172A),
+          //     size: 24,
+          //   ),
+          // ),
         ],
       ),
     );

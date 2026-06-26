@@ -12,4 +12,8 @@ abstract class ReservationRepository {
   FutureEither<List<ReservationEntity>> getMyReservations();
 
   FutureEither<ReservationEntity> cancelReservation(int reservationId);
+
+  FutureEither<List<ReservationEntity>> getAllReservations();
+
+  FutureEither<ReservationEntity> approveReservation(int reservationId);
 }

@@ -63,3 +63,40 @@ class CancelReservationError extends ReservationState {
   @override
   List<Object?> get props => [message];
 }
+
+class AllReservationsLoading extends ReservationState {}
+
+class AllReservationsLoaded extends ReservationState {
+  final List<ReservationEntity> reservations;
+  const AllReservationsLoaded(this.reservations);
+
+  @override
+  List<Object?> get props => [reservations];
+}
+
+class AllReservationsError extends ReservationState {
+  final String message;
+  const AllReservationsError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class ApproveReservationLoading extends ReservationState {}
+
+class ApproveReservationSuccess extends ReservationState {
+  final ReservationEntity reservation;
+  const ApproveReservationSuccess(this.reservation);
+
+  @override
+  List<Object?> get props => [reservation];
+}
+
+class ApproveReservationError extends ReservationState {
+  final String message;
+  const ApproveReservationError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+

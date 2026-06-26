@@ -20,7 +20,7 @@ class ProfileHeaderWidget extends StatelessWidget {
     final emailTextColor = isDark ? Colors.white70 : const Color(0xFF64748B);
     final avatarBgColor = isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
     final avatarIconColor = isDark ? Colors.white60 : const Color(0xFF64748B);
-    final cameraBorderColor = isDark ? const Color(0xFF1E293B) : const Color(0xFFF6F8F6);
+    // final cameraBorderColor = isDark ? const Color(0xFF1E293B) : const Color(0xFFF6F8F6);
 
     return Column(
       children: [
@@ -45,27 +45,27 @@ class ProfileHeaderWidget extends StatelessWidget {
                   ? Icon(Icons.person, size: 48, color: avatarIconColor)
                   : null,
             ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: InkWell(
-                onTap: () => _showPicker(context),
-                child: Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1E293B),
-                    shape: BoxShape.circle,
-                    border: Border.all(color: cameraBorderColor, width: 2),
-                  ),
-                  child: const Icon(
-                    Icons.camera_alt_outlined,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                ),
-              ),
-            ),
+            // Positioned(
+            //   bottom: 0,
+            //   right: 0,
+            //   child: InkWell(
+            //     onTap: () => _showPicker(context),
+            //     child: Container(
+            //       width: 32,
+            //       height: 32,
+            //       decoration: BoxDecoration(
+            //         color: const Color(0xFF1E293B),
+            //         shape: BoxShape.circle,
+            //         border: Border.all(color: cameraBorderColor, width: 2),
+            //       ),
+            //       child: const Icon(
+            //         Icons.camera_alt_outlined,
+            //         color: Colors.white,
+            //         size: 16,
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
         const SizedBox(height: 16),
@@ -93,37 +93,37 @@ class ProfileHeaderWidget extends StatelessWidget {
     );
   }
 
-  void _showPicker(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Theme.of(context).bottomSheetTheme.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (BuildContext bc) {
-        final isDarkSheet = Theme.of(context).brightness == Brightness.dark;
-        final sheetIconColor = isDarkSheet ? Colors.white70 : const Color(0xFF1E293B);
-        final sheetTextColor = isDarkSheet ? Colors.white : const Color(0xFF1E293B);
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Wrap(
-              children: <Widget>[
-                ListTile(
-                  leading: Icon(Icons.photo_library_outlined, color: sheetIconColor),
-                  title: Text('Gallery', style: GoogleFonts.spaceGrotesk(color: sheetTextColor, fontWeight: FontWeight.w500)),
-                  onTap: () => Navigator.of(context).pop(),
-                ),
-                ListTile(
-                  leading: Icon(Icons.photo_camera_outlined, color: sheetIconColor),
-                  title: Text('Camera', style: GoogleFonts.spaceGrotesk(color: sheetTextColor, fontWeight: FontWeight.w500)),
-                  onTap: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+  // void _showPicker(BuildContext context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     backgroundColor: Theme.of(context).bottomSheetTheme.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  //     ),
+  //     builder: (BuildContext bc) {
+  //       final isDarkSheet = Theme.of(context).brightness == Brightness.dark;
+  //       final sheetIconColor = isDarkSheet ? Colors.white70 : const Color(0xFF1E293B);
+  //       final sheetTextColor = isDarkSheet ? Colors.white : const Color(0xFF1E293B);
+  //       return SafeArea(
+  //         child: Padding(
+  //           padding: const EdgeInsets.symmetric(vertical: 20),
+  //           child: Wrap(
+  //             children: <Widget>[
+  //               ListTile(
+  //                 leading: Icon(Icons.photo_library_outlined, color: sheetIconColor),
+  //                 title: Text('Gallery', style: GoogleFonts.spaceGrotesk(color: sheetTextColor, fontWeight: FontWeight.w500)),
+  //                 onTap: () => Navigator.of(context).pop(),
+  //               ),
+  //               ListTile(
+  //                 leading: Icon(Icons.photo_camera_outlined, color: sheetIconColor),
+  //                 title: Text('Camera', style: GoogleFonts.spaceGrotesk(color: sheetTextColor, fontWeight: FontWeight.w500)),
+  //                 onTap: () => Navigator.of(context).pop(),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 }

@@ -79,7 +79,7 @@ class ProfileView extends StatelessWidget {
                       // but I'll keep it refactored to match the aesthetic.
                       ProfileInfoSection(name: profile.name),
                       if (!isAdmin) const SavedCarsSection(),
-                      const SettingsSection(),
+                      SettingsSection(isAdmin: isAdmin),
                     ],
                   ),
                 ),

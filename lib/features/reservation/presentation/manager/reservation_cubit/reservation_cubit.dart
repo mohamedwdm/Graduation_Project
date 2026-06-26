@@ -3,17 +3,23 @@ import '../../../../../core/usecase/usecase.dart';
 import '../../../domain/usecases/cancel_reservation_usecase.dart';
 import '../../../domain/usecases/create_reservation_usecase.dart';
 import '../../../domain/usecases/get_my_reservations_usecase.dart';
+import '../../../domain/usecases/get_all_reservations_usecase.dart';
+import '../../../domain/usecases/approve_reservation_usecase.dart';
 import 'reservation_state.dart';
 
 class ReservationCubit extends Cubit<ReservationState> {
   final CreateReservationUseCase createReservationUseCase;
   final GetMyReservationsUseCase getMyReservationsUseCase;
   final CancelReservationUseCase cancelReservationUseCase;
+  final GetAllReservationsUseCase getAllReservationsUseCase;
+  final ApproveReservationUseCase approveReservationUseCase;
 
   ReservationCubit({
     required this.createReservationUseCase,
     required this.getMyReservationsUseCase,
     required this.cancelReservationUseCase,
+    required this.getAllReservationsUseCase,
+    required this.approveReservationUseCase,
   }) : super(ReservationInitial());
 
   Future<void> reserveSlot({
@@ -54,4 +60,23 @@ class ReservationCubit extends Cubit<ReservationState> {
       (reservation) => emit(CancelReservationSuccess(reservation)),
     );
   }
+
+  Future<void> getAllReservations() async {
+    emit(AllReservationsLoading());
+    final result = await getAllReservationsUseCase(const NoParams());
+    result.fold(
+      (failure) => emit(AllReservationsError(failure.message)),
+      (reservations) => emit(AllReservationsLoaded(reservations)),
+    );
+  }
+
+  Future<void> approveReservation(int reservationId) async {
+    emit(ApproveReservationLoading());
+    final result = await approveReservationUseCase(reservationId);
+    result.fold(
+      (failure) => emit(ApproveReservationError(failure.message)),
+      (reservation) => emit(ApproveReservationSuccess(reservation)),
+    );
+  }
 }
+

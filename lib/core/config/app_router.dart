@@ -13,6 +13,7 @@ import '../../features/profile/domain/entities/saved_car_entity.dart';
 import '../../features/profile/presentation/manager/saved_car_form_cubit/saved_car_form_cubit.dart';
 import '../../features/reservation/presentation/views/reserve_slot_view.dart';
 import '../../features/reservation/presentation/views/booking_history_view.dart';
+import '../../features/reservation/presentation/views/admin_reservations_view.dart';
 import '../../features/reservation/presentation/manager/reservation_cubit/reservation_cubit.dart';
 import '../../features/profile/presentation/manager/saved_cars_cubit/saved_cars_cubit.dart';
 import '../../features/slots/presentation/manager/slots_cubit/slots_cubit.dart';
@@ -22,6 +23,7 @@ abstract class AppRouter {
   static const String registerPath = '/register';
   static const String homePath = '/home';
   static const String adminParkingOverviewPath = '/admin/parking-overview';
+  static const String adminReservationsPath = '/admin/reservations';
   static const String bookingHistoryPath = '/booking-history';
 
   static final router = GoRouter(
@@ -52,6 +54,16 @@ abstract class AppRouter {
         builder: (context, state) => BlocProvider(
           create: (context) => sl<ParkingOverviewCubit>(),
           child: const ParkingOverviewView(),
+        ),
+      ),
+      GoRoute(
+        path: adminReservationsPath,
+        builder: (context, state) => MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (context) => sl<ReservationCubit>()),
+            BlocProvider(create: (context) => sl<SlotsCubit>()),
+          ],
+          child: const AdminReservationsView(),
         ),
       ),
       GoRoute(
@@ -100,3 +112,4 @@ abstract class AppRouter {
     ],
   );
 }
+

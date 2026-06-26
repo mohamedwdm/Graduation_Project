@@ -9,6 +9,10 @@ class ReservationEntity extends Equatable {
   final DateTime endTime;
   final String status;
   final DateTime createdAt;
+  final String? userName;
+  final String? userEmail;
+  final String? plateNumber;
+  final String? slotCode;
 
   const ReservationEntity({
     required this.id,
@@ -19,6 +23,10 @@ class ReservationEntity extends Equatable {
     required this.endTime,
     required this.status,
     required this.createdAt,
+    this.userName,
+    this.userEmail,
+    this.plateNumber,
+    this.slotCode,
   });
 
   @override
@@ -31,5 +39,10 @@ class ReservationEntity extends Equatable {
         endTime,
         status,
         createdAt,
+        userName,
+        userEmail,
+        plateNumber,
+        slotCode,
       ];
 }
+

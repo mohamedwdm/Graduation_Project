@@ -60,6 +60,11 @@ class _ParkingOverviewViewState extends State<ParkingOverviewView> {
           ),
         ),
         actions: [
+          IconButton(
+            icon: Icon(Icons.book_online_outlined, color: iconColor),
+            tooltip: 'Manage Bookings',
+            onPressed: () => context.push(AppRouter.adminReservationsPath),
+          ),
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: CircleAvatar(

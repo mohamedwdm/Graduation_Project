@@ -8,7 +8,8 @@ import '../../../auth/presentation/manager/auth_cubit/auth_cubit.dart';
 import '../manager/theme_cubit/theme_cubit.dart';
 
 class SettingsSection extends StatelessWidget {
-  const SettingsSection({super.key});
+  final bool isAdmin;
+  const SettingsSection({super.key, this.isAdmin = false});
 
   @override
   Widget build(BuildContext context) {
@@ -69,11 +70,11 @@ class SettingsSection extends StatelessWidget {
               ),
               _buildDivider(dividerColor),
               _buildSettingTile(
-                icon: Icons.receipt_long_outlined,
-                title: 'Booking History',
+                icon: isAdmin ? Icons.book_online_outlined : Icons.receipt_long_outlined,
+                title: isAdmin ? 'Manage Bookings' : 'Booking History',
                 titleColor: tileTextColor,
                 iconColor: tileIconColor,
-                onTap: () => context.push(AppRouter.bookingHistoryPath),
+                onTap: () => context.push(isAdmin ? AppRouter.adminReservationsPath : AppRouter.bookingHistoryPath),
               ),
               _buildDivider(dividerColor),
               _buildSettingTile(
@@ -99,6 +100,7 @@ class SettingsSection extends StatelessWidget {
       ],
     );
   }
+
 
   Widget _buildSettingTile({
     required IconData icon,
