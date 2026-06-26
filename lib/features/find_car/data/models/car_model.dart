@@ -8,15 +8,17 @@ class CarModel extends CarEntity {
     required super.color,
     required super.plateNumber,
     required super.parkingLocation,
+    super.imagePath,
   });
 
   factory CarModel.fromJson(JsonMap json) {
     return CarModel(
-      id: json['id'] as String,
-      model: json['model'] as String,
-      color: json['color'] as String,
-      plateNumber: json['plate_number'] as String,
-      parkingLocation: json['parking_location'] as String,
+      id: json['id']?.toString() ?? json['plate_number']?.toString() ?? '',
+      model: (json['model'] ?? json['type'] ?? json['vehicle_type']) as String? ?? 'Unknown',
+      color: (json['color'] ?? json['vehicle_color']) as String? ?? 'Unknown',
+      plateNumber: json['plate_number'] as String? ?? '',
+      parkingLocation: json['parking_location'] as String? ?? '',
+      imagePath: json['image_path'] as String?,
     );
   }
 
@@ -27,6 +29,7 @@ class CarModel extends CarEntity {
       color: entity.color,
       plateNumber: entity.plateNumber,
       parkingLocation: entity.parkingLocation,
+      imagePath: entity.imagePath,
     );
   }
 
@@ -37,6 +40,7 @@ class CarModel extends CarEntity {
       'color': color,
       'plate_number': plateNumber,
       'parking_location': parkingLocation,
+      'image_path': imagePath,
     };
   }
 }

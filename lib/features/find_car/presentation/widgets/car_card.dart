@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/config/env_config.dart';
 import '../../domain/entities/car_entity.dart';
 
 class CarCard extends StatelessWidget {
@@ -45,7 +46,7 @@ class CarCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Car Image Placeholder (80x80)
+                // Car Image with local/fallback placeholder (80x80)
                 Container(
                   width: 80,
                   height: 80,
@@ -53,12 +54,46 @@ class CarCard extends StatelessWidget {
                     color: imageBgColor,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Center(
-                    child: Icon(
-                      Icons.directions_car,
-                      color: imageIconColor,
-                      size: 40,
-                    ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: (car.imagePath != null && car.imagePath!.isNotEmpty)
+                        ? Image.network(
+                            car.imagePath!.startsWith('http')
+                                ? car.imagePath!
+                                : '${EnvConfig.instance.apiBaseUrl}/${car.imagePath!.replaceFirst(RegExp(r'^/'), '')}',
+                            fit: BoxFit.cover,
+                            width: 80,
+                            height: 80,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Center(
+                                child: Icon(
+                                  Icons.directions_car,
+                                  color: imageIconColor,
+                                  size: 40,
+                                ),
+                              );
+                            },
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return const Center(
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Color(0xFF00A24F),
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        : Center(
+                            child: Icon(
+                              Icons.directions_car,
+                              color: imageIconColor,
+                              size: 40,
+                            ),
+                          ),
                   ),
                 ),
                 const SizedBox(width: 16),

@@ -33,6 +33,7 @@ class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
             color: (json['color'] ?? json['vehicle_color']) as String? ?? 'Unknown',
             plateNumber: plate,
             parkingLocation: '$floorVal, $sectionVal - Slot $slotVal',
+            imagePath: json['image_path'] as String?,
           ));
         }
       }

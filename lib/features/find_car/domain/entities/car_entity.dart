@@ -6,6 +6,7 @@ class CarEntity extends Equatable {
   final String color;
   final String plateNumber;
   final String parkingLocation;
+  final String? imagePath;
 
   const CarEntity({
     required this.id,
@@ -13,8 +14,9 @@ class CarEntity extends Equatable {
     required this.color,
     required this.plateNumber,
     required this.parkingLocation,
+    this.imagePath,
   });
 
   @override
-  List<Object?> get props => [id, model, color, plateNumber, parkingLocation];
+  List<Object?> get props => [id, model, color, plateNumber, parkingLocation, imagePath];
 }

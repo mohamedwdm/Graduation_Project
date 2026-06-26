@@ -73,7 +73,7 @@ class SettingsSection extends StatelessWidget {
                 title: 'Booking History',
                 titleColor: tileTextColor,
                 iconColor: tileIconColor,
-                onTap: () {},
+                onTap: () => context.push(AppRouter.bookingHistoryPath),
               ),
               _buildDivider(dividerColor),
               _buildSettingTile(
