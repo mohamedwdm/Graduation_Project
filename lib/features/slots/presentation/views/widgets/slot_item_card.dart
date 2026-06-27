@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go2car/core/di/injection_container.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../auth/data/datasources/auth_local_datasource.dart';
 import '../../../domain/entities/slot_entity.dart';
 
 class SlotItemCard extends StatelessWidget {
@@ -130,7 +132,59 @@ class SlotItemCard extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       if (slot.isAvailable) {
-                        context.push('/reserve-slot?slotCode=${slot.slotId}');
+                        final token = sl<AuthLocalDataSource>().getToken();
+                        final isGuest = token == 'guest_token_from_server';
+                        if (isGuest) {
+                          showDialog(
+                            context: context,
+                            builder: (dialogContext) => AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              title: const Text(
+                                'Authentication Required',
+                                style: TextStyle(
+                                  fontFamily: 'Space Grotesk',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              content: const Text(
+                                'You are currently in Guest Mode. Please sign in or register to reserve parking slots.',
+                                style: TextStyle(
+                                  fontFamily: 'Space Grotesk',
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(dialogContext),
+                                  child: const Text(
+                                    'Cancel',
+                                    style: TextStyle(
+                                      fontFamily: 'Space Grotesk',
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(dialogContext);
+                                    context.go('/');
+                                  },
+                                  child: const Text(
+                                    'Sign In',
+                                    style: TextStyle(
+                                      fontFamily: 'Space Grotesk',
+                                      color: Color(0xff00A24F),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        } else {
+                          context.push('/reserve-slot?slotCode=${slot.slotId}');
+                        }
                       } else {
                         // Navigate logic if any
                       }

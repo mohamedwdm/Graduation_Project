@@ -74,6 +74,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'userid': 'guest_id_from_server',
         'name': 'Guest User',
         'email': 'guest@go2car.com',
+        'role': 'guest',
       }),
     );
   }

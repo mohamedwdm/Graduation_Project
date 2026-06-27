@@ -14,6 +14,7 @@ class UserEntity extends Equatable {
   });
 
   bool get isAdmin => role == 'admin';
+  bool get isGuest => role == 'guest' || userid == 'guest_id_from_server';
 
   @override
   List<Object?> get props => [userid, name, email, role];

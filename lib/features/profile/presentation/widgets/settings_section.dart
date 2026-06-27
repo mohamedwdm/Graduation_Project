@@ -9,7 +9,8 @@ import '../manager/theme_cubit/theme_cubit.dart';
 
 class SettingsSection extends StatelessWidget {
   final bool isAdmin;
-  const SettingsSection({super.key, this.isAdmin = false});
+  final bool isGuest;
+  const SettingsSection({super.key, this.isAdmin = false, this.isGuest = false});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class SettingsSection extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Text(
-            'Preferences & Security',
+            isGuest ? 'Preferences' : 'Preferences & Security',
             style: GoogleFonts.spaceGrotesk(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -44,56 +45,80 @@ class SettingsSection extends StatelessWidget {
             border: Border.all(color: borderColor),
           ),
           child: Column(
-            children: [
-              _buildSettingTile(
-                icon: Icons.notifications_none_outlined,
-                title: 'Notifications',
-                titleColor: tileTextColor,
-                iconColor: tileIconColor,
-                onTap: () {},
-              ),
-              _buildDivider(dividerColor),
-              _buildSettingTile(
-                icon: Icons.credit_card_outlined,
-                title: 'Payment Methods',
-                titleColor: tileTextColor,
-                iconColor: tileIconColor,
-                onTap: () {},
-              ),
-              _buildDivider(dividerColor),
-              _buildSettingTile(
-                icon: Icons.palette_outlined,
-                title: 'App Appearance',
-                titleColor: tileTextColor,
-                iconColor: tileIconColor,
-                onTap: () => _showThemeSelectionDialog(context),
-              ),
-              _buildDivider(dividerColor),
-              _buildSettingTile(
-                icon: isAdmin ? Icons.book_online_outlined : Icons.receipt_long_outlined,
-                title: isAdmin ? 'Manage Bookings' : 'Booking History',
-                titleColor: tileTextColor,
-                iconColor: tileIconColor,
-                onTap: () => context.push(isAdmin ? AppRouter.adminReservationsPath : AppRouter.bookingHistoryPath),
-              ),
-              _buildDivider(dividerColor),
-              _buildSettingTile(
-                icon: Icons.security_outlined,
-                title: 'Account Security',
-                titleColor: tileTextColor,
-                iconColor: tileIconColor,
-                onTap: () {},
-              ),
-              _buildDivider(dividerColor),
-              _buildSettingTile(
-                icon: Icons.logout_outlined,
-                title: 'Logout',
-                titleColor: const Color(0xFFEF4444),
-                iconColor: const Color(0xFFEF4444),
-                showChevron: false,
-                onTap: () => _showLogoutDialog(context),
-              ),
-            ],
+            children: isGuest
+                ? [
+                    _buildSettingTile(
+                      icon: Icons.palette_outlined,
+                      title: 'App Appearance',
+                      titleColor: tileTextColor,
+                      iconColor: tileIconColor,
+                      onTap: () => _showThemeSelectionDialog(context),
+                    ),
+                    _buildDivider(dividerColor),
+                    _buildSettingTile(
+                      icon: Icons.login_outlined,
+                      title: 'Sign In / Register',
+                      titleColor: const Color(0xff00A24F),
+                      iconColor: const Color(0xff00A24F),
+                      showChevron: false,
+                      onTap: () async {
+                        await sl<AuthCubit>().logout();
+                        if (context.mounted) {
+                          context.go(AppRouter.loginPath);
+                        }
+                      },
+                    ),
+                  ]
+                : [
+                    _buildSettingTile(
+                      icon: Icons.notifications_none_outlined,
+                      title: 'Notifications',
+                      titleColor: tileTextColor,
+                      iconColor: tileIconColor,
+                      onTap: () {},
+                    ),
+                    _buildDivider(dividerColor),
+                    _buildSettingTile(
+                      icon: Icons.credit_card_outlined,
+                      title: 'Payment Methods',
+                      titleColor: tileTextColor,
+                      iconColor: tileIconColor,
+                      onTap: () {},
+                    ),
+                    _buildDivider(dividerColor),
+                    _buildSettingTile(
+                      icon: Icons.palette_outlined,
+                      title: 'App Appearance',
+                      titleColor: tileTextColor,
+                      iconColor: tileIconColor,
+                      onTap: () => _showThemeSelectionDialog(context),
+                    ),
+                    _buildDivider(dividerColor),
+                    _buildSettingTile(
+                      icon: isAdmin ? Icons.book_online_outlined : Icons.receipt_long_outlined,
+                      title: isAdmin ? 'Manage Bookings' : 'Booking History',
+                      titleColor: tileTextColor,
+                      iconColor: tileIconColor,
+                      onTap: () => context.push(isAdmin ? AppRouter.adminReservationsPath : AppRouter.bookingHistoryPath),
+                    ),
+                    _buildDivider(dividerColor),
+                    _buildSettingTile(
+                      icon: Icons.security_outlined,
+                      title: 'Account Security',
+                      titleColor: tileTextColor,
+                      iconColor: tileIconColor,
+                      onTap: () => context.push(AppRouter.changePasswordPath),
+                    ),
+                    _buildDivider(dividerColor),
+                    _buildSettingTile(
+                      icon: Icons.logout_outlined,
+                      title: 'Logout',
+                      titleColor: const Color(0xFFEF4444),
+                      iconColor: const Color(0xFFEF4444),
+                      showChevron: false,
+                      onTap: () => _showLogoutDialog(context),
+                    ),
+                  ],
           ),
         ),
         const SizedBox(height: 40),

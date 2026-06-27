@@ -77,6 +77,27 @@ class _MainLayoutState extends State<MainLayout> {
           label: "Profile",
         ),
       ]);
+    } else if (widget.user?.isGuest ?? false) {
+      pages.addAll([
+        const SlotsView(),
+        const FindCarView(),
+        const ProfileView(isAdmin: false),
+      ]);
+
+      items.addAll([
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.local_parking_outlined),
+          label: "Slots",
+        ),
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.directions_car_outlined),
+          label: "Find Car",
+        ),
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.person_outline),
+          label: "Profile",
+        ),
+      ]);
     } else {
       pages.addAll([
         const HomeView(),
@@ -127,7 +148,8 @@ class _MainLayoutState extends State<MainLayout> {
           setState(() {
             currentIndex = index;
           });
-          if (index == 3 && !(widget.user?.isAdmin ?? false)) {
+          final isProfileTab = (widget.user?.isGuest ?? false) ? index == 2 : index == 3;
+          if (isProfileTab && !(widget.user?.isAdmin ?? false) && !(widget.user?.isGuest ?? false)) {
             final savedCarsCubit = context.read<SavedCarsCubit>();
             if (savedCarsCubit.state is SavedCarsInitial || savedCarsCubit.state is SavedCarsError) {
               savedCarsCubit.loadSavedCars();

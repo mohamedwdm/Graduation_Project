@@ -24,6 +24,7 @@ abstract class ApiConstants {
 
   // Profile
   static const String updateProfile = '/users/me';
+  static const String changePassword = '/users/me/password';
   static const String uploadAvatar = '/auth/profile/avatar';
 
   // Find Car

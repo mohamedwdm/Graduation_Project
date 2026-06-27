@@ -65,6 +65,7 @@ class ProfileView extends StatelessWidget {
                 state is ProfileUpdating) {
               final dynamic profileState = state;
               final profile = profileState.profile;
+              final isGuest = profile.id == 'guest_id_from_server';
               return SafeArea(
                 child: SingleChildScrollView(
                   child: Column(
@@ -74,12 +75,9 @@ class ProfileView extends StatelessWidget {
                         email: profile.email,
                         avatarUrl: profile.avatarUrl,
                       ),
-                      // We can keep ProfileInfoSection as a generic layout or merge it
-                      // In the new CSS, there wasn't a separate "Personal Information" section with tiles,
-                      // but I'll keep it refactored to match the aesthetic.
-                      ProfileInfoSection(name: profile.name),
-                      if (!isAdmin) const SavedCarsSection(),
-                      SettingsSection(isAdmin: isAdmin),
+                      if (!isGuest) ProfileInfoSection(name: profile.name),
+                      if (!isAdmin && !isGuest) const SavedCarsSection(),
+                      SettingsSection(isAdmin: isAdmin, isGuest: isGuest),
                     ],
                   ),
                 ),

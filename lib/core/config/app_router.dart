@@ -17,6 +17,7 @@ import '../../features/reservation/presentation/views/admin_reservations_view.da
 import '../../features/reservation/presentation/manager/reservation_cubit/reservation_cubit.dart';
 import '../../features/profile/presentation/manager/saved_cars_cubit/saved_cars_cubit.dart';
 import '../../features/slots/presentation/manager/slots_cubit/slots_cubit.dart';
+import '../../features/profile/presentation/views/change_password_view.dart';
 
 abstract class AppRouter {
   static const String loginPath = '/';
@@ -25,6 +26,7 @@ abstract class AppRouter {
   static const String adminParkingOverviewPath = '/admin/parking-overview';
   static const String adminReservationsPath = '/admin/reservations';
   static const String bookingHistoryPath = '/booking-history';
+  static const String changePasswordPath = '/change-password';
 
   static final router = GoRouter(
     initialLocation: loginPath,
@@ -32,6 +34,10 @@ abstract class AppRouter {
       GoRoute(
         path: loginPath,
         builder: (context, state) => const LoginView(),
+      ),
+      GoRoute(
+        path: changePasswordPath,
+        builder: (context, state) => const ChangePasswordView(),
       ),
       GoRoute(
         path: registerPath,

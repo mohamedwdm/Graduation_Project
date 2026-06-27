@@ -6,6 +6,7 @@ import '../models/saved_car_model.dart';
 abstract class ProfileRemoteDataSource {
   Future<ProfileModel> fetchProfile();
   Future<ProfileModel> updateProfileName(String newName);
+  Future<void> changePassword(String oldPassword, String newPassword);
   Future<List<SavedCarModel>> fetchSavedCars();
   Future<SavedCarModel> addSavedCar(SavedCarModel car);
   Future<SavedCarModel> updateSavedCar(SavedCarModel car);
@@ -16,6 +17,17 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   final ApiClient _apiClient;
 
   ProfileRemoteDataSourceImpl(this._apiClient);
+
+  @override
+  Future<void> changePassword(String oldPassword, String newPassword) async {
+    await _apiClient.put(
+      ApiConstants.changePassword,
+      data: {
+        'old_password': oldPassword,
+        'new_password': newPassword,
+      },
+    );
+  }
 
   @override
   Future<ProfileModel> fetchProfile() async {

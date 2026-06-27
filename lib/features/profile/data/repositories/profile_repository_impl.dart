@@ -72,6 +72,29 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
+  FutureEither<void> changePassword(String oldPassword, String newPassword) async {
+    if (isMockMode) {
+      try {
+        await remoteDataSource.changePassword(oldPassword, newPassword);
+        return const Right(null);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(e.message));
+      }
+    }
+
+    if (await networkInfo.isConnected) {
+      try {
+        await remoteDataSource.changePassword(oldPassword, newPassword);
+        return const Right(null);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(e.message));
+      }
+    } else {
+      return const Left(NetworkFailure());
+    }
+  }
+
+  @override
   FutureEither<List<SavedCarEntity>> getSavedCars() async {
     if (isMockMode) {
       return Right(await remoteDataSource.fetchSavedCars());
