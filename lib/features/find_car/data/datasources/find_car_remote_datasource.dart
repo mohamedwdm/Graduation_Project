@@ -1,17 +1,28 @@
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/api_constants.dart';
 import '../models/car_model.dart';
+import '../models/vehicle_map_model.dart';
 
 abstract class FindCarRemoteDataSource {
   Future<List<CarModel>> searchCars(String query, {String? floor, String? section});
   Future<List<String>> getFloors();
   Future<List<String>> getSections();
+  Future<VehicleMapModel> getVehicleMap(String plate);
 }
 
 class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
   final ApiClient _apiClient;
 
   FindCarRemoteDataSourceImpl(this._apiClient);
+
+  @override
+  Future<VehicleMapModel> getVehicleMap(String plate) async {
+    final response = await _apiClient.get(ApiConstants.vehicleMap(plate));
+    if (response.data != null && response.data['data'] != null) {
+      return VehicleMapModel.fromJson(response.data['data'] as Map<String, dynamic>);
+    }
+    throw Exception('Failed to retrieve vehicle map');
+  }
 
   @override
   Future<List<CarModel>> searchCars(String query, {String? floor, String? section}) async {

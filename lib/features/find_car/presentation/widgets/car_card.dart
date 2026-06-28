@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/config/env_config.dart';
+import '../../../../core/di/injection_container.dart';
+import '../../../auth/data/datasources/auth_local_datasource.dart';
 import '../../domain/entities/car_entity.dart';
+import 'vehicle_map_dialog.dart';
 
 class CarCard extends StatelessWidget {
   final CarEntity car;
@@ -154,7 +158,61 @@ class CarCard extends StatelessWidget {
               // View on Map
               Expanded(
                 child: InkWell(
-                  onTap: null, // Disabled
+                  onTap: () {
+                    final token = sl<AuthLocalDataSource>().getToken();
+                    final isGuest = token == 'guest_token_from_server';
+                    if (isGuest) {
+                      showDialog(
+                        context: context,
+                        builder: (dialogContext) => AlertDialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          title: const Text(
+                            'Authentication Required',
+                            style: TextStyle(
+                              fontFamily: 'Space Grotesk',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          content: const Text(
+                            'You are currently in Guest Mode. Please sign in or register to view the vehicle map.',
+                            style: TextStyle(
+                              fontFamily: 'Space Grotesk',
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(dialogContext),
+                              child: const Text(
+                                'Cancel',
+                                style: TextStyle(
+                                  fontFamily: 'Space Grotesk',
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(dialogContext);
+                                context.go('/');
+                              },
+                              child: const Text(
+                                'Sign In',
+                                style: TextStyle(
+                                  fontFamily: 'Space Grotesk',
+                                  color: Color(0xff00A24F),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      VehicleMapDialog.show(context, car.plateNumber);
+                    }
+                  },
                   child: Container(
                     height: 50,
                     alignment: Alignment.center,

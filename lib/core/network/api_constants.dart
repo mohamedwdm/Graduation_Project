@@ -34,6 +34,7 @@ abstract class ApiConstants {
   static const String searchAdvanced = '/vehicles/search/advanced';
   static const String floors = '/floors/all';
   static const String sections = '/sections/all';
+  static String vehicleMap(String plate) => '/vehicles/$plate/map';
 
   // Dashboard
   static const String dashboard = '/admin/summary';

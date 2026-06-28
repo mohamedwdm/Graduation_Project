@@ -4,6 +4,7 @@ import '../../../../core/errors/failures.dart';
 import '../../../../core/network/network_info.dart';
 import '../../../../core/utils/typedefs.dart';
 import '../../domain/entities/car_entity.dart';
+import '../../domain/entities/vehicle_map_entity.dart';
 import '../../domain/repositories/find_car_repository.dart';
 import '../datasources/find_car_remote_datasource.dart';
 
@@ -60,6 +61,31 @@ class FindCarRepositoryImpl implements FindCarRepository {
     try {
       final sections = await _remoteDataSource.getSections();
       return Right(sections);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  FutureEither<VehicleMapEntity> getVehicleMap(String plate) async {
+    if (isMockMode) {
+      return const Right(VehicleMapEntity(
+        mapPath: '/static/maps/floor1.png',
+        slot: 'MockSlot',
+        section: 'MockSec',
+        floor: 'MockFloor',
+      ));
+    }
+
+    if (!await _networkInfo.isConnected) {
+      return const Left(NetworkFailure());
+    }
+
+    try {
+      final mapEntity = await _remoteDataSource.getVehicleMap(plate);
+      return Right(mapEntity);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message, statusCode: e.statusCode));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }

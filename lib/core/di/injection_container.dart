@@ -27,7 +27,9 @@ import '../../features/find_car/domain/repositories/find_car_repository.dart';
 import '../../features/find_car/domain/usecases/search_cars_usecase.dart';
 import '../../features/find_car/domain/usecases/get_floors_usecase.dart';
 import '../../features/find_car/domain/usecases/get_sections_usecase.dart';
+import '../../features/find_car/domain/usecases/get_vehicle_map_usecase.dart';
 import '../../features/find_car/presentation/manager/find_car_cubit/find_car_cubit.dart';
+import '../../features/find_car/presentation/manager/vehicle_map_cubit/vehicle_map_cubit.dart';
 import '../../features/profile/data/datasources/profile_local_datasource.dart';
 import '../../features/profile/data/datasources/profile_remote_datasource.dart';
 import '../../features/profile/data/repositories/profile_repository_impl.dart';
@@ -174,10 +176,14 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => SearchCarsUseCase(sl()));
   sl.registerLazySingleton(() => FindCarGetFloorsUseCase(sl()));
   sl.registerLazySingleton(() => FindCarGetSectionsUseCase(sl()));
+  sl.registerLazySingleton(() => GetVehicleMapUseCase(sl()));
   sl.registerFactory(() => FindCarCubit(
         searchCarsUseCase: sl(),
         getFloorsUseCase: sl(),
         getSectionsUseCase: sl(),
+      ));
+  sl.registerFactory(() => VehicleMapCubit(
+        getVehicleMapUseCase: sl(),
       ));
 
   // Profile Feature
