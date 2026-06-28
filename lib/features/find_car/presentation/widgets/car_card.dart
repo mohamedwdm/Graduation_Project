@@ -51,53 +51,72 @@ class CarCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Car Image with local/fallback placeholder (80x80)
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    color: imageBgColor,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: (car.imagePath != null && car.imagePath!.isNotEmpty)
-                        ? Image.network(
-                            car.imagePath!.startsWith('http')
-                                ? car.imagePath!
-                                : '${EnvConfig.instance.apiBaseUrl}/${car.imagePath!.replaceFirst(RegExp(r'^/'), '')}',
-                            fit: BoxFit.cover,
-                            width: 80,
-                            height: 80,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Center(
+                GestureDetector(
+                  onTap: (car.imagePath != null && car.imagePath!.isNotEmpty)
+                      ? () {
+                          final imageUrl = car.imagePath!.startsWith('http')
+                              ? car.imagePath!
+                              : '${EnvConfig.instance.apiBaseUrl}/${car.imagePath!.replaceFirst(RegExp(r'^/'), '')}';
+                          ImagePreviewDialog.show(
+                            context,
+                            imageUrl,
+                            'Vehicle ${car.plateNumber}',
+                          );
+                        }
+                      : null,
+                  child: MouseRegion(
+                    cursor: (car.imagePath != null && car.imagePath!.isNotEmpty)
+                        ? SystemMouseCursors.click
+                        : SystemMouseCursors.basic,
+                    child: Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: imageBgColor,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: (car.imagePath != null && car.imagePath!.isNotEmpty)
+                            ? Image.network(
+                                car.imagePath!.startsWith('http')
+                                    ? car.imagePath!
+                                    : '${EnvConfig.instance.apiBaseUrl}/${car.imagePath!.replaceFirst(RegExp(r'^/'), '')}',
+                                fit: BoxFit.cover,
+                                width: 80,
+                                height: 80,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Center(
+                                    child: Icon(
+                                      Icons.directions_car,
+                                      color: imageIconColor,
+                                      size: 40,
+                                    ),
+                                  );
+                                },
+                                loadingBuilder: (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return const Center(
+                                    child: SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Color(0xFF00A24F),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              )
+                            : Center(
                                 child: Icon(
                                   Icons.directions_car,
                                   color: imageIconColor,
                                   size: 40,
                                 ),
-                              );
-                            },
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return const Center(
-                                child: SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Color(0xFF00A24F),
-                                  ),
-                                ),
-                              );
-                            },
-                          )
-                        : Center(
-                            child: Icon(
-                              Icons.directions_car,
-                              color: imageIconColor,
-                              size: 40,
-                            ),
-                          ),
+                              ),
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -270,3 +289,133 @@ class CarCard extends StatelessWidget {
     );
   }
 }
+
+class ImagePreviewDialog extends StatelessWidget {
+  final String imageUrl;
+  final String title;
+
+  const ImagePreviewDialog({
+    super.key,
+    required this.imageUrl,
+    required this.title,
+  });
+
+  static void show(BuildContext context, String imageUrl, String title) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => ImagePreviewDialog(imageUrl: imageUrl, title: title),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final titleColor = isDark ? Colors.white : const Color(0xFF0F172A);
+
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              color: Colors.transparent,
+              width: double.infinity,
+              height: double.infinity,
+            ),
+          ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 16,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                clipBehavior: Clip.hardEdge,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            title,
+                            style: GoogleFonts.spaceGrotesk(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: titleColor,
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.close, color: titleColor),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
+                    ),
+                    InteractiveViewer(
+                      maxScale: 4.0,
+                      minScale: 1.0,
+                      child: Image.network(
+                        imageUrl,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            height: 250,
+                            color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+                            child: const Center(
+                              child: Icon(
+                                Icons.broken_image_outlined,
+                                size: 64,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          );
+                        },
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
+                            height: 250,
+                            color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+                            child: const Center(
+                              child: CircularProgressIndicator(
+                                color: Color(0xFF00A24F),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Pinch to zoom and drag to pan',
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 13,
+                  color: Colors.white,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
