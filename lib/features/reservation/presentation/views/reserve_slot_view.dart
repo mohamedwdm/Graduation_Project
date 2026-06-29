@@ -172,7 +172,7 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
         if (state is ReservationSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Reserved Slot ${_selectedSlotCode} successfully!'),
+              content: Text('Reservation request submitted! Awaiting admin approval.'),
               backgroundColor: const Color(0xff00A24F),
             ),
           );

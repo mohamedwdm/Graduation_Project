@@ -18,12 +18,27 @@ class SlotItemCard extends StatelessWidget {
     final titleTextColor = isDark ? Colors.white : const Color(0xFF0F172A);
     final noteTextColor = isDark ? Colors.white70 : const Color(0xFF64748B);
 
-    final statusBgColor = slot.isAvailable
-        ? (isDark ? const Color(0xFF14532D) : const Color(0xFFDCFCE7))
-        : (isDark ? const Color(0xFF7F1D1D) : const Color(0xFFFEE2E2));
-    final statusTextColor = slot.isAvailable
-        ? (isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D))
-        : (isDark ? const Color(0xFFFCA5A5) : const Color(0xFFDC2626));
+    final String statusText;
+    final Color statusBgColor;
+    final Color statusTextColor;
+    final IconData statusIcon;
+
+    if (slot.status == 'available') {
+      statusText = 'Available';
+      statusBgColor = isDark ? const Color(0xFF14532D) : const Color(0xFFDCFCE7);
+      statusTextColor = isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D);
+      statusIcon = Icons.check_circle;
+    } else if (slot.status == 'booked') {
+      statusText = 'Booked';
+      statusBgColor = isDark ? const Color(0xFF1E3A8A) : const Color(0xFFDBEAFE);
+      statusTextColor = isDark ? const Color(0xFF60A5FA) : const Color(0xFF1D4ED8);
+      statusIcon = Icons.bookmark_added;
+    } else {
+      statusText = 'Occupied';
+      statusBgColor = isDark ? const Color(0xFF7F1D1D) : const Color(0xFFFEE2E2);
+      statusTextColor = isDark ? const Color(0xFFFCA5A5) : const Color(0xFFDC2626);
+      statusIcon = Icons.cancel;
+    }
 
     final navigateBtnColor = slot.isAvailable
         ? const Color(0xff00A24F)
@@ -90,13 +105,13 @@ class SlotItemCard extends StatelessWidget {
                 child: Row(
                   children: [
                     Icon(
-                      slot.isAvailable ? Icons.check_circle : Icons.cancel,
+                      statusIcon,
                       size: 16,
                       color: statusTextColor,
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      slot.isAvailable ? 'Available' : 'Occupied',
+                      statusText,
                       style: TextStyle(
                         fontFamily: 'Space Grotesk',
                         fontWeight: FontWeight.w500,

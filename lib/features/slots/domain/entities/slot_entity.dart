@@ -9,6 +9,7 @@ class SlotEntity extends Equatable {
   final bool hasEvCharging;
   final bool isAccessible;
   final DateTime? lastUpdated;
+  final String status;
 
   const SlotEntity({
     required this.id,
@@ -19,12 +20,13 @@ class SlotEntity extends Equatable {
     this.hasEvCharging = false,
     this.isAccessible = false,
     this.lastUpdated,
+    this.status = 'available',
   });
 
   // UI Compatibility Getters
   String get slotId => label;
   String get locationNote => 'Floor $floor, Section $section';
-  bool get isAvailable => !isOccupied;
+  bool get isAvailable => status == 'available';
   int get floorIndex => floor;
 
   @override
@@ -37,5 +39,6 @@ class SlotEntity extends Equatable {
         hasEvCharging,
         isAccessible,
         lastUpdated,
+        status,
       ];
 }

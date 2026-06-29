@@ -11,6 +11,7 @@ class SlotModel extends SlotEntity {
     bool hasEvCharging = false,
     bool isAccessible = false,
     DateTime? lastUpdated,
+    String? status,
     // Legacy support for older code in repos/
     String? slotId,
     String? locationNote,
@@ -25,6 +26,7 @@ class SlotModel extends SlotEntity {
           hasEvCharging: hasEvCharging,
           isAccessible: isAccessible,
           lastUpdated: lastUpdated,
+          status: status ?? (isOccupied == true ? 'occupied' : 'available'),
         );
 
   factory SlotModel.fromJson(JsonMap json) {
@@ -65,6 +67,7 @@ class SlotModel extends SlotEntity {
       lastUpdated: json['last_updated'] != null
           ? DateTime.parse(json['last_updated'] as String)
           : null,
+      status: json['status']?.toString() ?? (json['is_occupied'] == true ? 'occupied' : 'available'),
     );
   }
 
@@ -78,6 +81,7 @@ class SlotModel extends SlotEntity {
       'has_ev_charging': hasEvCharging,
       'is_accessible': isAccessible,
       'last_updated': lastUpdated?.toIso8601String(),
+      'status': status,
     };
   }
 

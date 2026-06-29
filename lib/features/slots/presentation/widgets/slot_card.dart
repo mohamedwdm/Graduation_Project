@@ -13,8 +13,19 @@ class SlotCard extends StatelessWidget {
     final titleTextColor = isDark ? Colors.white : const Color(0xFF0F172A);
     final shadowColor = isDark ? Colors.transparent : Colors.black.withOpacity(0.05);
 
-    final Color statusColor = slot.isOccupied ? const Color(0xFFEF4444) : const Color(0xFF10B981);
-    final String statusText = slot.isOccupied ? 'Occupied' : 'Available';
+    final Color statusColor;
+    final String statusText;
+
+    if (slot.status == 'available') {
+      statusColor = const Color(0xFF10B981);
+      statusText = 'Available';
+    } else if (slot.status == 'booked') {
+      statusColor = const Color(0xFF3B82F6);
+      statusText = 'Booked';
+    } else {
+      statusColor = const Color(0xFFEF4444);
+      statusText = 'Occupied';
+    }
 
     return Container(
       padding: const EdgeInsets.all(16),

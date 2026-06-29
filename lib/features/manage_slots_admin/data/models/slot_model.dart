@@ -72,6 +72,8 @@ class SlotModel extends SlotEntity {
         return SlotStatus.maintenance;
       case 'occupied':
         return SlotStatus.occupied;
+      case 'booked':
+        return SlotStatus.booked;
       default:
         return SlotStatus.available;
     }

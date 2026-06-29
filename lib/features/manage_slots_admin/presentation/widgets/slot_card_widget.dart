@@ -152,6 +152,11 @@ class _StatusBadge extends StatelessWidget {
         statusText = "Occupied";
         statusIcon = Icons.cancel;
         break;
+      case SlotStatus.booked:
+        statusColor = isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB);
+        statusText = "Booked";
+        statusIcon = Icons.bookmark_added;
+        break;
     }
 
     return Container(
