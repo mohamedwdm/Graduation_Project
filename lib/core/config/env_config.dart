@@ -39,8 +39,8 @@ class EnvConfig {
         break;
       case Environment.prod:
         _instance = EnvConfig._(
-          apiBaseUrl: 'https://api.go2car.com/v1',
-          socketBaseUrl: 'ws://api.go2car.com/ws',
+          apiBaseUrl: 'https://go2carbackendgp-production.up.railway.app',
+          socketBaseUrl: 'wss://go2carbackendgp-production.up.railway.app/ws',
           enableLogging: false,
           environment: Environment.prod,
         );

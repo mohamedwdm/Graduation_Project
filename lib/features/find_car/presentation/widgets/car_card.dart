@@ -238,11 +238,11 @@ class CarCard extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.map_outlined,
-                            size: 18, color: buttonTextColor),
+                        Icon(Icons.navigation_outlined,
+                            size: 19, color: buttonTextColor),
                         const SizedBox(width: 8),
                         Text(
-                          "View on map",
+                          "Navigate to Car",
                           style: GoogleFonts.spaceGrotesk(
                             fontWeight: FontWeight.w500,
                             fontSize: 16,
@@ -254,34 +254,34 @@ class CarCard extends StatelessWidget {
                   ),
                 ),
               ),
-              // vertical separator
-              Container(width: 1, height: 52, color: dividerColor),
-              // Navigate
-              Expanded(
-                child: InkWell(
-                  onTap: null, // Disabled
-                  child: Container(
-                    height: 52,
-                    alignment: Alignment.center,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.navigation_outlined,
-                            size: 18, color: Color(0xFF13EC5B)),
-                        const SizedBox(width: 8),
-                        Text(
-                          "Navigate",
-                          style: GoogleFonts.spaceGrotesk(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16,
-                            color: const Color(0xFF13EC5B),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+              // // vertical separator
+              // Container(width: 1, height: 52, color: dividerColor),
+              // // Navigate
+              // Expanded(
+              //   child: InkWell(
+              //     onTap: null, // Disabled
+              //     child: Container(
+              //       height: 52,
+              //       alignment: Alignment.center,
+              //       child: Row(
+              //         mainAxisAlignment: MainAxisAlignment.center,
+              //         children: [
+              //           const Icon(Icons.navigation_outlined,
+              //               size: 18, color: Color(0xFF13EC5B)),
+              //           const SizedBox(width: 8),
+              //           Text(
+              //             "Navigate",
+              //             style: GoogleFonts.spaceGrotesk(
+              //               fontWeight: FontWeight.w700,
+              //               fontSize: 16,
+              //               color: const Color(0xFF13EC5B),
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ],

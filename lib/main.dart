@@ -9,7 +9,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // 1. Initialize Environment
-  EnvConfig.initialize(Environment.dev);
+  EnvConfig.initialize(Environment.prod);
+  //  EnvConfig.initialize(Environment.dev);
   
   // 2. Initialize Dependency Injection
   await initDependencies();
