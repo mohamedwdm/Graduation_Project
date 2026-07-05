@@ -99,7 +99,9 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   FutureVoid logout() async {
     try {
-      await _remoteDataSource.logout();
+      if (!_apiClient.isGuest) {
+        await _remoteDataSource.logout();
+      }
       await _localDataSource.clearUser();
       await _localDataSource.clearToken();
       _apiClient.updateAuthToken(null);

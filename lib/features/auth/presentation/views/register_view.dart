@@ -9,16 +9,12 @@ class RegisterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<AuthCubit>(),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-         
-          backgroundColor: Colors.transparent,
-        ),
-        body: const SafeArea(child: RegisterViewBody()),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
       ),
+      body: const SafeArea(child: RegisterViewBody()),
     );
   }
 }

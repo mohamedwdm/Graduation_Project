@@ -68,7 +68,7 @@ class SettingsSection extends StatelessWidget {
                           context.read<SavedCarsCubit>().clear();
                           context.read<FindCarCubit>().clearState();
                         } catch (_) {}
-                        await sl<AuthCubit>().logout();
+                        await context.read<AuthCubit>().logout();
                         if (context.mounted) {
                           context.go(AppRouter.loginPath);
                         }
@@ -263,7 +263,7 @@ class SettingsSection extends StatelessWidget {
                 context.read<SavedCarsCubit>().clear();
                 context.read<FindCarCubit>().clearState();
               } catch (_) {}
-              await sl<AuthCubit>().logout();
+              await context.read<AuthCubit>().logout();
               if (context.mounted) {
                 context.go(AppRouter.loginPath);
               }
