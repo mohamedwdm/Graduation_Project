@@ -73,15 +73,21 @@ class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
         final plate = json['plate_number'] as String? ?? '';
         if (plate.isNotEmpty && !uniquePlates.contains(plate)) {
           uniquePlates.add(plate);
-          final floorVal = json['floor'] ?? '';
-          final sectionVal = json['section'] ?? '';
-          final slotVal = json['slot'] ?? '';
+          final floorVal = (json['floor'] ?? '').toString();
+          final floorStr = floorVal.toLowerCase().startsWith('floor') ? floorVal : 'Floor $floorVal';
+          
+          final sectionVal = (json['section_name_display'] ?? json['section_display'] ?? json['section'] ?? '').toString();
+          final sectionStr = sectionVal.toLowerCase().startsWith('section') ? sectionVal : 'Section $sectionVal';
+          
+          final slotVal = (json['slot_number'] ?? json['slot'] ?? '').toString();
+          final slotStr = 'Slot $slotVal';
+
           allResults.add(CarModel(
             id: plate,
             model: (json['type'] ?? json['vehicle_type']) as String? ?? 'Unknown',
             color: (json['color'] ?? json['vehicle_color']) as String? ?? 'Unknown',
             plateNumber: plate,
-            parkingLocation: '$floorVal, $sectionVal - Slot $slotVal',
+            parkingLocation: '$floorStr, $sectionStr - $slotStr',
             imagePath: json['image_path'] as String?,
             slotId: json['slot_id'] != null ? int.tryParse(json['slot_id'].toString()) : null,
           ));
@@ -143,7 +149,7 @@ class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
       if (response.data != null) {
         final List list = response.data is List ? response.data : (response.data['data'] ?? []);
         return list
-            .map((item) => (item['floor_name'] as String? ?? '').trim())
+            .map((item) => (item['floor_name']?.toString() ?? '').trim())
             .where((name) => name.isNotEmpty)
             .toList();
       }
@@ -159,10 +165,22 @@ class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
       final response = await _apiClient.get(ApiConstants.sections);
       if (response.data != null) {
         final List list = response.data is List ? response.data : (response.data['data'] ?? []);
-        return list
-            .map((item) => (item['section_name'] as String? ?? '').trim())
-            .where((name) => name.isNotEmpty)
-            .toList();
+        // Deduplicate: "A1" may appear for every floor (F1_A1, F2_A1 → both display as "A1").
+        // We keep only unique display names. Sending "A1" to the backend already searches
+        // across ALL floors because the filter uses section_name.ilike("%A1%").
+        final seen = <String>{};
+        final result = <String>[];
+        for (final item in list) {
+          final display = (item['section_display']?.toString() ??
+                  item['section_name_display']?.toString() ??
+                  item['section_name']?.toString() ??
+                  '')
+              .trim();
+          if (display.isNotEmpty && seen.add(display)) {
+            result.add(display);
+          }
+        }
+        return result;
       }
     } catch (_) {
       // Return empty list on error

@@ -18,14 +18,38 @@ class _AddSavedCarViewState extends State<AddSavedCarView> {
   final _formKey = GlobalKey<FormState>();
   final _plateController = TextEditingController();
   final _colorController = TextEditingController();
-  String _selectedCarType = 'Sedan';
+  String _selectedCarType = 'Toyota';
 
   final List<String> _carTypes = [
-    'Sedan',
-    'SUV',
-    'Hatchbacks',
-    'Pickup Truck',
-    'Sports Car',
+    'Ashok Leyland',
+    'Audi',
+    'Bentley',
+    'Bharat Benz',
+    'BMW',
+    'Eicher Motors',
+    'Ford',
+    'Honda',
+    'Hyundai',
+    'Jaguar',
+    'KIA',
+    'Land Rover',
+    'Mahindra',
+    'Maruti Suzuki',
+    'Mercedes',
+    'MG Motors',
+    'Nissan',
+    'Renault',
+    'Rolls Royce',
+    'Skoda',
+    'Swaraj Mazda',
+    'Tata',
+    'Toyota',
+    'Volkswagen',
+    'Volvo',
+    'Chevrolet',
+    'Citreon',
+    'Fiat',
+    'Jeep',
   ];
 
   @override
@@ -37,11 +61,15 @@ class _AddSavedCarViewState extends State<AddSavedCarView> {
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
+      final plate = _plateController.text.trim();
+      final finalPlate = plate.isEmpty
+          ? 'UNKNOWN-${DateTime.now().millisecondsSinceEpoch}'
+          : plate;
       final car = SavedCarEntity(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         model: _selectedCarType,
         color: _colorController.text,
-        plateNumber: _plateController.text,
+        plateNumber: finalPlate,
       );
       context.read<SavedCarFormCubit>().addCar(car);
     }
@@ -152,8 +180,7 @@ class _AddSavedCarViewState extends State<AddSavedCarView> {
                 _buildTextField(
                   controller: _plateController,
                   hint: 'e.g. ABC-1234',
-                  validator: (val) =>
-                      val == null || val.isEmpty ? 'Required' : null,
+                  validator: null,
                 ),
                 const SizedBox(height: 20),
                 _buildLabel('Color'),

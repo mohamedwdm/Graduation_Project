@@ -12,6 +12,9 @@ class SlotModel extends SlotEntity {
     bool isAccessible = false,
     DateTime? lastUpdated,
     String? status,
+    String? slotNumber,
+    String? sectionDisplay,
+    String? sectionNameDisplay,
     // Legacy support for older code in repos/
     String? slotId,
     String? locationNote,
@@ -27,6 +30,9 @@ class SlotModel extends SlotEntity {
           isAccessible: isAccessible,
           lastUpdated: lastUpdated,
           status: status ?? (isOccupied == true ? 'occupied' : 'available'),
+          slotNumber: slotNumber ?? '',
+          sectionDisplay: sectionDisplay ?? '',
+          sectionNameDisplay: sectionNameDisplay ?? '',
         );
 
   factory SlotModel.fromJson(JsonMap json) {
@@ -56,9 +62,31 @@ class SlotModel extends SlotEntity {
       parsedSection = (json['locationNote'] ?? '').toString();
     }
 
+    final label = json['label']?.toString() ?? json['slot_code']?.toString() ?? json['slotId']?.toString() ?? '';
+    final slotNumber = json['slot_number']?.toString() ?? '';
+    String derivedSlotNumber = slotNumber;
+    if (derivedSlotNumber.isEmpty) {
+      derivedSlotNumber = label.replaceAll(RegExp(r'slot\s*', caseSensitive: false), '').split('-').last.trim();
+    }
+
+    String parsedSectionDisplay = '';
+    String parsedSectionNameDisplay = '';
+    if (sectionData is Map) {
+      parsedSectionDisplay = (sectionData['section_display'] ?? '').toString();
+      parsedSectionNameDisplay = (sectionData['section_name_display'] ?? '').toString();
+    }
+    
+    // Fallbacks
+    if (parsedSectionDisplay.isEmpty) {
+      parsedSectionDisplay = parsedSection.replaceAll(RegExp(r'section\s*', caseSensitive: false), '').trim();
+    }
+    if (parsedSectionNameDisplay.isEmpty) {
+      parsedSectionNameDisplay = parsedSection.toLowerCase().startsWith('section') ? parsedSection : 'Section $parsedSection';
+    }
+
     return SlotModel(
       id: json['id']?.toString() ?? json['slotId']?.toString() ?? '',
-      label: json['label']?.toString() ?? json['slot_code']?.toString() ?? json['slotId']?.toString() ?? '',
+      label: label,
       isOccupied: json['is_occupied'] as bool? ?? !(json['isAvailable'] as bool? ?? true),
       floor: parsedFloor,
       section: parsedSection,
@@ -68,6 +96,9 @@ class SlotModel extends SlotEntity {
           ? DateTime.parse(json['last_updated'] as String)
           : null,
       status: json['status']?.toString() ?? (json['is_occupied'] == true ? 'occupied' : 'available'),
+      slotNumber: derivedSlotNumber,
+      sectionDisplay: parsedSectionDisplay,
+      sectionNameDisplay: parsedSectionNameDisplay,
     );
   }
 
@@ -82,11 +113,13 @@ class SlotModel extends SlotEntity {
       'is_accessible': isAccessible,
       'last_updated': lastUpdated?.toIso8601String(),
       'status': status,
+      'slot_number': slotNumber,
+      'section_display': sectionDisplay,
+      'section_name_display': sectionNameDisplay,
     };
   }
 
   factory SlotModel.fromSocketEvent(JsonMap json) {
-    // Socket data might be slightly different or nested, but based on the plan:
     return SlotModel.fromJson(json);
   }
 }

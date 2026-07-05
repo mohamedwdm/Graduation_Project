@@ -6,6 +6,8 @@ import '../../../../core/config/app_router.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../auth/presentation/manager/auth_cubit/auth_cubit.dart';
 import '../manager/theme_cubit/theme_cubit.dart';
+import '../../../../features/find_car/presentation/manager/find_car_cubit/find_car_cubit.dart';
+import '../../../../features/profile/presentation/manager/saved_cars_cubit/saved_cars_cubit.dart';
 
 class SettingsSection extends StatelessWidget {
   final bool isAdmin;
@@ -62,6 +64,10 @@ class SettingsSection extends StatelessWidget {
                       iconColor: const Color(0xff00A24F),
                       showChevron: false,
                       onTap: () async {
+                        try {
+                          context.read<SavedCarsCubit>().clear();
+                          context.read<FindCarCubit>().clearState();
+                        } catch (_) {}
                         await sl<AuthCubit>().logout();
                         if (context.mounted) {
                           context.go(AppRouter.loginPath);
@@ -253,6 +259,10 @@ class SettingsSection extends StatelessWidget {
           TextButton(
             onPressed: () async {
               Navigator.pop(dialogContext);
+              try {
+                context.read<SavedCarsCubit>().clear();
+                context.read<FindCarCubit>().clearState();
+              } catch (_) {}
               await sl<AuthCubit>().logout();
               if (context.mounted) {
                 context.go(AppRouter.loginPath);

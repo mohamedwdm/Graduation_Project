@@ -173,6 +173,8 @@ class VehicleMapDialog extends StatelessWidget {
                       final baseUrl = EnvConfig.instance.apiBaseUrl;
                       final relativeMapPath = map.mapPath.replaceFirst(RegExp(r'^/'), '');
                       final mapUrl = '$baseUrl/$relativeMapPath';
+                      // ignore: avoid_print
+                      debugPrint('[VehicleMap] mapPath="${map.mapPath}" → URL="$mapUrl"');
 
                       return Column(
                         children: [
@@ -201,7 +203,7 @@ class VehicleMapDialog extends StatelessWidget {
                                 _buildLocationDetail(
                                   Icons.grid_view_outlined,
                                   'Section',
-                                  map.section,
+                                  map.sectionDisplay,
                                   context,
                                 ),
                                 Container(
@@ -212,7 +214,7 @@ class VehicleMapDialog extends StatelessWidget {
                                 _buildLocationDetail(
                                   Icons.local_parking_outlined,
                                   'Slot',
-                                  map.slot,
+                                  map.slotNumber,
                                   context,
                                 ),
                               ],
@@ -240,6 +242,7 @@ class VehicleMapDialog extends StatelessWidget {
                                         mapUrl,
                                         fit: BoxFit.contain,
                                         errorBuilder: (context, error, stackTrace) {
+                                          debugPrint('[VehicleMap] Image load error: $error');
                                           return Center(
                                             child: Column(
                                               mainAxisAlignment: MainAxisAlignment.center,
@@ -255,6 +258,18 @@ class VehicleMapDialog extends StatelessWidget {
                                                   style: GoogleFonts.spaceGrotesk(
                                                     fontSize: 14,
                                                     color: subtitleColor,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Padding(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                                  child: Text(
+                                                    mapUrl,
+                                                    style: GoogleFonts.spaceGrotesk(
+                                                      fontSize: 10,
+                                                      color: subtitleColor.withOpacity(0.7),
+                                                    ),
+                                                    textAlign: TextAlign.center,
                                                   ),
                                                 ),
                                               ],

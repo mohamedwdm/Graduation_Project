@@ -22,6 +22,8 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
   final _customPlateController = TextEditingController();
 
   String? _selectedSlotCode;
+  int? _selectedFloor;
+  String? _selectedSectionNameDisplay;
   String? _selectedSavedCarPlate;
   bool _useCustomPlate = false;
 
@@ -407,57 +409,182 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
                   ),
                   const SizedBox(height: 24),
 
-                  // PARKING SLOT SECTION
-                  _buildSectionHeader('Select Parking Slot'),
-                  const SizedBox(height: 12),
                   BlocBuilder<SlotsCubit, SlotsState>(
                     builder: (context, state) {
+                      List<DropdownMenuItem<int>> floorItems = [];
+                      List<DropdownMenuItem<String>> sectionItems = [];
                       List<DropdownMenuItem<String>> slotItems = [];
 
                       if (state is SlotsLoaded) {
-                        // Filter available slots
-                        final availableSlots = state.slots.where((slot) => slot.isAvailable).toList();
-                        slotItems = availableSlots.map((slot) {
-                          return DropdownMenuItem<String>(
-                            value: slot.slotId,
+                        final availableSlots = state.slots.where((s) => s.isAvailable || s.slotId == _selectedSlotCode).toList();
+
+                        // Resolve preselection
+                        if (_selectedSlotCode != null && _selectedFloor == null) {
+                          for (final slot in availableSlots) {
+                            if (slot.slotId == _selectedSlotCode) {
+                              _selectedFloor = slot.floor;
+                              _selectedSectionNameDisplay = slot.sectionNameDisplay;
+                              break;
+                            }
+                          }
+                        }
+
+                        // Floors
+                        final floorsList = availableSlots.map((s) => s.floor).toSet().toList()..sort();
+                        floorItems = floorsList.map((f) {
+                          return DropdownMenuItem<int>(
+                            value: f,
                             child: Text(
-                              'Slot ${slot.slotId} (Floor ${slot.floor})',
+                              'Floor $f',
                               style: GoogleFonts.spaceGrotesk(),
                             ),
                           );
                         }).toList();
+
+                        // Sections
+                        if (_selectedFloor != null) {
+                          final sectionsList = availableSlots
+                              .where((s) => s.floor == _selectedFloor)
+                              .map((s) => s.sectionNameDisplay)
+                              .toSet()
+                              .toList()
+                              ..sort();
+                          sectionItems = sectionsList.map((sec) {
+                            return DropdownMenuItem<String>(
+                              value: sec,
+                              child: Text(
+                                sec,
+                                style: GoogleFonts.spaceGrotesk(),
+                              ),
+                            );
+                          }).toList();
+                        }
+
+                        // Slots
+                        if (_selectedFloor != null && _selectedSectionNameDisplay != null) {
+                          final slotsList = availableSlots
+                              .where((s) => s.floor == _selectedFloor && s.sectionNameDisplay == _selectedSectionNameDisplay)
+                              .toList();
+                          slotItems = slotsList.map((slot) {
+                            return DropdownMenuItem<String>(
+                              value: slot.slotId,
+                              child: Text(
+                                'Slot ${slot.slotNumber}',
+                                style: GoogleFonts.spaceGrotesk(),
+                              ),
+                            );
+                          }).toList();
+                        }
                       }
 
-                      return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: const Color(0xFFE2E8F0)),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButtonFormField<String>(
-                            value: _selectedSlotCode,
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              isDense: true,
+                      final isDark = Theme.of(context).brightness == Brightness.dark;
+                      final disabledColor = isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9);
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // FLOOR DROPDOWN
+                          _buildSectionHeader('Select Floor'),
+                          const SizedBox(height: 12),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: const Color(0xFFE2E8F0)),
                             ),
-                            hint: Text(
-                              state is SlotsLoading ? 'Loading slots...' : 'Choose an available slot',
-                              style: GoogleFonts.spaceGrotesk(color: const Color(0xFF94A3B8)),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButtonFormField<int>(
+                                value: _selectedFloor,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                ),
+                                hint: Text(
+                                  state is SlotsLoading ? 'Loading floors...' : 'Choose a floor',
+                                  style: GoogleFonts.spaceGrotesk(color: const Color(0xFF94A3B8)),
+                                ),
+                                items: floorItems,
+                                onChanged: state is! SlotsLoaded ? null : (val) {
+                                  setState(() {
+                                    _selectedFloor = val;
+                                    _selectedSectionNameDisplay = null;
+                                    _selectedSlotCode = null;
+                                  });
+                                },
+                              ),
                             ),
-                            items: slotItems,
-                            onChanged: (val) {
-                              setState(() {
-                                _selectedSlotCode = val;
-                              });
-                            },
                           ),
-                        ),
+                          const SizedBox(height: 24),
+
+                          // SECTION DROPDOWN
+                          _buildSectionHeader('Select Section'),
+                          const SizedBox(height: 12),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            decoration: BoxDecoration(
+                              color: _selectedFloor == null ? disabledColor : Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButtonFormField<String>(
+                                value: _selectedSectionNameDisplay,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                ),
+                                hint: Text(
+                                  _selectedFloor == null ? 'Select a floor first' : 'Choose a section',
+                                  style: GoogleFonts.spaceGrotesk(color: const Color(0xFF94A3B8)),
+                                ),
+                                items: sectionItems,
+                                onChanged: _selectedFloor == null ? null : (val) {
+                                  setState(() {
+                                    _selectedSectionNameDisplay = val;
+                                    _selectedSlotCode = null;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+
+                          // SLOT DROPDOWN
+                          _buildSectionHeader('Select Slot'),
+                          const SizedBox(height: 12),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            decoration: BoxDecoration(
+                              color: _selectedSectionNameDisplay == null ? disabledColor : Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButtonFormField<String>(
+                                value: _selectedSlotCode,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                ),
+                                hint: Text(
+                                  _selectedSectionNameDisplay == null ? 'Select a section first' : 'Choose a slot',
+                                  style: GoogleFonts.spaceGrotesk(color: const Color(0xFF94A3B8)),
+                                ),
+                                items: slotItems,
+                                onChanged: _selectedSectionNameDisplay == null ? null : (val) {
+                                  setState(() {
+                                    _selectedSlotCode = val;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                        ],
                       );
                     },
                   ),
-                  const SizedBox(height: 24),
 
                   // TIMEFRAME SECTION
                   _buildSectionHeader('Reservation Timeframe'),

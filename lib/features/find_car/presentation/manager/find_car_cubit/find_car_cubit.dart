@@ -46,7 +46,7 @@ class FindCarCubit extends Cubit<FindCarState> {
     floorsResult.fold((_) {}, (list) => _floors = list);
     sectionsResult.fold((_) {}, (list) => _sections = list);
 
-    emit(state);
+    emit(FindCarInitial(floors: List.from(_floors), sections: List.from(_sections)));
   }
 
   Future<void> searchCars(String query) async {
@@ -74,7 +74,27 @@ class FindCarCubit extends Cubit<FindCarState> {
     await _performSearch();
   }
 
+  Future<void> searchWithSavedCar({
+    required String? plateNumber,
+    required String? brand,
+    required String? color,
+  }) async {
+    _query = plateNumber ?? '';
+    _brand = brand;
+    _color = color;
+    await _performSearch();
+  }
+
   Future<void> clearSearch() async {
+    _query = '';
+    _floor = null;
+    _section = null;
+    _brand = null;
+    _color = null;
+    emit(const FindCarInitial());
+  }
+
+  void clearState() {
     _query = '';
     _floor = null;
     _section = null;

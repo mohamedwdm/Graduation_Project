@@ -18,6 +18,8 @@ class GreetingHeader extends StatelessWidget {
     // final notificationBorderColor = isDark ? const Color(0xFF0F172A) : Colors.white;
     final textNameColor = isDark ? Colors.white : Colors.black;
 
+    final isGuest = userName.toLowerCase() == 'guest' || userName.isEmpty;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -27,17 +29,23 @@ class GreetingHeader extends StatelessWidget {
             const SizedBox(height: 15),
             Text(
               'Welcome back!',
-              style: TextStyle(color: welcomeColor, fontSize: 14),
-            ),
-            //SizedBox(height: 5),
-            Text(
-              userName,
               style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: textNameColor,
+                color: isGuest ? textNameColor : welcomeColor,
+                fontSize: isGuest ? 24 : 14,
+                fontWeight: isGuest ? FontWeight.bold : FontWeight.normal,
               ),
             ),
+            if (!isGuest) ...[
+              const SizedBox(height: 4),
+              Text(
+                userName,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: textNameColor,
+                ),
+              ),
+            ],
           ],
         ),
 

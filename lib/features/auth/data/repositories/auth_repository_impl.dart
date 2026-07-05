@@ -51,6 +51,7 @@ class AuthRepositoryImpl implements AuthRepository {
       // Token Orchestration
       await _localDataSource.cacheToken(token);
       _apiClient.updateAuthToken(token);
+      _apiClient.setGuestMode(false);
       _socketManager.updateToken(token);
       
       await _localDataSource.cacheUser(user);
@@ -102,12 +103,14 @@ class AuthRepositoryImpl implements AuthRepository {
       await _localDataSource.clearUser();
       await _localDataSource.clearToken();
       _apiClient.updateAuthToken(null);
+      _apiClient.setGuestMode(false);
       _socketManager.updateToken(null);
       return right(null);
     } catch (e) {
       await _localDataSource.clearUser();
       await _localDataSource.clearToken();
       _apiClient.updateAuthToken(null);
+      _apiClient.setGuestMode(false);
       _socketManager.updateToken(null);
       return right(null);
     }
@@ -124,6 +127,7 @@ class AuthRepositoryImpl implements AuthRepository {
       // Token Orchestration
       await _localDataSource.cacheToken(token);
       _apiClient.updateAuthToken(token);
+      _apiClient.setGuestMode(true);
       _socketManager.updateToken(token);
       
       await _localDataSource.cacheUser(user);

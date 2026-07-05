@@ -64,17 +64,28 @@ class SavedCarCard extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    Text(
-                      car.plateNumber,
-                      style: GoogleFonts.spaceGrotesk(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: plateColor,
-                        height: 1.43,
+                    if (!car.plateNumber.startsWith('UNKNOWN')) ...[
+                      Text(
+                        car.plateNumber,
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: plateColor,
+                          height: 1.43,
+                        ),
                       ),
-                    ),
+                      Text(
+                        " - ",
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: plateColor,
+                          height: 1.43,
+                        ),
+                      ),
+                    ],
                     Text(
-                      " - ${car.color}",
+                      car.color,
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
@@ -94,6 +105,19 @@ class SavedCarCard extends StatelessWidget {
               size: 20,
             ),
             onPressed: () async {
+              if (car.plateNumber.startsWith('UNKNOWN')) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'This vehicle does not have a license plate assigned.',
+                      style: GoogleFonts.spaceGrotesk(),
+                    ),
+                    backgroundColor: Colors.orangeAccent,
+                  ),
+                );
+                return;
+              }
+
               showDialog(
                 context: context,
                 barrierDismissible: false,

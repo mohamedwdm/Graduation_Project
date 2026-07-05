@@ -10,6 +10,10 @@ class SavedCarsCubit extends Cubit<SavedCarsState> {
     required this.getSavedCarsUseCase,
   }) : super(SavedCarsInitial());
 
+  void clear() {
+    emit(SavedCarsInitial());
+  }
+
   Future<void> loadSavedCars() async {
     emit(SavedCarsLoading());
     final result = await getSavedCarsUseCase(const NoParams());

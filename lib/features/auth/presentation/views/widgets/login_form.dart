@@ -146,12 +146,6 @@ class _LoginFormState extends State<LoginForm> {
               },
             ),
           ),
-          const SizedBox(height: 15),
-          const Align(
-            alignment: Alignment.center,
-            child:
-                Text("Forget Password?", style: TextStyle(color: Colors.red)),
-          ),
           const SizedBox(height: 20),
           TextButton(
             onPressed: () {

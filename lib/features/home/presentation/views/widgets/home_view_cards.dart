@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go2car/features/home/presentation/views/widgets/home_view_big_card.dart';
 import 'package:go2car/features/home/presentation/views/widgets/home_view_small_card.dart';
+import 'package:go2car/features/layout/presentation/views/main_layout.dart';
 
 class HomeViewCards extends StatelessWidget {
   const HomeViewCards({
@@ -19,7 +20,7 @@ class HomeViewCards extends StatelessWidget {
       children: [
         HomeViewBigCard(
           onTap: () {
-           // context.push('/reserve-slot');
+            context.findAncestorStateOfType<MainLayoutState>()?.changeTab(1);
           },
           availableSlots: availableSlots,
           totalSlots: totalSlots,
@@ -29,7 +30,9 @@ class HomeViewCards extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             HomeViewSmallCard(
-              onTap: () {},
+              onTap: () {
+                context.findAncestorStateOfType<MainLayoutState>()?.changeTab(2);
+              },
               title: 'Find My Car',
               subTitle: "Navigate back to your vehicle",
               icon: Icons.place_outlined,
