@@ -4,23 +4,23 @@ import 'package:go2car/core/errors/failures.dart';
 import 'package:go2car/core/network/network_info.dart';
 import 'package:go2car/core/utils/typedefs.dart';
 import '../../domain/entities/parking_overview_entity.dart';
-import '../../domain/repositories/parking_overview_repository.dart';
-import '../datasources/parking_overview_datasource.dart';
+import '../../domain/repositories/admin_notifications_repository.dart';
+import '../datasources/admin_notifications_datasource.dart';
 
-class ParkingOverviewRepositoryImpl implements ParkingOverviewRepository {
-  final ParkingOverviewDataSource dataSource;
+class AdminNotificationsRepositoryImpl implements AdminNotificationsRepository {
+  final AdminNotificationsDataSource dataSource;
   final NetworkInfo networkInfo;
 
-  ParkingOverviewRepositoryImpl({
+  AdminNotificationsRepositoryImpl({
     required this.dataSource,
     required this.networkInfo,
   });
 
   @override
-  FutureEither<ParkingOverviewEntity> getParkingOverview() async {
+  FutureEither<AdminNotificationsEntity> getAdminNotifications({bool onlyFlagged = false}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await dataSource.fetchParkingOverview();
+        final result = await dataSource.fetchAdminNotifications(onlyFlagged: onlyFlagged);
         return Right(result);
       } on ForbiddenException {
         return const Left(ForbiddenFailure('Access Denied: Admin Only'));
