@@ -10,9 +10,21 @@ class VehicleMapCubit extends Cubit<VehicleMapState> {
   })  : _getVehicleMapUseCase = getVehicleMapUseCase,
         super(const VehicleMapInitial());
 
-  Future<void> fetchVehicleMap(String plate) async {
+  Future<void> fetchVehicleMap({
+    int? slotId,
+    String? plate,
+    required String floor,
+    required String section,
+    required String slot,
+  }) async {
     emit(const VehicleMapLoading());
-    final result = await _getVehicleMapUseCase(plate);
+    final result = await _getVehicleMapUseCase(GetVehicleMapParams(
+      slotId: slotId,
+      plate: plate,
+      floor: floor,
+      section: section,
+      slot: slot,
+    ));
     result.fold(
       (failure) => emit(VehicleMapError(failure.message)),
       (mapEntity) => emit(VehicleMapLoaded(mapEntity)),

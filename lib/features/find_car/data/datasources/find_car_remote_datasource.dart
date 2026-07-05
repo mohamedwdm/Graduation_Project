@@ -1,13 +1,19 @@
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/api_constants.dart';
 import '../models/car_model.dart';
-import '../models/vehicle_map_model.dart';
 
 abstract class FindCarRemoteDataSource {
-  Future<List<CarModel>> searchCars(String query, {String? floor, String? section});
+  Future<List<CarModel>> searchCars(
+    String query, {
+    String? floor,
+    String? section,
+    String? brand,
+    String? color,
+  });
   Future<List<String>> getFloors();
   Future<List<String>> getSections();
-  Future<VehicleMapModel> getVehicleMap(String plate);
+  Future<String> getSlotMap(int slotId);
+  Future<Map<String, dynamic>> getVehicleMap(String plate);
 }
 
 class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
@@ -16,16 +22,48 @@ class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
   FindCarRemoteDataSourceImpl(this._apiClient);
 
   @override
-  Future<VehicleMapModel> getVehicleMap(String plate) async {
-    final response = await _apiClient.get(ApiConstants.vehicleMap(plate));
-    if (response.data != null && response.data['data'] != null) {
-      return VehicleMapModel.fromJson(response.data['data'] as Map<String, dynamic>);
+  Future<String> getSlotMap(int slotId) async {
+    final response = await _apiClient.get(ApiConstants.slotMap(slotId));
+    final data = response.data;
+    if (data != null) {
+      if (data is String) {
+        return data.replaceAll('"', '').replaceAll("'", "").trim();
+      }
+      if (data is Map) {
+        final Map mapData = data['data'] is Map ? data['data'] : data;
+        final keys = ['map_path', 'map_image_path', 'image_path', 'path', 'map'];
+        for (final key in keys) {
+          if (mapData[key] != null) {
+            return mapData[key].toString().replaceAll('"', '').replaceAll("'", "").trim();
+          }
+        }
+        if (data['data'] is String) {
+          return data['data'].toString().replaceAll('"', '').replaceAll("'", "").trim();
+        }
+      }
     }
-    throw Exception('Failed to retrieve vehicle map');
+    throw Exception('Failed to retrieve slot map. Response was: $data');
   }
 
   @override
-  Future<List<CarModel>> searchCars(String query, {String? floor, String? section}) async {
+  Future<Map<String, dynamic>> getVehicleMap(String plate) async {
+    final response = await _apiClient.get(ApiConstants.vehicleMap(plate));
+    final data = response.data;
+    if (data != null && data is Map) {
+      final Map<String, dynamic> mapData = data['data'] is Map ? Map<String, dynamic>.from(data['data']) : {};
+      return mapData;
+    }
+    throw Exception('Failed to retrieve vehicle map. Response was: $data');
+  }
+
+  @override
+  Future<List<CarModel>> searchCars(
+    String query, {
+    String? floor,
+    String? section,
+    String? brand,
+    String? color,
+  }) async {
     final List<CarModel> allResults = [];
     final Set<String> uniquePlates = {};
 
@@ -45,6 +83,7 @@ class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
             plateNumber: plate,
             parkingLocation: '$floorVal, $sectionVal - Slot $slotVal',
             imagePath: json['image_path'] as String?,
+            slotId: json['slot_id'] != null ? int.tryParse(json['slot_id'].toString()) : null,
           ));
         }
       }
@@ -58,6 +97,12 @@ class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
         }
         if (section != null && section.isNotEmpty) {
           queryParameters['section'] = section;
+        }
+        if (brand != null && brand.isNotEmpty) {
+          queryParameters['type'] = brand;
+        }
+        if (color != null && color.isNotEmpty) {
+          queryParameters['color'] = color;
         }
         queryParameters.addAll(extraParams);
 
@@ -78,8 +123,6 @@ class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
 
     if (query.isNotEmpty) {
       futures.add(queryField({'plate_number': query}));
-      futures.add(queryField({'color': query}));
-      futures.add(queryField({'type': query}));
     } else {
       futures.add(queryField({}));
     }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go2car/features/auth/domain/entities/user_entity.dart';
+import 'package:go2car/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:go2car/features/home/presentation/views/home_view.dart';
 import 'package:go2car/features/slots/presentation/views/slots_view.dart';
 import 'package:go2car/features/find_car/presentation/views/find_car_view.dart';
@@ -26,13 +27,56 @@ class MainLayout extends StatefulWidget {
 
 class _MainLayoutState extends State<MainLayout> {
   int currentIndex = 0;
+  UserEntity? _currentUser;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentUser = widget.user;
+    if (_currentUser == null) {
+      _loadUser();
+    }
+  }
+
+  Future<void> _loadUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      final user = await sl<AuthLocalDataSource>().getCachedUser();
+      if (mounted) {
+        setState(() {
+          _currentUser = user;
+          _isLoading = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(
+            color: Color(0xff00A24F),
+          ),
+        ),
+      );
+    }
+
+    final user = _currentUser;
     final List<Widget> pages = [];
     final List<BottomNavigationBarItem> items = [];
 
-    if (widget.user?.isAdmin ?? false) {
+    if (user?.isAdmin ?? false) {
       pages.addAll([
        // const SlotsView(),
         const FindCarView(),
@@ -77,7 +121,7 @@ class _MainLayoutState extends State<MainLayout> {
           label: "Profile",
         ),
       ]);
-    } else if (widget.user?.isGuest ?? false) {
+    } else if (user?.isGuest ?? false) {
       pages.addAll([
         const SlotsView(),
         const FindCarView(),
@@ -148,8 +192,8 @@ class _MainLayoutState extends State<MainLayout> {
           setState(() {
             currentIndex = index;
           });
-          final isProfileTab = (widget.user?.isGuest ?? false) ? index == 2 : index == 3;
-          if (isProfileTab && !(widget.user?.isAdmin ?? false) && !(widget.user?.isGuest ?? false)) {
+          final isProfileTab = (user?.isGuest ?? false) ? index == 2 : index == 3;
+          if (isProfileTab && !(user?.isAdmin ?? false) && !(user?.isGuest ?? false)) {
             final savedCarsCubit = context.read<SavedCarsCubit>();
             if (savedCarsCubit.state is SavedCarsInitial || savedCarsCubit.state is SavedCarsError) {
               savedCarsCubit.loadSavedCars();

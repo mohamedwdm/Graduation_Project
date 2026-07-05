@@ -51,7 +51,7 @@ abstract class AppRouter {
       GoRoute(
         path: homePath,
         builder: (context, state) {
-          final user = state.extra as UserEntity;
+          final user = state.extra as UserEntity?;
           return MainLayout(user: user);
         },
       ),

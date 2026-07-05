@@ -11,7 +11,13 @@ class SearchCarsUseCase implements UseCase<List<CarEntity>, SearchCarsParams> {
 
   @override
   FutureEither<List<CarEntity>> call(SearchCarsParams params) {
-    return _repository.searchCars(params.query, floor: params.floor, section: params.section);
+    return _repository.searchCars(
+      params.query,
+      floor: params.floor,
+      section: params.section,
+      brand: params.brand,
+      color: params.color,
+    );
   }
 }
 
@@ -19,13 +25,17 @@ class SearchCarsParams extends Equatable {
   final String query;
   final String? floor;
   final String? section;
+  final String? brand;
+  final String? color;
 
   const SearchCarsParams({
     required this.query,
     this.floor,
     this.section,
+    this.brand,
+    this.color,
   });
 
   @override
-  List<Object?> get props => [query, floor, section];
+  List<Object?> get props => [query, floor, section, brand, color];
 }

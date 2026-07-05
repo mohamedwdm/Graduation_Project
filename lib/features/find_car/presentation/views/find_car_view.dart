@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../core/di/injection_container.dart';
 import '../manager/find_car_cubit/find_car_cubit.dart';
 import '../manager/find_car_cubit/find_car_state.dart';
 import '../widgets/car_card.dart';
@@ -87,7 +86,7 @@ class _FindCarBodyState extends State<_FindCarBody> {
                     style: GoogleFonts.spaceGrotesk(color: textColor, fontSize: 16),
                     onChanged: (query) => context.read<FindCarCubit>().searchCars(query),
                     decoration: InputDecoration(
-                      hintText: "Plate number, model or color",
+                      hintText: "Enter plate number",
                       hintStyle: GoogleFonts.spaceGrotesk(
                         color: hintColor,
                         fontSize: 16,
@@ -123,58 +122,117 @@ class _FindCarBodyState extends State<_FindCarBody> {
             final cubit = context.read<FindCarCubit>();
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: Row(
+              child: Column(
                 children: [
-                  Expanded(
-                    child: _buildFilterDropdown<String?>(
-                      context: context,
-                      value: cubit.floor,
-                      hint: "All Floors",
-                      icon: Icons.layers_outlined,
-                      items: [
-                        const DropdownMenuItem(value: null, child: Text("All Floors")),
-                        ...cubit.floorsList.map(
-                          (floorVal) => DropdownMenuItem(
-                            value: floorVal,
-                            child: Text(floorVal),
-                          ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildFilterDropdown<String?>(
+                          context: context,
+                          value: cubit.floor,
+                          hint: "All Floors",
+                          icon: Icons.layers_outlined,
+                          items: [
+                            const DropdownMenuItem(value: null, child: Text("All Floors")),
+                            ...cubit.floorsList.map(
+                              (floorVal) => DropdownMenuItem(
+                                value: floorVal,
+                                child: Text(floorVal),
+                              ),
+                            ),
+                            if (cubit.floor != null && !cubit.floorsList.contains(cubit.floor))
+                              DropdownMenuItem(
+                                value: cubit.floor,
+                                child: Text(cubit.floor!),
+                              ),
+                          ],
+                          onChanged: (val) {
+                            cubit.updateFloor(val);
+                          },
                         ),
-                        if (cubit.floor != null && !cubit.floorsList.contains(cubit.floor))
-                          DropdownMenuItem(
-                            value: cubit.floor,
-                            child: Text(cubit.floor!),
-                          ),
-                      ],
-                      onChanged: (val) {
-                        cubit.updateFloor(val);
-                      },
-                    ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _buildFilterDropdown<String?>(
+                          context: context,
+                          value: cubit.section,
+                          hint: "All Sections",
+                          icon: Icons.grid_view_outlined,
+                          items: [
+                            const DropdownMenuItem(value: null, child: Text("All Sections")),
+                            ...cubit.sectionsList.map(
+                              (sectionVal) => DropdownMenuItem(
+                                value: sectionVal,
+                                child: Text(sectionVal.length == 1 ? "Sec $sectionVal" : sectionVal),
+                              ),
+                            ),
+                            if (cubit.section != null && !cubit.sectionsList.contains(cubit.section))
+                              DropdownMenuItem(
+                                value: cubit.section,
+                                child: Text(cubit.section!.length == 1 ? "Sec ${cubit.section!}" : cubit.section!),
+                              ),
+                          ],
+                          onChanged: (val) {
+                            cubit.updateSection(val);
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildFilterDropdown<String?>(
-                      context: context,
-                      value: cubit.section,
-                      hint: "All Sections",
-                      icon: Icons.grid_view_outlined,
-                      items: [
-                        const DropdownMenuItem(value: null, child: Text("All Sections")),
-                        ...cubit.sectionsList.map(
-                          (sectionVal) => DropdownMenuItem(
-                            value: sectionVal,
-                            child: Text(sectionVal.length == 1 ? "Sec $sectionVal" : sectionVal),
-                          ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildFilterDropdown<String?>(
+                          context: context,
+                          value: cubit.brand,
+                          hint: "All Brands",
+                          icon: Icons.directions_car_outlined,
+                          items: [
+                            const DropdownMenuItem(value: null, child: Text("All Brands")),
+                            ...[
+                              'Ashok Leyland', 'Audi', 'Bentley', 'Bharat Benz', 'BMW', 
+                              'Eicher Motors', 'Ford', 'Honda', 'Hyundai', 'Jaguar', 
+                              'KIA', 'Land Rover', 'Mahindra', 'Maruti Suzuki', 'Mercedes', 
+                              'MG Motors', 'Nissan', 'Renault', 'Rolls Royce', 'Skoda', 
+                              'Swaraj Mazda', 'Tata', 'Toyota', 'Volkswagen', 'Volvo', 
+                              'Chevrolet', 'Citreon', 'Fiat', 'Jeep'
+                            ].map(
+                              (brandVal) => DropdownMenuItem(
+                                value: brandVal,
+                                child: Text(brandVal),
+                              ),
+                            ),
+                          ],
+                          onChanged: (val) {
+                            cubit.updateBrand(val);
+                          },
                         ),
-                        if (cubit.section != null && !cubit.sectionsList.contains(cubit.section))
-                          DropdownMenuItem(
-                            value: cubit.section,
-                            child: Text(cubit.section!.length == 1 ? "Sec ${cubit.section!}" : cubit.section!),
-                          ),
-                      ],
-                      onChanged: (val) {
-                        cubit.updateSection(val);
-                      },
-                    ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _buildFilterDropdown<String?>(
+                          context: context,
+                          value: cubit.color,
+                          hint: "All Colors",
+                          icon: Icons.color_lens_outlined,
+                          items: [
+                            const DropdownMenuItem(value: null, child: Text("All Colors")),
+                            ...[
+                              "black", "blue", "brown", "green", "grey", "orange", "red", "silver", "white", "yellow"
+                            ].map(
+                              (colorVal) => DropdownMenuItem(
+                                value: colorVal,
+                                child: Text(colorVal[0].toUpperCase() + colorVal.substring(1)),
+                              ),
+                            ),
+                          ],
+                          onChanged: (val) {
+                            cubit.updateColor(val);
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

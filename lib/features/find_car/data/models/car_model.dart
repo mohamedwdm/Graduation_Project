@@ -9,6 +9,7 @@ class CarModel extends CarEntity {
     required super.plateNumber,
     required super.parkingLocation,
     super.imagePath,
+    super.slotId,
   });
 
   factory CarModel.fromJson(JsonMap json) {
@@ -19,6 +20,7 @@ class CarModel extends CarEntity {
       plateNumber: json['plate_number'] as String? ?? '',
       parkingLocation: json['parking_location'] as String? ?? '',
       imagePath: json['image_path'] as String?,
+      slotId: json['slot_id'] != null ? int.tryParse(json['slot_id'].toString()) : null,
     );
   }
 
@@ -30,6 +32,7 @@ class CarModel extends CarEntity {
       plateNumber: entity.plateNumber,
       parkingLocation: entity.parkingLocation,
       imagePath: entity.imagePath,
+      slotId: entity.slotId,
     );
   }
 
@@ -41,6 +44,7 @@ class CarModel extends CarEntity {
       'plate_number': plateNumber,
       'parking_location': parkingLocation,
       'image_path': imagePath,
+      'slot_id': slotId,
     };
   }
 }

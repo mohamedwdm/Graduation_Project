@@ -14,6 +14,8 @@ class FindCarCubit extends Cubit<FindCarState> {
   String _query = '';
   String? _floor;
   String? _section;
+  String? _brand;
+  String? _color;
 
   List<String> _floors = [];
   List<String> _sections = [];
@@ -21,6 +23,8 @@ class FindCarCubit extends Cubit<FindCarState> {
   String get query => _query;
   String? get floor => _floor;
   String? get section => _section;
+  String? get brand => _brand;
+  String? get color => _color;
   List<String> get floorsList => _floors;
   List<String> get sectionsList => _sections;
 
@@ -60,16 +64,32 @@ class FindCarCubit extends Cubit<FindCarState> {
     await _performSearch();
   }
 
+  Future<void> updateBrand(String? newBrand) async {
+    _brand = newBrand;
+    await _performSearch();
+  }
+
+  Future<void> updateColor(String? newColor) async {
+    _color = newColor;
+    await _performSearch();
+  }
+
   Future<void> clearSearch() async {
     _query = '';
     _floor = null;
     _section = null;
+    _brand = null;
+    _color = null;
     emit(const FindCarInitial());
   }
 
   Future<void> _performSearch() async {
     final trimmedQuery = _query.trim();
-    if (trimmedQuery.isEmpty && (_floor == null || _floor!.isEmpty) && (_section == null || _section!.isEmpty)) {
+    if (trimmedQuery.isEmpty && 
+        (_floor == null || _floor!.isEmpty) && 
+        (_section == null || _section!.isEmpty) &&
+        (_brand == null || _brand!.isEmpty) &&
+        (_color == null || _color!.isEmpty)) {
       emit(const FindCarInitial());
       return;
     }
@@ -78,6 +98,8 @@ class FindCarCubit extends Cubit<FindCarState> {
       query: trimmedQuery,
       floor: _floor,
       section: _section,
+      brand: _brand,
+      color: _color,
     ));
     result.fold(
       (failure) => emit(FindCarError(failure.message)),

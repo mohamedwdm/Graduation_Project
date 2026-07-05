@@ -32,6 +32,8 @@ class SlotsRepositoryImpl implements SlotsRepository {
       return Right(remoteSlots);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message, statusCode: e.statusCode));
+    } on AppException catch (e) {
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -48,6 +50,8 @@ class SlotsRepositoryImpl implements SlotsRepository {
       return Right(remoteSlot);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message, statusCode: e.statusCode));
+    } on AppException catch (e) {
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -62,6 +66,9 @@ class SlotsRepositoryImpl implements SlotsRepository {
         .handleError((error) {
           if (error is ServerException) {
             return Left(ServerFailure(error.message, statusCode: error.statusCode));
+          }
+          if (error is AppException) {
+            return Left(ServerFailure(error.message));
           }
           return Left(ServerFailure(error.toString()));
         });

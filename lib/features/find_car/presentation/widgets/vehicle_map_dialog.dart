@@ -3,19 +3,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/config/env_config.dart';
 import '../../../../core/di/injection_container.dart';
+import '../../domain/entities/car_entity.dart';
 import '../manager/vehicle_map_cubit/vehicle_map_cubit.dart';
 import '../manager/vehicle_map_cubit/vehicle_map_state.dart';
 
 class VehicleMapDialog extends StatelessWidget {
-  final String plateNumber;
+  final CarEntity car;
+  final bool fetchByPlate;
 
-  const VehicleMapDialog({super.key, required this.plateNumber});
+  const VehicleMapDialog({super.key, required this.car, this.fetchByPlate = false});
 
-  static Future<void> show(BuildContext context, String plateNumber) {
+  static Future<void> show(BuildContext context, CarEntity car, {bool fetchByPlate = false}) {
     return showDialog(
       context: context,
       barrierDismissible: true,
-      builder: (context) => VehicleMapDialog(plateNumber: plateNumber),
+      builder: (context) => VehicleMapDialog(car: car, fetchByPlate: fetchByPlate),
     );
   }
 
@@ -28,8 +30,33 @@ class VehicleMapDialog extends StatelessWidget {
     final cardBgColor = isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC);
     final borderColor = isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
 
+    // Parse floor, section, slot from car.parkingLocation
+    String floor = 'Unknown';
+    String section = 'Unknown';
+    String slot = 'Unknown';
+    
+    final parts = car.parkingLocation.split(',');
+    if (parts.isNotEmpty) {
+      floor = parts[0].trim();
+    }
+    if (parts.length > 1) {
+      final secParts = parts[1].split('-');
+      if (secParts.isNotEmpty) {
+        section = secParts[0].trim();
+      }
+      if (secParts.length > 1) {
+        slot = secParts[1].replaceAll('Slot', '').trim();
+      }
+    }
+
     return BlocProvider<VehicleMapCubit>(
-      create: (context) => sl<VehicleMapCubit>()..fetchVehicleMap(plateNumber),
+      create: (context) => sl<VehicleMapCubit>()..fetchVehicleMap(
+        slotId: fetchByPlate ? null : car.slotId,
+        plate: fetchByPlate ? car.plateNumber : null,
+        floor: floor,
+        section: section,
+        slot: slot,
+      ),
       child: Dialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
@@ -62,7 +89,7 @@ class VehicleMapDialog extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Vehicle: $plateNumber',
+                          'Vehicle: ${car.plateNumber}',
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 14,
                             color: subtitleColor,
@@ -120,7 +147,13 @@ class VehicleMapDialog extends StatelessWidget {
                                   ),
                                 ),
                                 onPressed: () {
-                                  context.read<VehicleMapCubit>().fetchVehicleMap(plateNumber);
+                                  context.read<VehicleMapCubit>().fetchVehicleMap(
+                                    slotId: fetchByPlate ? null : car.slotId,
+                                    plate: fetchByPlate ? car.plateNumber : null,
+                                    floor: floor,
+                                    section: section,
+                                    slot: slot,
+                                  );
                                 },
                                 child: Text(
                                   'Retry',
@@ -198,40 +231,45 @@ class VehicleMapDialog extends StatelessWidget {
                               child: InteractiveViewer(
                                 maxScale: 5.0,
                                 minScale: 0.5,
-                                child: Image.network(
-                                  mapUrl,
-                                  fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Center(
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Icons.broken_image_outlined,
-                                            size: 48,
-                                            color: subtitleColor,
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            'Failed to load map image',
-                                            style: GoogleFonts.spaceGrotesk(
-                                              fontSize: 14,
-                                              color: subtitleColor,
+                                child: map.mapPath.startsWith('assets/')
+                                    ? Image.asset(
+                                        map.mapPath,
+                                        fit: BoxFit.contain,
+                                      )
+                                    : Image.network(
+                                        mapUrl,
+                                        fit: BoxFit.contain,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          return Center(
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  Icons.broken_image_outlined,
+                                                  size: 48,
+                                                  color: subtitleColor,
+                                                ),
+                                                const SizedBox(height: 8),
+                                                Text(
+                                                  'Failed to load map image',
+                                                  style: GoogleFonts.spaceGrotesk(
+                                                    fontSize: 14,
+                                                    color: subtitleColor,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ),
-                                        ],
+                                          );
+                                        },
+                                        loadingBuilder: (context, child, loadingProgress) {
+                                          if (loadingProgress == null) return child;
+                                          return const Center(
+                                            child: CircularProgressIndicator(
+                                              color: Color(0xFF00A24F),
+                                            ),
+                                          );
+                                        },
                                       ),
-                                    );
-                                  },
-                                  loadingBuilder: (context, child, loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return const Center(
-                                      child: CircularProgressIndicator(
-                                        color: Color(0xFF00A24F),
-                                      ),
-                                    );
-                                  },
-                                ),
                               ),
                             ),
                           ),

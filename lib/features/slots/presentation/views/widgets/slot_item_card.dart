@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go2car/core/di/injection_container.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../auth/data/datasources/auth_local_datasource.dart';
+import '../../../../find_car/domain/entities/car_entity.dart';
+import '../../../../find_car/presentation/widgets/vehicle_map_dialog.dart';
 import '../../../domain/entities/slot_entity.dart';
 
 class SlotItemCard extends StatelessWidget {
@@ -201,7 +203,15 @@ class SlotItemCard extends StatelessWidget {
                           context.push('/reserve-slot?slotCode=${slot.slotId}');
                         }
                       } else {
-                        // Navigate logic if any
+                        final tempCar = CarEntity(
+                          id: slot.id,
+                          model: '',
+                          color: '',
+                          plateNumber: slot.label,
+                          parkingLocation: 'Floor ${slot.floor}, Section ${slot.section} - Slot ${slot.label}',
+                          slotId: int.tryParse(slot.id),
+                        );
+                        VehicleMapDialog.show(context, tempCar);
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -229,7 +239,17 @@ class SlotItemCard extends StatelessWidget {
                 child: SizedBox(
                   height: 48,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      final tempCar = CarEntity(
+                        id: slot.id,
+                        model: '',
+                        color: '',
+                        plateNumber: slot.label,
+                        parkingLocation: 'Floor ${slot.floor}, Section ${slot.section} - Slot ${slot.label}',
+                        slotId: int.tryParse(slot.id),
+                      );
+                      VehicleMapDialog.show(context, tempCar);
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: mapBtnBgColor,
                       foregroundColor: mapBtnTextColor,

@@ -62,21 +62,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<AuthResponseModel> loginAsGuest() async {
-    // This is currently a dummy implementation until the backend endpoint is ready.
-    // In the future, this will call:
-    // await _apiClient.post(ApiConstants.loginGuest);
-    
-    await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
-    
-    return AuthResponseModel(
-      token: 'guest_token_from_server',
-      user: UserModel.fromJson(const {
-        'userid': 'guest_id_from_server',
-        'name': 'Guest User',
-        'email': 'guest@go2car.com',
-        'role': 'guest',
-      }),
-    );
+    final response = await _apiClient.post(ApiConstants.loginGuest);
+    return AuthResponseModel.fromJson(response.data as Map<String, dynamic>);
   }
 
   @override
