@@ -15,10 +15,16 @@ class AdminNotifications extends StatefulWidget {
 }
 
 class _AdminNotificationsState extends State<AdminNotifications> {
+  bool _showOnlyFlagged = false;
+
   @override
   void initState() {
     super.initState();
-    context.read<AdminNotificationsCubit>().loadOverview();
+    _loadLogs();
+  }
+
+  void _loadLogs() {
+    context.read<AdminNotificationsCubit>().loadOverview(onlyFlagged: _showOnlyFlagged);
   }
 
   @override
@@ -28,8 +34,6 @@ class _AdminNotificationsState extends State<AdminNotifications> {
         isDark ? const Color(0xff0F172A) : const Color(0xffF6F8F6);
     final appBarBg = isDark ? const Color(0xff0F172A) : const Color(0xffF6F8F6);
     final titleColor = isDark ? Colors.white : const Color(0xff0F172A);
-    // final avatarBg = isDark ? const Color(0xff1E293B) : const Color(0xffE2E8F0);
-    // final iconColor = isDark ? Colors.white70 : const Color(0xff0F172A);
 
     return Scaffold(
       backgroundColor: scaffoldBg,
@@ -45,56 +49,112 @@ class _AdminNotificationsState extends State<AdminNotifications> {
             color: titleColor,
           ),
         ),
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(Icons.book_online_outlined, color: iconColor),
-        //     tooltip: 'Manage Bookings',
-        //     onPressed: () => context.push(AppRouter.adminReservationsPath),
-        //   ),
-        //   Padding(
-        //     padding: const EdgeInsets.only(right: 16.0),
-        //     child: CircleAvatar(
-        //       radius: 20,
-        //       backgroundColor: avatarBg,
-        //       child: Icon(
-        //         Icons.notifications_none_outlined,
-        //         color: iconColor,
-        //         size: 24,
-        //       ),
-        //     ),
-        //   ),
-        // ],
       ),
-      body: BlocConsumer<AdminNotificationsCubit, AdminNotificationsState>(
-        listener: (context, state) {
-          if (state is AdminNotificationsForbidden) {
-            context.go(AppRouter.homePath);
-          }
-        },
-        builder: (context, state) {
-          if (state is AdminNotificationsLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Filter Bar
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Filters',
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white70 : const Color(0xff64748B),
+                  ),
+                ),
+                Row(
+                  children: [
+                    ChoiceChip(
+                      label: Text(
+                        'All Logs',
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: !_showOnlyFlagged
+                              ? Colors.white
+                              : (isDark ? Colors.white70 : const Color(0xff0f172a)),
+                        ),
+                      ),
+                      selected: !_showOnlyFlagged,
+                      selectedColor: const Color(0xff00A24F),
+                      backgroundColor: isDark ? const Color(0xff1e293b) : const Color(0xffe2e8f0),
+                      onSelected: (selected) {
+                        if (selected) {
+                          setState(() {
+                            _showOnlyFlagged = false;
+                            _loadLogs();
+                          });
+                        }
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                    ChoiceChip(
+                      label: Text(
+                        'Flagged Only',
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: _showOnlyFlagged
+                              ? Colors.white
+                              : (isDark ? Colors.white70 : const Color(0xff0f172a)),
+                        ),
+                      ),
+                      selected: _showOnlyFlagged,
+                      selectedColor: Colors.redAccent,
+                      backgroundColor: isDark ? const Color(0xff1e293b) : const Color(0xffe2e8f0),
+                      onSelected: (selected) {
+                        if (selected) {
+                          setState(() {
+                            _showOnlyFlagged = true;
+                            _loadLogs();
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: BlocConsumer<AdminNotificationsCubit, AdminNotificationsState>(
+                listener: (context, state) {
+                  if (state is AdminNotificationsForbidden) {
+                    context.go(AppRouter.homePath);
+                  }
+                },
+                builder: (context, state) {
+                  if (state is AdminNotificationsLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-          if (state is AdminNotificationsError) {
-            return Center(child: Text(state.message));
-          }
+                  if (state is AdminNotificationsError) {
+                    return Center(child: Text(state.message));
+                  }
 
-          if (state is AdminNotificationsLoaded) {
-            final overview = state.overview;
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ActivityLogSectionWidget(activities: overview.activityLog),
-                ],
+                  if (state is AdminNotificationsLoaded) {
+                    final overview = state.overview;
+                    return RefreshIndicator(
+                      color: const Color(0xff00A24F),
+                      onRefresh: () async => _loadLogs(),
+                      child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: ActivityLogSectionWidget(activities: overview.activityLog),
+                      ),
+                    );
+                  }
+
+                  return const SizedBox.shrink();
+                },
               ),
-            );
-          }
-
-          return const SizedBox.shrink();
-        },
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -12,9 +12,10 @@ class AdminNotificationsRemoteDataSourceImpl implements AdminNotificationsDataSo
       : _apiClient = apiClient;
 
   @override
-  Future<AdminNotificationsModel> fetchAdminNotifications() async {
+  Future<AdminNotificationsModel> fetchAdminNotifications({bool onlyFlagged = false}) async {
     try {
-      final response = await _apiClient.get('/detection-logs/');
+      final endpoint = onlyFlagged ? '/detection-logs/flagged' : '/detection-logs/';
+      final response = await _apiClient.get(endpoint);
 
       if (response.statusCode == 200) {
         final List dataList = response.data as List? ?? [];

@@ -12,10 +12,10 @@ class AdminNotificationsCubit extends Cubit<AdminNotificationsState> {
   })  : _getParkingOverviewUseCase = getParkingOverviewUseCase,
         super(AdminNotificationsInitial());
 
-  Future<void> loadOverview() async {
+  Future<void> loadOverview({bool onlyFlagged = false}) async {
     emit(AdminNotificationsLoading());
 
-    final result = await _getParkingOverviewUseCase(const NoParams());
+    final result = await _getParkingOverviewUseCase(onlyFlagged);
 
     result.fold(
       (failure) {

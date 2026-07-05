@@ -17,10 +17,10 @@ class AdminNotificationsRepositoryImpl implements AdminNotificationsRepository {
   });
 
   @override
-  FutureEither<AdminNotificationsEntity> getAdminNotifications() async {
+  FutureEither<AdminNotificationsEntity> getAdminNotifications({bool onlyFlagged = false}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await dataSource.fetchAdminNotifications();
+        final result = await dataSource.fetchAdminNotifications(onlyFlagged: onlyFlagged);
         return Right(result);
       } on ForbiddenException {
         return const Left(ForbiddenFailure('Access Denied: Admin Only'));
