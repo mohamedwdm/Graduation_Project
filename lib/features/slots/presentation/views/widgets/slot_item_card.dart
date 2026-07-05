@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go2car/core/di/injection_container.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../auth/data/datasources/auth_local_datasource.dart';
+
+import 'package:go2car/core/network/api_client.dart';
 import '../../../../find_car/domain/entities/car_entity.dart';
 import '../../../../find_car/presentation/widgets/vehicle_map_dialog.dart';
 import '../../../domain/entities/slot_entity.dart';
@@ -75,7 +76,7 @@ class SlotItemCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    slot.slotId,
+                    'Slot ${slot.slotNumber}',
                     style: TextStyle(
                       fontFamily: 'Space Grotesk',
                       fontWeight: FontWeight.w700,
@@ -149,8 +150,7 @@ class SlotItemCard extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       if (slot.isAvailable) {
-                        final token = sl<AuthLocalDataSource>().getToken();
-                        final isGuest = token == 'guest_token_from_server';
+                        final isGuest = sl<ApiClient>().isGuest;
                         if (isGuest) {
                           showDialog(
                             context: context,
@@ -208,7 +208,7 @@ class SlotItemCard extends StatelessWidget {
                           model: '',
                           color: '',
                           plateNumber: slot.label,
-                          parkingLocation: 'Floor ${slot.floor}, Section ${slot.section} - Slot ${slot.label}',
+                          parkingLocation: 'Floor ${slot.floor}, ${slot.sectionNameDisplay} - Slot ${slot.slotNumber}',
                           slotId: int.tryParse(slot.id),
                         );
                         VehicleMapDialog.show(context, tempCar);
@@ -245,7 +245,7 @@ class SlotItemCard extends StatelessWidget {
                         model: '',
                         color: '',
                         plateNumber: slot.label,
-                        parkingLocation: 'Floor ${slot.floor}, Section ${slot.section} - Slot ${slot.label}',
+                        parkingLocation: 'Floor ${slot.floor}, ${slot.sectionNameDisplay} - Slot ${slot.slotNumber}',
                         slotId: int.tryParse(slot.id),
                       );
                       VehicleMapDialog.show(context, tempCar);

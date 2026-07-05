@@ -20,22 +20,51 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _plateController;
   late final TextEditingController _colorController;
-  String _selectedCarType = 'Sedan';
+  String _selectedCarType = 'Toyota';
 
   final List<String> _carTypes = [
-    'Sedan',
-    'SUV',
-    'Hatchbacks',
-    'Pickup Truck',
-    'Sports Car',
+    'Ashok Leyland',
+    'Audi',
+    'Bentley',
+    'Bharat Benz',
+    'BMW',
+    'Eicher Motors',
+    'Ford',
+    'Honda',
+    'Hyundai',
+    'Jaguar',
+    'KIA',
+    'Land Rover',
+    'Mahindra',
+    'Maruti Suzuki',
+    'Mercedes',
+    'MG Motors',
+    'Nissan',
+    'Renault',
+    'Rolls Royce',
+    'Skoda',
+    'Swaraj Mazda',
+    'Tata',
+    'Toyota',
+    'Volkswagen',
+    'Volvo',
+    'Chevrolet',
+    'Citreon',
+    'Fiat',
+    'Jeep',
   ];
 
   @override
   void initState() {
     super.initState();
-    _plateController = TextEditingController(text: widget.car.plateNumber);
+    _plateController = TextEditingController(
+        text: widget.car.plateNumber.startsWith('UNKNOWN')
+            ? ''
+            : widget.car.plateNumber);
     _colorController = TextEditingController(text: widget.car.color);
-    _selectedCarType = _carTypes.contains(widget.car.model) ? widget.car.model : 'Sedan';
+    _selectedCarType = _carTypes.contains(widget.car.model)
+        ? widget.car.model
+        : 'Toyota';
   }
 
   @override
@@ -47,11 +76,17 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
+      final plate = _plateController.text.trim();
+      final finalPlate = plate.isEmpty
+          ? (widget.car.plateNumber.startsWith('UNKNOWN')
+              ? widget.car.plateNumber
+              : 'UNKNOWN-${DateTime.now().millisecondsSinceEpoch}')
+          : plate;
       final updatedCar = SavedCarEntity(
         id: widget.car.id,
         model: _selectedCarType,
         color: _colorController.text,
-        plateNumber: _plateController.text,
+        plateNumber: finalPlate,
       );
       context.read<SavedCarFormCubit>().updateCar(updatedCar);
     }
@@ -79,7 +114,7 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
           ),
         ),
         content: Text(
-          'Are you sure you want to delete this car (${widget.car.plateNumber})? This action cannot be undone.',
+          'Are you sure you want to delete this car (${widget.car.plateNumber.startsWith('UNKNOWN') ? 'No Plate' : widget.car.plateNumber})? This action cannot be undone.',
           style: GoogleFonts.manrope(
             color: contentColor,
           ),
@@ -214,7 +249,7 @@ class _EditSavedCarViewState extends State<EditSavedCarView> {
                 _buildLabel('License Plate'),
                 _buildTextField(
                   controller: _plateController,
-                  validator: (val) => val == null || val.isEmpty ? 'Required' : null,
+                  validator: null,
                 ),
                 const SizedBox(height: 20),
                 _buildLabel('Color'),

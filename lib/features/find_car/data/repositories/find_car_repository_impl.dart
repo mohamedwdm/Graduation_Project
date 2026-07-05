@@ -92,12 +92,22 @@ class FindCarRepositoryImpl implements FindCarRepository {
     required String section,
     required String slot,
   }) async {
+    String cleanSlotNumber(String s) => s.replaceAll(RegExp(r'slot\s*', caseSensitive: false), '').trim();
+    String cleanSectionDisplay(String sec) => sec.replaceAll(RegExp(r'section\s*', caseSensitive: false), '').trim();
+    String cleanSectionNameDisplay(String sec) {
+      final clean = cleanSectionDisplay(sec);
+      return clean.isNotEmpty ? 'Section $clean' : '';
+    }
+
     if (isMockMode) {
       return Right(VehicleMapEntity(
         mapPath: '/static/maps/floor1.png',
         slot: slot,
         section: section,
         floor: floor,
+        slotNumber: cleanSlotNumber(slot),
+        sectionDisplay: cleanSectionDisplay(section),
+        sectionNameDisplay: cleanSectionNameDisplay(section),
       ));
     }
 
@@ -108,11 +118,18 @@ class FindCarRepositoryImpl implements FindCarRepository {
     try {
       if (plate != null) {
         final mapData = await _remoteDataSource.getVehicleMap(plate);
+        final mapSlot = mapData['slot']?.toString() ?? slot;
+        final mapSection = mapData['section']?.toString() ?? section;
+        final mapFloor = mapData['floor']?.toString() ?? floor;
+
         return Right(VehicleMapEntity(
           mapPath: mapData['map_path']?.toString() ?? '',
-          slot: mapData['slot']?.toString() ?? slot,
-          section: mapData['section']?.toString() ?? section,
-          floor: mapData['floor']?.toString() ?? floor,
+          slot: mapSlot,
+          section: mapSection,
+          floor: mapFloor,
+          slotNumber: mapData['slot_number']?.toString() ?? cleanSlotNumber(mapSlot),
+          sectionDisplay: mapData['section_display']?.toString() ?? cleanSectionDisplay(mapSection),
+          sectionNameDisplay: mapData['section_name_display']?.toString() ?? cleanSectionNameDisplay(mapSection),
         ));
       } else if (slotId != null) {
         final mapPath = await _remoteDataSource.getSlotMap(slotId);
@@ -121,6 +138,9 @@ class FindCarRepositoryImpl implements FindCarRepository {
           slot: slot,
           section: section,
           floor: floor,
+          slotNumber: cleanSlotNumber(slot),
+          sectionDisplay: cleanSectionDisplay(section),
+          sectionNameDisplay: cleanSectionNameDisplay(section),
         ));
       } else {
         return const Left(ServerFailure('Neither slotId nor plate was provided'));

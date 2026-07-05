@@ -4,6 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import '../manager/find_car_cubit/find_car_cubit.dart';
 import '../manager/find_car_cubit/find_car_state.dart';
 import '../widgets/car_card.dart';
+import '../../../profile/presentation/manager/saved_cars_cubit/saved_cars_cubit.dart';
+import '../../../profile/presentation/manager/saved_cars_cubit/saved_cars_state.dart';
+import '../../../../core/di/injection_container.dart';
+import '../../../../core/network/api_client.dart';
 
 class FindCarView extends StatelessWidget {
   const FindCarView({super.key});
@@ -45,9 +49,185 @@ class _FindCarBodyState extends State<_FindCarBody> {
   final _searchController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    final cubit = context.read<FindCarCubit>();
+    if (cubit.floorsList.isEmpty || cubit.sectionsList.isEmpty) {
+      cubit.loadFilters();
+    }
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _showSavedCarsPopup() {
+    final savedCarsCubit = context.read<SavedCarsCubit>();
+    final state = savedCarsCubit.state;
+
+    if (state is! SavedCarsLoaded) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Loading saved cars, please try again...',
+            style: GoogleFonts.spaceGrotesk(),
+          ),
+          backgroundColor: Colors.orangeAccent,
+        ),
+      );
+      savedCarsCubit.loadSavedCars();
+      return;
+    }
+
+    final cars = state.cars;
+    if (cars.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: Theme.of(context).dialogBackgroundColor,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text(
+            'No Saved Cars',
+            style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            'You do not have any saved cars. Please add cars in your profile page.',
+            style: GoogleFonts.spaceGrotesk(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                'OK',
+                style: GoogleFonts.spaceGrotesk(
+                  color: const Color(0xff00A24F),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    if (cars.length == 1) {
+      final car = cars.first;
+      _selectCarForSearch(car);
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (bottomSheetContext) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final listBgColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+        final titleColor = isDark ? Colors.white : const Color(0xFF0F172A);
+        final plateColor = isDark ? Colors.white70 : const Color(0xFF64748B);
+
+        return Container(
+          decoration: BoxDecoration(
+            color: listBgColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white30 : Colors.black12,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Select Saved Car',
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: titleColor,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: cars.length,
+                  itemBuilder: (context, index) {
+                    final car = cars[index];
+                    final isNoPlate = car.plateNumber.startsWith('UNKNOWN');
+                    final displayPlate = isNoPlate ? 'No Plate' : car.plateNumber;
+
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: isDark
+                              ? const Color(0xFF334155)
+                              : const Color(0xFFE2E8F0),
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor:
+                              const Color(0xff00A24F).withOpacity(0.1),
+                          child: const Icon(Icons.directions_car,
+                              color: Color(0xff00A24F)),
+                        ),
+                        title: Text(
+                          car.model,
+                          style: GoogleFonts.spaceGrotesk(
+                            fontWeight: FontWeight.w600,
+                            color: titleColor,
+                          ),
+                        ),
+                        subtitle: Text(
+                          '$displayPlate - ${car.color}',
+                          style: GoogleFonts.spaceGrotesk(
+                            color: plateColor,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.pop(bottomSheetContext);
+                          _selectCarForSearch(car);
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _selectCarForSearch(dynamic car) {
+    final isUnknown = car.plateNumber.startsWith('UNKNOWN');
+    final plate = isUnknown ? '' : car.plateNumber;
+
+    setState(() {
+      _searchController.text = plate;
+    });
+
+    context.read<FindCarCubit>().searchWithSavedCar(
+          plateNumber: plate,
+          brand: car.model,
+          color: car.color.toLowerCase().trim(),
+        );
   }
 
   @override
@@ -62,9 +242,25 @@ class _FindCarBodyState extends State<_FindCarBody> {
     final closeIconColor = isDark ? Colors.white70 : const Color(0xFF475569);
     final headingColor = isDark ? Colors.white70 : const Color(0xFF475569);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      floatingActionButton: sl<ApiClient>().isGuest
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: _showSavedCarsPopup,
+              backgroundColor: const Color(0xff00A24F),
+              icon: const Icon(Icons.bookmarks_outlined, color: Colors.white),
+              label: Text(
+                "Search by Saved Cars",
+                style: GoogleFonts.spaceGrotesk(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
         // Search Bar
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -183,53 +379,73 @@ class _FindCarBodyState extends State<_FindCarBody> {
                   Row(
                     children: [
                       Expanded(
-                        child: _buildFilterDropdown<String?>(
-                          context: context,
-                          value: cubit.brand,
-                          hint: "All Brands",
-                          icon: Icons.directions_car_outlined,
-                          items: [
-                            const DropdownMenuItem(value: null, child: Text("All Brands")),
-                            ...[
+                        child: Builder(
+                          builder: (context) {
+                            final brandList = [
                               'Ashok Leyland', 'Audi', 'Bentley', 'Bharat Benz', 'BMW', 
                               'Eicher Motors', 'Ford', 'Honda', 'Hyundai', 'Jaguar', 
                               'KIA', 'Land Rover', 'Mahindra', 'Maruti Suzuki', 'Mercedes', 
                               'MG Motors', 'Nissan', 'Renault', 'Rolls Royce', 'Skoda', 
                               'Swaraj Mazda', 'Tata', 'Toyota', 'Volkswagen', 'Volvo', 
                               'Chevrolet', 'Citreon', 'Fiat', 'Jeep'
-                            ].map(
-                              (brandVal) => DropdownMenuItem(
-                                value: brandVal,
-                                child: Text(brandVal),
-                              ),
-                            ),
-                          ],
-                          onChanged: (val) {
-                            cubit.updateBrand(val);
-                          },
+                            ];
+                            return _buildFilterDropdown<String?>(
+                              context: context,
+                              value: cubit.brand,
+                              hint: "All Brands",
+                              icon: Icons.directions_car_outlined,
+                              items: [
+                                const DropdownMenuItem(value: null, child: Text("All Brands")),
+                                ...brandList.map(
+                                  (brandVal) => DropdownMenuItem(
+                                    value: brandVal,
+                                    child: Text(brandVal),
+                                  ),
+                                ),
+                                if (cubit.brand != null && !brandList.contains(cubit.brand))
+                                  DropdownMenuItem(
+                                    value: cubit.brand,
+                                    child: Text(cubit.brand!),
+                                  ),
+                              ],
+                              onChanged: (val) {
+                                cubit.updateBrand(val);
+                              },
+                            );
+                          }
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: _buildFilterDropdown<String?>(
-                          context: context,
-                          value: cubit.color,
-                          hint: "All Colors",
-                          icon: Icons.color_lens_outlined,
-                          items: [
-                            const DropdownMenuItem(value: null, child: Text("All Colors")),
-                            ...[
+                        child: Builder(
+                          builder: (context) {
+                            final colorList = [
                               "black", "blue", "brown", "green", "grey", "orange", "red", "silver", "white", "yellow"
-                            ].map(
-                              (colorVal) => DropdownMenuItem(
-                                value: colorVal,
-                                child: Text(colorVal[0].toUpperCase() + colorVal.substring(1)),
-                              ),
-                            ),
-                          ],
-                          onChanged: (val) {
-                            cubit.updateColor(val);
-                          },
+                            ];
+                            return _buildFilterDropdown<String?>(
+                              context: context,
+                              value: cubit.color,
+                              hint: "All Colors",
+                              icon: Icons.color_lens_outlined,
+                              items: [
+                                const DropdownMenuItem(value: null, child: Text("All Colors")),
+                                ...colorList.map(
+                                  (colorVal) => DropdownMenuItem(
+                                    value: colorVal,
+                                    child: Text(colorVal[0].toUpperCase() + colorVal.substring(1)),
+                                  ),
+                                ),
+                                if (cubit.color != null && !colorList.contains(cubit.color))
+                                  DropdownMenuItem(
+                                    value: cubit.color,
+                                    child: Text(cubit.color![0].toUpperCase() + cubit.color!.substring(1)),
+                                  ),
+                              ],
+                              onChanged: (val) {
+                                cubit.updateColor(val);
+                              },
+                            );
+                          }
                         ),
                       ),
                     ],
@@ -327,8 +543,9 @@ class _FindCarBodyState extends State<_FindCarBody> {
           ),
         ),
       ],
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildFilterDropdown<T>({
     required BuildContext context,

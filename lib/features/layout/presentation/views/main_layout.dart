@@ -22,11 +22,18 @@ class MainLayout extends StatefulWidget {
   const MainLayout({super.key, this.user});
 
   @override
-  State<MainLayout> createState() => _MainLayoutState();
+  State<MainLayout> createState() => MainLayoutState();
 }
 
-class _MainLayoutState extends State<MainLayout> {
+class MainLayoutState extends State<MainLayout> {
   int currentIndex = 0;
+  
+  void changeTab(int index) {
+    setState(() {
+      currentIndex = index;
+    });
+  }
+
   UserEntity? _currentUser;
   bool _isLoading = false;
 
@@ -119,12 +126,17 @@ class _MainLayoutState extends State<MainLayout> {
       ]);
     } else if (user?.isGuest ?? false) {
       pages.addAll([
+        const HomeView(isGuest: true),
         const SlotsView(),
         const FindCarView(),
         const ProfileView(isAdmin: false),
       ]);
 
       items.addAll([
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.home_outlined),
+          label: "Home",
+        ),
         const BottomNavigationBarItem(
           icon: Icon(Icons.local_parking_outlined),
           label: "Slots",
@@ -134,8 +146,8 @@ class _MainLayoutState extends State<MainLayout> {
           label: "Find Car",
         ),
         const BottomNavigationBarItem(
-          icon: Icon(Icons.person_outline),
-          label: "Profile",
+          icon: Icon(Icons.settings_outlined),
+          label: "Settings",
         ),
       ]);
     } else {
@@ -189,11 +201,10 @@ class _MainLayoutState extends State<MainLayout> {
           setState(() {
             currentIndex = index;
           });
-          final isProfileTab =
-              (user?.isGuest ?? false) ? index == 2 : index == 3;
-          if (isProfileTab &&
-              !(user?.isAdmin ?? false) &&
-              !(user?.isGuest ?? false)) {
+          // Guest now has 4 tabs (Home=0, Slots=1, FindCar=2, Profile=3)
+          // Regular user also has 4 tabs (Home=0, Slots=1, FindCar=2, Profile=3)
+          final isProfileTab = index == 3;
+          if (isProfileTab && !(user?.isAdmin ?? false) && !(user?.isGuest ?? false)) {
             final savedCarsCubit = context.read<SavedCarsCubit>();
             if (savedCarsCubit.state is SavedCarsInitial ||
                 savedCarsCubit.state is SavedCarsError) {

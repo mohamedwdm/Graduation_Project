@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/di/injection_container.dart';
+import '../../../../core/network/api_client.dart';
 import '../manager/profile_cubit/profile_cubit.dart';
 import '../manager/profile_cubit/profile_state.dart';
 import '../widgets/profile_header_widget.dart';
@@ -15,6 +16,7 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isGuest = sl<ApiClient>().isGuest;
     return BlocProvider(
       create: (context) => sl<ProfileCubit>()..loadProfile(),
       child: Scaffold(
@@ -24,7 +26,7 @@ class ProfileView extends StatelessWidget {
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           title: Text(
-            'Profile & Settings',
+            isGuest ? 'Settings' : 'Profile & Settings',
             style: GoogleFonts.spaceGrotesk(
               fontSize: 20,
               fontWeight: FontWeight.w700,
@@ -65,16 +67,17 @@ class ProfileView extends StatelessWidget {
                 state is ProfileUpdating) {
               final dynamic profileState = state;
               final profile = profileState.profile;
-              final isGuest = profile.id == 'guest_id_from_server';
+              final isGuest = profile.id == 'guest_id_from_server' || sl<ApiClient>().isGuest;
               return SafeArea(
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      ProfileHeaderWidget(
-                        name: profile.name,
-                        email: profile.email,
-                        avatarUrl: profile.avatarUrl,
-                      ),
+                      if (!isGuest)
+                        ProfileHeaderWidget(
+                          name: profile.name,
+                          email: profile.email,
+                          avatarUrl: profile.avatarUrl,
+                        ),
                       if (!isGuest) ProfileInfoSection(name: profile.name),
                       if (!isAdmin && !isGuest) const SavedCarsSection(),
                       SettingsSection(isAdmin: isAdmin, isGuest: isGuest),

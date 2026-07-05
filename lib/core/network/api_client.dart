@@ -4,9 +4,11 @@ import 'api_interceptor.dart';
 
 class ApiClient {
   final Dio _dio;
+  bool _isGuestMode;
 
-  ApiClient({required String baseUrl, String? authToken})
-      : _dio = Dio(
+  ApiClient({required String baseUrl, String? authToken, bool isGuest = false})
+      : _isGuestMode = isGuest,
+        _dio = Dio(
           BaseOptions(
             baseUrl: baseUrl,
             connectTimeout: const Duration(seconds: 15),
@@ -41,12 +43,10 @@ class ApiClient {
     return false;
   }
 
-  bool get isGuest {
-    final authInterceptors = _dio.interceptors.whereType<AuthInterceptor>().toList();
-    if (authInterceptors.isNotEmpty) {
-      return authInterceptors.first.token == 'guest_token_from_server';
-    }
-    return false;
+  bool get isGuest => _isGuestMode;
+
+  void setGuestMode(bool value) {
+    _isGuestMode = value;
   }
 
   Future<Response> get(String path, {Map<String, dynamic>? queryParameters}) async {

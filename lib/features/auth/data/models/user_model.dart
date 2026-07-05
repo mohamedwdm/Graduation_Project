@@ -10,12 +10,18 @@ class UserModel extends UserEntity {
   });
 
   factory UserModel.fromJson(JsonMap json) {
+    final userid = json['userid']?.toString() ?? json['id']?.toString() ?? '';
+    final name = json['name']?.toString() ?? '';
+    final role = (userid == '0' || name == 'Guest' || json['role'] == 'guest')
+        ? 'guest'
+        : (json['role']?.toString() ?? 
+            ((json['is_admin'] == true) ? 'admin' : 'user'));
+
     return UserModel(
-      userid: json['userid']?.toString() ?? json['id']?.toString() ?? '',
-      name: json['name']?.toString() ?? '',
+      userid: userid,
+      name: name,
       email: json['email']?.toString() ?? '',
-      role: json['role']?.toString() ?? 
-            ((json['is_admin'] == true) ? 'admin' : 'user'),
+      role: role,
     );
   }
 

@@ -9,7 +9,13 @@ abstract class FindCarState extends Equatable {
 }
 
 class FindCarInitial extends FindCarState {
-  const FindCarInitial();
+  final List<String> floors;
+  final List<String> sections;
+
+  const FindCarInitial({this.floors = const [], this.sections = const []});
+
+  @override
+  List<Object?> get props => [floors, sections];
 }
 
 class FindCarLoading extends FindCarState {

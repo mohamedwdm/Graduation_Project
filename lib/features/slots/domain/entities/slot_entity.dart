@@ -10,6 +10,9 @@ class SlotEntity extends Equatable {
   final bool isAccessible;
   final DateTime? lastUpdated;
   final String status;
+  final String slotNumber;
+  final String sectionDisplay;
+  final String sectionNameDisplay;
 
   const SlotEntity({
     required this.id,
@@ -17,6 +20,9 @@ class SlotEntity extends Equatable {
     required this.isOccupied,
     required this.floor,
     required this.section,
+    required this.slotNumber,
+    required this.sectionDisplay,
+    required this.sectionNameDisplay,
     this.hasEvCharging = false,
     this.isAccessible = false,
     this.lastUpdated,
@@ -25,7 +31,7 @@ class SlotEntity extends Equatable {
 
   // UI Compatibility Getters
   String get slotId => label;
-  String get locationNote => 'Floor $floor, Section $section';
+  String get locationNote => 'Floor $floor, $sectionNameDisplay';
   bool get isAvailable => status == 'available';
   int get floorIndex => floor;
 
@@ -40,5 +46,8 @@ class SlotEntity extends Equatable {
         isAccessible,
         lastUpdated,
         status,
+        slotNumber,
+        sectionDisplay,
+        sectionNameDisplay,
       ];
 }

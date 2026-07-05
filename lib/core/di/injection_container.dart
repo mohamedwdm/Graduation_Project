@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:get_it/get_it.dart';
 import 'package:go2car/features/analysis_admin/data/datasources/analysis_datasource.dart';
 import 'package:go2car/features/analysis_admin/data/datasources/analysis_remote_datasource_impl.dart';
@@ -76,6 +77,7 @@ import '../config/env_config.dart';
 import '../network/api_client.dart';
 import '../network/network_info.dart';
 import '../websocket/socket_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'register_module.dart';
 import 'package:go2car/features/profile/presentation/manager/theme_cubit/theme_cubit.dart';
 
@@ -95,11 +97,27 @@ Future<void> initDependencies() async {
 
   // Core
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
-
-  sl.registerLazySingleton(() => ApiClient(
-        baseUrl: EnvConfig.instance.apiBaseUrl,
-        authToken: sl<AuthLocalDataSource>().getToken(),
-      ));
+  sl.registerLazySingleton(() {
+    final prefs = sl<SharedPreferences>();
+    final cachedUserString = prefs.getString('CACHED_USER');
+    bool isGuest = false;
+    if (cachedUserString != null) {
+      try {
+        final Map<String, dynamic> userJson = jsonDecode(cachedUserString);
+        final userid = userJson['userid']?.toString() ?? userJson['id']?.toString() ?? '';
+        final name = userJson['name']?.toString() ?? '';
+        final role = userJson['role']?.toString();
+        if (userid == '0' || name == 'Guest' || role == 'guest') {
+          isGuest = true;
+        }
+      } catch (_) {}
+    }
+    return ApiClient(
+      baseUrl: EnvConfig.instance.apiBaseUrl,
+      authToken: sl<AuthLocalDataSource>().getToken(),
+      isGuest: isGuest,
+    );
+  });
 
   sl.registerLazySingleton(() => SocketManager(
         baseUrl: EnvConfig.instance.socketBaseUrl,
@@ -127,7 +145,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => LoginAsGuestUseCase(sl()));
 
   // Cubit
-  sl.registerFactory(() => AuthCubit(
+  sl.registerLazySingleton(() => AuthCubit(
         loginUseCase: sl(),
         registerUseCase: sl(),
         logoutUseCase: sl(),

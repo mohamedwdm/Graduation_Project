@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:go2car/features/home/presentation/manager/home_cubit/home_cubit.dart';
 import 'package:go2car/features/home/presentation/manager/home_cubit/home_state.dart';
 import '../../../../../core/widgets/greeting_header.dart';
@@ -9,7 +8,9 @@ import 'quick_action_card.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomeViewBody extends StatelessWidget {
-  const HomeViewBody({super.key});
+  final bool isGuest;
+
+  const HomeViewBody({super.key, this.isGuest = false});
 
   @override
   Widget build(BuildContext context) {
@@ -32,17 +33,6 @@ class HomeViewBody extends StatelessWidget {
                   availableSlots: summary.availableSlots,
                   totalSlots: summary.totalSlots,
                 ),
-                const SizedBox(height: 25),
-                Text(
-                  "Quick Action",
-                  style: GoogleFonts.spaceGrotesk(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : const Color(0xFF0F172A),
-                  ),
-                ),
-                const SizedBox(height: 15),
-                QuickActionCard(onTap: () {}),
               ],
             ),
           );
