@@ -84,7 +84,7 @@ class _SlotsViewBodyState extends State<SlotsViewBody> {
                     );
                   } else if (state is SlotsLoaded) {
                     final filteredSlots = state.slots
-                        .where((slot) => slot.floor == _selectedFloor)
+                        .where((slot) => slot.floor == _selectedFloor && (slot.status == 'available' || slot.isAvailable))
                         .toList();
 
                     if (filteredSlots.isEmpty) {

@@ -32,6 +32,7 @@ class HomeViewBody extends StatelessWidget {
                 HomeViewCards(
                   availableSlots: summary.availableSlots,
                   totalSlots: summary.totalSlots,
+                  isGuest: isGuest,
                 ),
               ],
             ),

@@ -9,10 +9,12 @@ class HomeViewCards extends StatelessWidget {
     super.key,
     required this.availableSlots,
     required this.totalSlots,
+    this.isGuest = false,
   });
 
   final int availableSlots;
   final int totalSlots;
+  final bool isGuest;
 
   @override
   Widget build(BuildContext context) {
@@ -25,30 +27,45 @@ class HomeViewCards extends StatelessWidget {
           availableSlots: availableSlots,
           totalSlots: totalSlots,
         ),
-        SizedBox(height: 25),
+        const SizedBox(height: 25),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            HomeViewSmallCard(
-              onTap: () {
-                context.findAncestorStateOfType<MainLayoutState>()?.changeTab(2);
-              },
-              title: 'Find My Car',
-              subTitle: "Navigate back to your vehicle",
-              icon: Icons.place_outlined,
-              iconBackgroundColor: const Color(0xffF0FDF1),
-              iconColor: Colors.green,
-            ),
-            HomeViewSmallCard(
-              onTap: () {
-                context.push('/reserve-slot');
-              },
-              title: 'Reserve Slot',
-              subTitle: 'Book your slot in advance',
-              icon: Icons.bookmark_add_outlined,
-              iconBackgroundColor: const Color(0xffEAFAF1),
-              iconColor: const Color(0xff00A24F),
-            ),
+            if (isGuest)
+              Expanded(
+                child: HomeViewSmallCard(
+                  onTap: () {
+                    context.findAncestorStateOfType<MainLayoutState>()?.changeTab(2);
+                  },
+                  title: 'Find My Car',
+                  subTitle: "Navigate back to your vehicle",
+                  icon: Icons.place_outlined,
+                  iconBackgroundColor: const Color(0xffF0FDF1),
+                  iconColor: Colors.green,
+                ),
+              )
+            else ...[
+              HomeViewSmallCard(
+                onTap: () {
+                  context.findAncestorStateOfType<MainLayoutState>()?.changeTab(2);
+                },
+                title: 'Find My Car',
+                subTitle: "Navigate back to your vehicle",
+                icon: Icons.place_outlined,
+                iconBackgroundColor: const Color(0xffF0FDF1),
+                iconColor: Colors.green,
+              ),
+              HomeViewSmallCard(
+                onTap: () {
+                  context.push('/reserve-slot');
+                },
+                title: 'Reserve Slot',
+                subTitle: 'Book your slot in advance',
+                icon: Icons.bookmark_add_outlined,
+                iconBackgroundColor: const Color(0xffEAFAF1),
+                iconColor: const Color(0xff00A24F),
+              ),
+            ],
           ],
         ),
       ],
