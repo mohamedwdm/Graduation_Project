@@ -29,11 +29,7 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
     final appBarBg = isDark ? const Color(0xff0F172A) : Colors.white;
     final titleTextColor = isDark ? Colors.white : const Color(0xff1152D4);
     final cardBgColor = isDark ? const Color(0xff1E293B) : Colors.white;
-    final calendarIconBg = isDark ? const Color(0xff1152D4).withOpacity(0.2) : const Color(0xff1152D4).withOpacity(0.1);
-    final calendarIconColor = isDark ? const Color(0xff4facfe) : const Color(0xff1152D4);
-    final textPeriodTitleColor = isDark ? const Color(0xff94A3B8) : const Color(0xff64748B);
-    final textPeriodValueColor = isDark ? Colors.white : const Color(0xff0D121B);
-    final tuneIconColor = isDark ? const Color(0xff94A3B8) : const Color(0xff64748B);
+    
     final dividerColor = isDark ? const Color(0xff334155) : const Color(0xffF3F4F6);
     final totalCapacityTitleColor = isDark ? const Color(0xff94A3B8) : const Color(0xff64748B);
     final totalCapacityValueColor = isDark ? Colors.white : const Color(0xff0D121B);
@@ -54,21 +50,7 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
             letterSpacing: -0.5,
           ),
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: const Color(0xff1152D4).withOpacity(0.1),
-                shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xff1152D4).withOpacity(0.2)),
-              ),
-              child: const Icon(Icons.person_outline, size: 18, color: Color(0xff1152D4)),
-            ),
-          ),
-        ],
+
       ),
       body: BlocConsumer<AnalysisCubit, AnalysisState>(
         listener: (context, state) {
@@ -92,62 +74,7 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
               child: ListView(
                 padding: const EdgeInsets.all(16.0),
                 children: [
-                  // Date Filter Button (Stylized)
-                  Container(
-                    height: 70,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: cardBgColor,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
-                          blurRadius: 20,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 36,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color: calendarIconBg,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(Icons.calendar_today_outlined,
-                              size: 20, color: calendarIconColor),
-                        ),
-                        const SizedBox(width: 16),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'ANALYSIS PERIOD',
-                              style: GoogleFonts.manrope(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: textPeriodTitleColor,
-                                letterSpacing: 0.6,
-                              ),
-                            ),
-                            Text(
-                              'Today, 12:00 PM - Now',
-                              style: GoogleFonts.manrope(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: textPeriodValueColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Spacer(),
-                        Icon(Icons.tune, color: tuneIconColor),
-                      ],
-                    ),
-                  ),
+  
                   const SizedBox(height: 24),
 
                   // Real-time Occupancy Section

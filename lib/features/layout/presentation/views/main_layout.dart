@@ -5,8 +5,8 @@ import 'package:go2car/features/home/presentation/views/home_view.dart';
 import 'package:go2car/features/slots/presentation/views/slots_view.dart';
 import 'package:go2car/features/find_car/presentation/views/find_car_view.dart';
 import 'package:go2car/features/profile/presentation/views/profile_view.dart';
-import 'package:go2car/features/parking_overview_admin/presentation/views/parking_overview_view.dart';
-import 'package:go2car/features/parking_overview_admin/presentation/manager/parking_overview_cubit/parking_overview_cubit.dart';
+import 'package:go2car/features/admin_notifications/presentation/views/admin_notifications_view.dart';
+import 'package:go2car/features/admin_notifications/presentation/manager/parking_overview_cubit/parking_overview_cubit.dart';
 import 'package:go2car/features/analysis_admin/presentation/views/analysis_dashboard_view.dart';
 import 'package:go2car/features/analysis_admin/presentation/manager/analysis_cubit/analysis_cubit.dart';
 import 'package:go2car/features/manage_slots_admin/presentation/views/manage_slots_view.dart';
@@ -78,11 +78,11 @@ class _MainLayoutState extends State<MainLayout> {
 
     if (user?.isAdmin ?? false) {
       pages.addAll([
-       // const SlotsView(),
+        // const SlotsView(),
         const FindCarView(),
         BlocProvider(
-          create: (context) => sl<ParkingOverviewCubit>(),
-          child: const ParkingOverviewView(),
+          create: (context) => sl<AdminNotificationsCubit>(),
+          child: const AdminNotifications(),
         ),
         BlocProvider(
           create: (context) => sl<AnalysisCubit>(),
@@ -91,22 +91,18 @@ class _MainLayoutState extends State<MainLayout> {
         BlocProvider(
           create: (context) => sl<ManageSlotsCubit>(),
           child: const ManageSlotsView(),
-        ), 
+        ),
         const ProfileView(isAdmin: true),
       ]);
 
       items.addAll([
-        // const BottomNavigationBarItem(
-        //   icon: Icon(Icons.local_parking_outlined),
-        //   label: "Slots",
-        // ),
         const BottomNavigationBarItem(
           icon: Icon(Icons.directions_car_outlined),
           label: "Find Car",
         ),
         const BottomNavigationBarItem(
-          icon: Icon(Icons.dashboard_outlined),
-          label: "Overview",
+          icon: Icon(Icons.notifications_outlined),
+          label: "Notifications",
         ),
         const BottomNavigationBarItem(
           icon: Icon(Icons.analytics_outlined),
@@ -171,7 +167,8 @@ class _MainLayoutState extends State<MainLayout> {
     }
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final navBgColor = isDark ? const Color(0xFF1E293B) : const Color(0xFFFFFFFF);
+    final navBgColor =
+        isDark ? const Color(0xFF1E293B) : const Color(0xFFFFFFFF);
     final unselectedColor = isDark ? Colors.white60 : Colors.grey;
 
     return Scaffold(
@@ -192,10 +189,14 @@ class _MainLayoutState extends State<MainLayout> {
           setState(() {
             currentIndex = index;
           });
-          final isProfileTab = (user?.isGuest ?? false) ? index == 2 : index == 3;
-          if (isProfileTab && !(user?.isAdmin ?? false) && !(user?.isGuest ?? false)) {
+          final isProfileTab =
+              (user?.isGuest ?? false) ? index == 2 : index == 3;
+          if (isProfileTab &&
+              !(user?.isAdmin ?? false) &&
+              !(user?.isGuest ?? false)) {
             final savedCarsCubit = context.read<SavedCarsCubit>();
-            if (savedCarsCubit.state is SavedCarsInitial || savedCarsCubit.state is SavedCarsError) {
+            if (savedCarsCubit.state is SavedCarsInitial ||
+                savedCarsCubit.state is SavedCarsError) {
               savedCarsCubit.loadSavedCars();
             }
           }

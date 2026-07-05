@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go2car/core/di/injection_container.dart';
-import 'package:go2car/features/parking_overview_admin/presentation/manager/parking_overview_cubit/parking_overview_cubit.dart';
-import 'package:go2car/features/parking_overview_admin/presentation/views/parking_overview_view.dart';
+import 'package:go2car/features/admin_notifications/presentation/manager/parking_overview_cubit/parking_overview_cubit.dart';
+import 'package:go2car/features/admin_notifications/presentation/views/admin_notifications_view.dart';
 import '../../features/auth/presentation/views/login_view.dart';
 import '../../features/profile/presentation/views/add_saved_car_view.dart';
 import '../../features/profile/presentation/views/edit_saved_car_view.dart';
@@ -58,8 +58,8 @@ abstract class AppRouter {
       GoRoute(
         path: adminParkingOverviewPath,
         builder: (context, state) => BlocProvider(
-          create: (context) => sl<ParkingOverviewCubit>(),
-          child: const ParkingOverviewView(),
+          create: (context) => sl<AdminNotificationsCubit>(),
+          child: const AdminNotifications(),
         ),
       ),
       GoRoute(
@@ -118,4 +118,3 @@ abstract class AppRouter {
     ],
   );
 }
-

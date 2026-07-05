@@ -50,12 +50,12 @@ import '../../features/home/data/repositories/home_repository_impl.dart';
 import '../../features/home/domain/repositories/home_repository.dart';
 import '../../features/home/domain/usecases/get_dashboard_summary_usecase.dart';
 import '../../features/home/presentation/manager/home_cubit/home_cubit.dart';
-import '../../features/parking_overview_admin/data/datasources/parking_overview_datasource.dart';
-import '../../features/parking_overview_admin/data/datasources/parking_overview_remote_datasource.dart';
-import '../../features/parking_overview_admin/data/repositories/parking_overview_repository_impl.dart';
-import '../../features/parking_overview_admin/domain/repositories/parking_overview_repository.dart';
-import '../../features/parking_overview_admin/domain/usecases/get_parking_overview_usecase.dart';
-import '../../features/parking_overview_admin/presentation/manager/parking_overview_cubit/parking_overview_cubit.dart';
+import '../../features/admin_notifications/data/datasources/admin_notifications_datasource.dart';
+import '../../features/admin_notifications/data/datasources/admin_notifications_remote_datasource.dart';
+import '../../features/admin_notifications/data/repositories/admin_notifications_repository_impl.dart';
+import '../../features/admin_notifications/domain/repositories/admin_notifications_repository.dart';
+import '../../features/admin_notifications/domain/usecases/get_admin_notifications_usecase.dart';
+import '../../features/admin_notifications/presentation/manager/parking_overview_cubit/parking_overview_cubit.dart';
 import 'package:go2car/features/manage_slots_admin/data/datasources/manage_slots_datasource.dart';
 import 'package:go2car/features/manage_slots_admin/data/repositories/manage_slots_repository_impl.dart';
 import 'package:go2car/features/manage_slots_admin/domain/repositories/manage_slots_repository.dart';
@@ -90,11 +90,12 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => module.connectivity);
 
   // Auth Feature - Local Data Source registered early
-  sl.registerLazySingleton<AuthLocalDataSource>(() => AuthLocalDataSourceImpl(sl()));
+  sl.registerLazySingleton<AuthLocalDataSource>(
+      () => AuthLocalDataSourceImpl(sl()));
 
   // Core
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
-  
+
   sl.registerLazySingleton(() => ApiClient(
         baseUrl: EnvConfig.instance.apiBaseUrl,
         authToken: sl<AuthLocalDataSource>().getToken(),
@@ -107,7 +108,8 @@ Future<void> initDependencies() async {
 
   // Auth Feature
   // Data Sources
-  sl.registerLazySingleton<AuthRemoteDataSource>(() => AuthRemoteDataSourceImpl(sl()));
+  sl.registerLazySingleton<AuthRemoteDataSource>(
+      () => AuthRemoteDataSourceImpl(sl()));
 
   // Repository
   sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(
@@ -271,13 +273,13 @@ Future<void> initDependencies() async {
   // Parking Overview Admin Feature
   // ─────────────────────────────────────────────────────────────
 
-  sl.registerLazySingleton<ParkingOverviewDataSource>(
-    () => ParkingOverviewRemoteDataSourceImpl(apiClient: sl()),
+  sl.registerLazySingleton<AdminNotificationsDataSource>(
+    () => AdminNotificationsRemoteDataSourceImpl(apiClient: sl()),
   );
 
   // Repository
-  sl.registerLazySingleton<ParkingOverviewRepository>(
-    () => ParkingOverviewRepositoryImpl(
+  sl.registerLazySingleton<AdminNotificationsRepository>(
+    () => AdminNotificationsRepositoryImpl(
       dataSource: sl(),
       networkInfo: sl(),
     ),
@@ -287,7 +289,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => GetParkingOverviewUseCase(sl()));
 
   // Cubit
-  sl.registerFactory(() => ParkingOverviewCubit(
+  sl.registerFactory(() => AdminNotificationsCubit(
         getParkingOverviewUseCase: sl(),
       ));
 
