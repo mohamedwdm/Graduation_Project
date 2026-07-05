@@ -5,7 +5,6 @@ import 'package:go2car/core/config/app_router.dart';
 import 'package:go_router/go_router.dart';
 import '../manager/analysis_cubit/analysis_cubit.dart';
 import '../widgets/occupancy_donut_chart.dart';
-import '../widgets/traffic_flow_card.dart';
 import '../widgets/analysis_status_bar_widget.dart';
 
 class AnalysisDashboardView extends StatefulWidget {
@@ -74,8 +73,7 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
               child: ListView(
                 padding: const EdgeInsets.all(16.0),
                 children: [
-  
-                  const SizedBox(height: 24),
+                   const SizedBox(height: 24),
 
                   // Real-time Occupancy Section
                   _buildSectionHeader('Real-time Occupancy', 'Main Parking Lot'),
@@ -136,33 +134,33 @@ class _AnalysisDashboardViewState extends State<AnalysisDashboardView> {
                   const SizedBox(height: 24),
 
                   // Traffic Flow Section
-                  _buildSectionHeader('Traffic Flow', 'Overall Movements'),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TrafficFlowCard(
-                          title: 'Cars Parked',
-                          count: data.carsParkedTotal.toString(),
-                          trend: '+${(data.carsParkedChange)}%',
-                          icon: Icons.login,
-                          iconBackgroundColor: const Color(0xff1152D4).withOpacity(0.1),
-                          iconColor: const Color(0xff1152D4),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: TrafficFlowCard(
-                          title: 'Cars Left',
-                          count: data.carsLeftTotal.toString(),
-                          trend: '+${data.carsLeftChange}%',
-                          icon: Icons.logout,
-                          iconBackgroundColor: isDark ? const Color(0xffEA580C).withOpacity(0.2) : const Color(0xffFFEDD5),
-                          iconColor: const Color(0xffEA580C),
-                        ),
-                      ),
-                    ],
-                  ),
+                  // _buildSectionHeader('Traffic Flow', 'Overall Movements'),
+                  // const SizedBox(height: 16),
+                  // Row(
+                  //   children: [
+                  //     Expanded(
+                  //       child: TrafficFlowCard(
+                  //         title: 'Cars Parked',
+                  //         count: data.carsParkedTotal.toString(),
+                  //         trend: '+${(data.carsParkedChange)}%',
+                  //         icon: Icons.login,
+                  //         iconBackgroundColor: const Color(0xff1152D4).withOpacity(0.1),
+                  //         iconColor: const Color(0xff1152D4),
+                  //       ),
+                  //     ),
+                  //     const SizedBox(width: 16),
+                  //     Expanded(
+                  //       child: TrafficFlowCard(
+                  //         title: 'Cars Left',
+                  //         count: data.carsLeftTotal.toString(),
+                  //         trend: '+${data.carsLeftChange}%',
+                  //         icon: Icons.logout,
+                  //         iconBackgroundColor: isDark ? const Color(0xffEA580C).withOpacity(0.2) : const Color(0xffFFEDD5),
+                  //         iconColor: const Color(0xffEA580C),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                   const SizedBox(height: 24),
 
                   // Camera Status Section

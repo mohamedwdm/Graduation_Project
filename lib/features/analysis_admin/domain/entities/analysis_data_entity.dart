@@ -6,11 +6,11 @@ class AnalysisDataEntity extends Equatable {
   final int freeCount;
   final int totalCapacity;
   
-  final int carsParkedTotal;
-  final double carsParkedChange;
+  // final int carsParkedTotal;
+  // final double carsParkedChange;
   
-  final int carsLeftTotal;
-  final double carsLeftChange;
+  // final int carsLeftTotal;
+  // final double carsLeftChange;
   
   final int onlineCameras;
   final int offlineCameras;
@@ -20,10 +20,10 @@ class AnalysisDataEntity extends Equatable {
     required this.occupiedCount,
     required this.freeCount,
     required this.totalCapacity,
-    required this.carsParkedTotal,
-    required this.carsParkedChange,
-    required this.carsLeftTotal,
-    required this.carsLeftChange,
+    // required this.carsParkedTotal,
+    // required this.carsParkedChange,
+    // required this.carsLeftTotal,
+    // required this.carsLeftChange,
     required this.onlineCameras,
     required this.offlineCameras,
   });
@@ -34,10 +34,10 @@ class AnalysisDataEntity extends Equatable {
         occupiedCount,
         freeCount,
         totalCapacity,
-        carsParkedTotal,
-        carsParkedChange,
-        carsLeftTotal,
-        carsLeftChange,
+        // carsParkedTotal,
+        // carsParkedChange,
+        // carsLeftTotal,
+        // carsLeftChange,
         onlineCameras,
         offlineCameras,
       ];
