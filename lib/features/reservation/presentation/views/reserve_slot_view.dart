@@ -433,11 +433,15 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
                       if (state is SlotsLoaded) {
                         final availableSlots = state.slots.where((s) {
                           final isAvailableOrSelected = s.isAvailable || s.slotId == _selectedSlotCode;
-                          final isAccessible = s.isAccessible || s.slotType == 'handicap';
-                          if (isAccessible && _userType != 'handicap') {
-                            return false;
+                          
+                          final type = s.slotType.toLowerCase();
+                          final isHandicap = type == 'handicap' || type == 'disabled' || type == 'accessible' || s.isAccessible;
+                          
+                          if (_userType == 'handicap') {
+                            return isAvailableOrSelected && (type == 'normal' || isHandicap || type.isEmpty);
+                          } else {
+                            return isAvailableOrSelected && (type == 'normal' || type.isEmpty);
                           }
-                          return isAvailableOrSelected;
                         }).toList();
 
                         // Resolve preselection

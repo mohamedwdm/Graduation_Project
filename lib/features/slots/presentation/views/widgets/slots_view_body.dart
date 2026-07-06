@@ -88,13 +88,17 @@ class _SlotsViewBodyState extends State<SlotsViewBody> {
                     final filteredSlots = state.slots.where((slot) {
                       final isCorrectFloor = slot.floor == _selectedFloor;
                       final isCorrectStatus = slot.status == 'available' || slot.isAvailable;
-                      final isAccessible = slot.isAccessible || slot.slotType == 'handicap';
                       
-                      if (isAccessible && _userType != 'handicap') {
-                        return false;
+                      final type = slot.slotType.toLowerCase();
+                      final isHandicap = type == 'handicap' || type == 'disabled' || type == 'accessible' || slot.isAccessible;
+                      
+                      if (_userType == 'handicap') {
+                        // Handicap users see both normal and disabled slots
+                        return isCorrectFloor && isCorrectStatus && (type == 'normal' || isHandicap || type.isEmpty);
+                      } else {
+                        // Normal users see only normal slots
+                        return isCorrectFloor && isCorrectStatus && (type == 'normal' || type.isEmpty);
                       }
-                      
-                      return isCorrectFloor && isCorrectStatus;
                     }).toList();
 
                     if (filteredSlots.isEmpty) {
