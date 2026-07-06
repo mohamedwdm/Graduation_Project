@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -52,7 +53,7 @@ class _FindCarBodyState extends State<_FindCarBody> {
   void initState() {
     super.initState();
     final cubit = context.read<FindCarCubit>();
-    if (cubit.floorsList.isEmpty || cubit.sectionsList.isEmpty) {
+    if (!cubit.filtersLoadedFromServer) {
       cubit.loadFilters();
     }
   }
@@ -63,9 +64,62 @@ class _FindCarBodyState extends State<_FindCarBody> {
     super.dispose();
   }
 
+  void _showNoSavedCarsDialog() {
+    final parentContext = context;
+    showDialog(
+      context: parentContext,
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).dialogBackgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'No Saved Cars',
+          style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          'You do not have any saved cars. Please add cars to search by saved cars.',
+          style: GoogleFonts.spaceGrotesk(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.spaceGrotesk(
+                color: Colors.grey,
+              ),
+            ),
+          ),
+                    TextButton(
+                      onPressed: () async {
+                        Navigator.pop(context);
+                        final result = await parentContext.push<bool>('/add-saved-car');
+                        if (result == true && mounted) {
+                          parentContext.read<SavedCarsCubit>().loadSavedCars();
+                        }
+                      },
+            child: Text(
+              'Add Car',
+              style: GoogleFonts.spaceGrotesk(
+                color: const Color(0xff00A24F),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+
+        ],
+      ),
+    );
+  }
+
   void _showSavedCarsPopup() {
     final savedCarsCubit = context.read<SavedCarsCubit>();
     final state = savedCarsCubit.state;
+
+    // Check for explicit empty state first
+    if (state is SavedCarsEmpty) {
+      _showNoSavedCarsDialog();
+      return;
+    }
 
     if (state is! SavedCarsLoaded) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -83,33 +137,7 @@ class _FindCarBodyState extends State<_FindCarBody> {
 
     final cars = state.cars;
     if (cars.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          backgroundColor: Theme.of(context).dialogBackgroundColor,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Text(
-            'No Saved Cars',
-            style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold),
-          ),
-          content: Text(
-            'You do not have any saved cars. Please add cars in your profile page.',
-            style: GoogleFonts.spaceGrotesk(),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(
-                'OK',
-                style: GoogleFonts.spaceGrotesk(
-                  color: const Color(0xff00A24F),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
+      _showNoSavedCarsDialog();
       return;
     }
 

@@ -80,22 +80,24 @@ class VehicleMapDialog extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Vehicle Location Map',
+                          fetchByPlate ? 'Vehicle Location Map' : 'Slot Location Map',
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
                             color: titleColor,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Vehicle: ${car.plateNumber}',
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 14,
-                            color: subtitleColor,
-                            fontWeight: FontWeight.w500,
+                        if (fetchByPlate) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            'Vehicle: ${car.plateNumber}',
+                            style: GoogleFonts.spaceGrotesk(
+                              fontSize: 14,
+                              color: subtitleColor,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
+                        ],
                       ],
                     ),
                   ),

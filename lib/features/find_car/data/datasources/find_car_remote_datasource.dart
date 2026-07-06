@@ -1,3 +1,4 @@
+import 'dart:developer';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/api_constants.dart';
 import '../models/car_model.dart';
@@ -148,15 +149,18 @@ class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
       final response = await _apiClient.get(ApiConstants.floors);
       if (response.data != null) {
         final List list = response.data is List ? response.data : (response.data['data'] ?? []);
-        return list
+        final parsed = list
             .map((item) => (item['floor_name']?.toString() ?? '').trim())
             .where((name) => name.isNotEmpty)
             .toList();
+        if (parsed.isNotEmpty) return parsed;
       }
-    } catch (_) {
-      // Return empty list on error
+      throw Exception('Floors list is empty in response');
+    } catch (e, stack) {
+      // Diagnostic logging
+      log('FindCarRemoteDataSourceImpl.getFloors error: $e\n$stack');
+      rethrow;
     }
-    return [];
   }
 
   @override
@@ -165,9 +169,6 @@ class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
       final response = await _apiClient.get(ApiConstants.sections);
       if (response.data != null) {
         final List list = response.data is List ? response.data : (response.data['data'] ?? []);
-        // Deduplicate: "A1" may appear for every floor (F1_A1, F2_A1 → both display as "A1").
-        // We keep only unique display names. Sending "A1" to the backend already searches
-        // across ALL floors because the filter uses section_name.ilike("%A1%").
         final seen = <String>{};
         final result = <String>[];
         for (final item in list) {
@@ -180,11 +181,13 @@ class FindCarRemoteDataSourceImpl implements FindCarRemoteDataSource {
             result.add(display);
           }
         }
-        return result;
+        if (result.isNotEmpty) return result;
       }
-    } catch (_) {
-      // Return empty list on error
+      throw Exception('Sections list is empty in response');
+    } catch (e, stack) {
+      // Diagnostic logging
+      log('FindCarRemoteDataSourceImpl.getSections error: $e\n$stack');
+      rethrow;
     }
-    return [];
   }
 }

@@ -34,10 +34,6 @@ class FindCarRepositoryImpl implements FindCarRepository {
       return const Right([]);
     }
 
-    if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure());
-    }
-
     try {
       final cars = await _remoteDataSource.searchCars(
         query,
@@ -47,6 +43,8 @@ class FindCarRepositoryImpl implements FindCarRepository {
         color: color,
       );
       return Right(cars);
+    } on NetworkException {
+      return const Left(NetworkFailure());
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message, statusCode: e.statusCode));
     } on AppException catch (e) {
@@ -59,10 +57,11 @@ class FindCarRepositoryImpl implements FindCarRepository {
   @override
   FutureEither<List<String>> getFloors() async {
     if (isMockMode) return const Right([]);
-    if (!await _networkInfo.isConnected) return const Left(NetworkFailure());
     try {
       final floors = await _remoteDataSource.getFloors();
       return Right(floors);
+    } on NetworkException {
+      return const Left(NetworkFailure());
     } on AppException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
@@ -73,10 +72,11 @@ class FindCarRepositoryImpl implements FindCarRepository {
   @override
   FutureEither<List<String>> getSections() async {
     if (isMockMode) return const Right([]);
-    if (!await _networkInfo.isConnected) return const Left(NetworkFailure());
     try {
       final sections = await _remoteDataSource.getSections();
       return Right(sections);
+    } on NetworkException {
+      return const Left(NetworkFailure());
     } on AppException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
@@ -111,10 +111,6 @@ class FindCarRepositoryImpl implements FindCarRepository {
       ));
     }
 
-    if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure());
-    }
-
     try {
       if (plate != null) {
         final mapData = await _remoteDataSource.getVehicleMap(plate);
@@ -145,6 +141,8 @@ class FindCarRepositoryImpl implements FindCarRepository {
       } else {
         return const Left(ServerFailure('Neither slotId nor plate was provided'));
       }
+    } on NetworkException {
+      return const Left(NetworkFailure());
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message, statusCode: e.statusCode));
     } on AppException catch (e) {

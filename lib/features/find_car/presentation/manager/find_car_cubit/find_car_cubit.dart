@@ -19,6 +19,7 @@ class FindCarCubit extends Cubit<FindCarState> {
 
   List<String> _floors = [];
   List<String> _sections = [];
+  bool _filtersLoadedFromServer = false;
 
   String get query => _query;
   String? get floor => _floor;
@@ -27,6 +28,7 @@ class FindCarCubit extends Cubit<FindCarState> {
   String? get color => _color;
   List<String> get floorsList => _floors;
   List<String> get sectionsList => _sections;
+  bool get filtersLoadedFromServer => _filtersLoadedFromServer;
 
   FindCarCubit({
     required SearchCarsUseCase searchCarsUseCase,
@@ -35,16 +37,39 @@ class FindCarCubit extends Cubit<FindCarState> {
   })  : _searchCarsUseCase = searchCarsUseCase,
         _getFloorsUseCase = getFloorsUseCase,
         _getSectionsUseCase = getSectionsUseCase,
-        super(const FindCarInitial()) {
-    loadFilters();
-  }
+        super(const FindCarInitial());
 
   Future<void> loadFilters() async {
+    // If already loaded successfully from server, don't re-fetch
+    if (_filtersLoadedFromServer) return;
+
     final floorsResult = await _getFloorsUseCase(const NoParams());
     final sectionsResult = await _getSectionsUseCase(const NoParams());
 
-    floorsResult.fold((_) {}, (list) => _floors = list);
-    sectionsResult.fold((_) {}, (list) => _sections = list);
+    bool floorSuccess = false;
+    bool sectionSuccess = false;
+
+    floorsResult.fold(
+      (_) {
+        _floors = ['Floor 1', 'Floor 2'];
+      },
+      (list) {
+        _floors = list;
+        floorSuccess = true;
+      },
+    );
+
+    sectionsResult.fold(
+      (_) {
+        _sections = ['A', 'B', 'C', 'D'];
+      },
+      (list) {
+        _sections = list;
+        sectionSuccess = true;
+      },
+    );
+
+    _filtersLoadedFromServer = floorSuccess && sectionSuccess;
 
     emit(FindCarInitial(floors: List.from(_floors), sections: List.from(_sections)));
   }
