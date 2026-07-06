@@ -7,6 +7,7 @@ import 'package:go2car/core/di/injection_container.dart';
 import 'package:go2car/features/admin_notifications/presentation/manager/parking_overview_cubit/parking_overview_cubit.dart';
 import 'package:go2car/features/admin_notifications/presentation/views/admin_notifications_view.dart';
 import '../../features/auth/presentation/views/login_view.dart';
+import '../../splash_view.dart';
 import '../../features/profile/presentation/views/add_saved_car_view.dart';
 import '../../features/profile/presentation/views/edit_saved_car_view.dart';
 import '../../features/profile/domain/entities/saved_car_entity.dart';
@@ -20,7 +21,8 @@ import '../../features/slots/presentation/manager/slots_cubit/slots_cubit.dart';
 import '../../features/profile/presentation/views/change_password_view.dart';
 
 abstract class AppRouter {
-  static const String loginPath = '/';
+  static const String splashPath = '/';
+  static const String loginPath = '/login';
   static const String registerPath = '/register';
   static const String homePath = '/home';
   static const String adminParkingOverviewPath = '/admin/parking-overview';
@@ -29,8 +31,12 @@ abstract class AppRouter {
   static const String changePasswordPath = '/change-password';
 
   static final router = GoRouter(
-    initialLocation: loginPath,
+    initialLocation: splashPath,
     routes: [
+      GoRoute(
+        path: splashPath,
+        builder: (context, state) => const SplashView(),
+      ),
       GoRoute(
         path: loginPath,
         builder: (context, state) => const LoginView(),
