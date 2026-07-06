@@ -18,19 +18,19 @@ class _RegisterFormState extends State<RegisterForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
 
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
   String? name;
   String? email;
   String? password;
+  String selectedUserType = 'driver';
+  bool hasSpecialNeeds = false;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     _nameController.dispose();
-    _phoneController.dispose();
     super.dispose();
   }
 
@@ -84,19 +84,6 @@ class _RegisterFormState extends State<RegisterForm> {
           ),
           const SizedBox(height: 15),
           CustomTextField(
-            controller: _phoneController,
-            prefixIcon: const Icon(
-              Icons.phone_outlined,
-              color: Color(0xff525252),
-              size: 21,
-            ),
-            hintText: "Phone Number (Optional)",
-            onChanged: (value) {
-              // Phone logic not yet implemented in Cubit
-            },
-          ),
-          const SizedBox(height: 15),
-          CustomTextField(
             controller: _passwordController,
             prefixIcon: const Icon(
               Icons.lock_outline,
@@ -117,6 +104,85 @@ class _RegisterFormState extends State<RegisterForm> {
               }
               return null;
             },
+          ),
+          const SizedBox(height: 10),
+          Theme(
+            data: Theme.of(context).copyWith(
+              checkboxTheme: CheckboxThemeData(
+                fillColor: WidgetStateProperty.resolveWith<Color?>((states) {
+                  if (states.contains(WidgetState.selected)) {
+                    return const Color(0xff00A24F);
+                  }
+                  return null;
+                }),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+            child: CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              value: hasSpecialNeeds,
+              onChanged: (value) {
+                setState(() {
+                  hasSpecialNeeds = value ?? false;
+                });
+              },
+              title: const Text(
+                "Are you someone with special needs?",
+                style: TextStyle(
+                  fontFamily: 'Space Grotesk',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xff525252),
+                ),
+              ),
+              controlAffinity: ListTileControlAffinity.leading,
+              activeColor: const Color(0xff00A24F),
+            ),
+          ),
+          const SizedBox(height: 15),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: const Text(
+              "Register As",
+              style: TextStyle(
+                fontFamily: 'Space Grotesk',
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Color(0xff525252),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: _buildRoleCard(
+                  label: "Driver",
+                  icon: Icons.directions_car_outlined,
+                  isSelected: selectedUserType == 'driver',
+                  onTap: () {
+                    setState(() {
+                      selectedUserType = 'driver';
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _buildRoleCard(
+                  label: "Parking Owner",
+                  icon: Icons.home_work_outlined,
+                  isSelected: selectedUserType == 'owner',
+                  onTap: () {
+                    setState(() {
+                      selectedUserType = 'owner';
+                    });
+                  },
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 30),
           SizedBox(
@@ -153,6 +219,7 @@ class _RegisterFormState extends State<RegisterForm> {
                         email: email!,
                         password: password!,
                         name: name!,
+                        userType: hasSpecialNeeds ? 'handicap' : selectedUserType,
                       );
                     } else {
                       setState(() {
@@ -165,6 +232,51 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildRoleCard({
+    required String label,
+    required IconData icon,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    final activeColor = const Color(0xff00A24F);
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? activeColor.withOpacity(0.08) : const Color(0xffEFEFEF),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? activeColor : Colors.transparent,
+            width: 1.5,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 20,
+              color: isSelected ? activeColor : const Color(0xff525252),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontFamily: 'Space Grotesk',
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                color: isSelected ? activeColor : const Color(0xff525252),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

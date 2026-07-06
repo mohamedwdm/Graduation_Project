@@ -8,9 +8,10 @@ class SlotModel extends SlotEntity {
     bool? isOccupied,
     int? floor,
     String? section,
-    bool hasEvCharging = false,
-    bool isAccessible = false,
-    DateTime? lastUpdated,
+    String? slotType,
+    bool? hasEvCharging,
+    bool? isAccessible,
+    super.lastUpdated,
     String? status,
     String? slotNumber,
     String? sectionDisplay,
@@ -26,9 +27,7 @@ class SlotModel extends SlotEntity {
           isOccupied: isOccupied ?? !(isAvailable ?? true),
           floor: floor ?? floorIndex ?? 0,
           section: section ?? locationNote ?? '',
-          hasEvCharging: hasEvCharging,
-          isAccessible: isAccessible,
-          lastUpdated: lastUpdated,
+          slotType: slotType ?? ((hasEvCharging == true) ? 'ev' : ((isAccessible == true) ? 'handicap' : 'normal')),
           status: status ?? (isOccupied == true ? 'occupied' : 'available'),
           slotNumber: slotNumber ?? '',
           sectionDisplay: sectionDisplay ?? '',
@@ -84,14 +83,20 @@ class SlotModel extends SlotEntity {
       parsedSectionNameDisplay = parsedSection.toLowerCase().startsWith('section') ? parsedSection : 'Section $parsedSection';
     }
 
+    final parsedSlotType = json['slot_type']?.toString() ??
+        ((json['has_ev_charging'] == true || json['hasEvCharging'] == true)
+            ? 'ev'
+            : ((json['is_accessible'] == true || json['isAccessible'] == true)
+                ? 'handicap'
+                : 'normal'));
+
     return SlotModel(
       id: json['id']?.toString() ?? json['slotId']?.toString() ?? '',
       label: label,
       isOccupied: json['is_occupied'] as bool? ?? !(json['isAvailable'] as bool? ?? true),
       floor: parsedFloor,
       section: parsedSection,
-      hasEvCharging: json['has_ev_charging'] as bool? ?? json['hasEvCharging'] as bool? ?? false,
-      isAccessible: json['is_accessible'] as bool? ?? json['isAccessible'] as bool? ?? false,
+      slotType: parsedSlotType,
       lastUpdated: json['last_updated'] != null
           ? DateTime.parse(json['last_updated'] as String)
           : null,
@@ -109,8 +114,7 @@ class SlotModel extends SlotEntity {
       'is_occupied': isOccupied,
       'floor': floor,
       'section': section,
-      'has_ev_charging': hasEvCharging,
-      'is_accessible': isAccessible,
+      'slot_type': slotType,
       'last_updated': lastUpdated?.toIso8601String(),
       'status': status,
       'slot_number': slotNumber,

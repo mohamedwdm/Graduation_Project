@@ -75,6 +75,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
     required String name,
+    required String userType,
   }) async {
     if (!await _networkInfo.isConnected) {
       return left(const NetworkFailure());
@@ -85,6 +86,7 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email,
         password: password,
         name: name,
+        userType: userType,
       );
       return right(null);
     } on ServerException catch (e) {
@@ -119,9 +121,9 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  FutureEither<UserEntity> loginAsGuest() async {
+  FutureEither<UserEntity> loginAsGuest({required String userType}) async {
     try {
-      final authResponse = await _remoteDataSource.loginAsGuest();
+      final authResponse = await _remoteDataSource.loginAsGuest(userType: userType);
       
       final token = authResponse.token;
       final user = authResponse.user;

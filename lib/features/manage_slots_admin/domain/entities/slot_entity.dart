@@ -8,8 +8,7 @@ class SlotEntity extends Equatable {
   final int floor;
   final SlotStatus status;
   final String location;
-  final bool isEV;
-  final bool isAccessible;
+  final String slotType;
 
   const SlotEntity({
     required this.id,
@@ -17,9 +16,11 @@ class SlotEntity extends Equatable {
     required this.floor,
     required this.status,
     required this.location,
-    required this.isEV,
-    required this.isAccessible,
+    required this.slotType,
   });
+
+  bool get isEV => slotType == 'ev';
+  bool get isAccessible => slotType == 'handicap' || slotType == 'accessible';
 
   @override
   List<Object?> get props => [
@@ -28,7 +29,6 @@ class SlotEntity extends Equatable {
         floor,
         status,
         location,
-        isEV,
-        isAccessible,
+        slotType,
       ];
 }

@@ -6,8 +6,7 @@ class SlotEntity extends Equatable {
   final bool isOccupied;
   final int floor;
   final String section;
-  final bool hasEvCharging;
-  final bool isAccessible;
+  final String slotType;
   final DateTime? lastUpdated;
   final String status;
   final String slotNumber;
@@ -23,11 +22,13 @@ class SlotEntity extends Equatable {
     required this.slotNumber,
     required this.sectionDisplay,
     required this.sectionNameDisplay,
-    this.hasEvCharging = false,
-    this.isAccessible = false,
+    required this.slotType,
     this.lastUpdated,
     this.status = 'available',
   });
+
+  bool get hasEvCharging => slotType == 'ev';
+  bool get isAccessible => slotType == 'handicap' || slotType == 'accessible';
 
   // UI Compatibility Getters
   String get slotId => label;
@@ -42,8 +43,7 @@ class SlotEntity extends Equatable {
         isOccupied,
         floor,
         section,
-        hasEvCharging,
-        isAccessible,
+        slotType,
         lastUpdated,
         status,
         slotNumber,

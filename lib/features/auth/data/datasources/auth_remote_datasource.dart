@@ -13,11 +13,12 @@ abstract class AuthRemoteDataSource {
     required String email,
     required String password,
     required String name,
+    required String userType,
   });
 
   Future<void> logout();
   
-  Future<AuthResponseModel> loginAsGuest();
+  Future<AuthResponseModel> loginAsGuest({required String userType});
 
   Future<void> verifyEmail({required String token});
 }
@@ -44,6 +45,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String email,
     required String password,
     required String name,
+    required String userType,
   }) async {
     await _apiClient.post(
       ApiConstants.register,
@@ -51,6 +53,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'email': email,
         'password': password,
         'name': name,
+        'user_type': userType,
       },
     );
   }
@@ -61,8 +64,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<AuthResponseModel> loginAsGuest() async {
-    final response = await _apiClient.post(ApiConstants.loginGuest);
+  Future<AuthResponseModel> loginAsGuest({required String userType}) async {
+    final response = await _apiClient.post(
+      ApiConstants.loginGuest,
+      queryParameters: {'user_type': userType},
+    );
     return AuthResponseModel.fromJson(response.data as Map<String, dynamic>);
   }
 

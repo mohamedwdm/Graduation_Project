@@ -44,10 +44,16 @@ class AuthCubit extends Cubit<AuthState> {
     required String email,
     required String password,
     required String name,
+    required String userType,
   }) async {
     emit(const AuthLoading());
     final result = await _registerUseCase(
-      RegisterParams(email: email, password: password, name: name),
+      RegisterParams(
+        email: email,
+        password: password,
+        name: name,
+        userType: userType,
+      ),
     );
     result.fold(
       (failure) => emit(AuthFailureState(failure.message)),
@@ -60,9 +66,9 @@ class AuthCubit extends Cubit<AuthState> {
     emit(const AuthInitial());
   }
 
-  Future<void> loginAsGuest() async {
+  Future<void> loginAsGuest({String userType = 'guest'}) async {
     emit(const AuthLoading());
-    final result = await _loginAsGuestUseCase(const NoParams());
+    final result = await _loginAsGuestUseCase(userType);
     result.fold(
       (failure) => emit(AuthFailureState(failure.message)),
       (user) => emit(AuthSuccess(user)),

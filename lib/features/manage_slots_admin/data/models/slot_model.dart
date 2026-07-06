@@ -7,9 +7,12 @@ class SlotModel extends SlotEntity {
     required super.floor,
     required super.status,
     required super.location,
-    required super.isEV,
-    required super.isAccessible,
-  });
+    String? slotType,
+    bool? isEV,
+    bool? isAccessible,
+  }) : super(
+          slotType: slotType ?? ((isEV == true) ? 'ev' : ((isAccessible == true) ? 'handicap' : 'normal')),
+        );
 
   factory SlotModel.fromJson(Map<String, dynamic> json) {
     int parsedFloor = 0;
@@ -41,14 +44,20 @@ class SlotModel extends SlotEntity {
       parsedStatus = _parseSlotStatus(json['status']?.toString());
     }
 
+    final parsedSlotType = json['slot_type']?.toString() ??
+        ((json['isEV'] == true || json['has_ev_charging'] == true)
+            ? 'ev'
+            : ((json['isAccessible'] == true || json['is_accessible'] == true)
+                ? 'handicap'
+                : 'normal'));
+
     return SlotModel(
       id: (json['id'] ?? '').toString(),
       name: (json['name'] ?? json['slot_code'] ?? '').toString(),
       floor: parsedFloor,
       status: parsedStatus,
       location: parsedLocation,
-      isEV: json['isEV'] as bool? ?? json['has_ev_charging'] as bool? ?? false,
-      isAccessible: json['isAccessible'] as bool? ?? json['is_accessible'] as bool? ?? false,
+      slotType: parsedSlotType,
     );
   }
 
@@ -59,8 +68,7 @@ class SlotModel extends SlotEntity {
       'floor': floor,
       'status': status.name,
       'location': location,
-      'isEV': isEV,
-      'isAccessible': isAccessible,
+      'slot_type': slotType,
     };
   }
 

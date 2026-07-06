@@ -11,9 +11,10 @@ abstract class AuthRepository {
     required String email,
     required String password,
     required String name,
+    required String userType,
   });
 
   FutureVoid logout();
 
-  FutureEither<UserEntity> loginAsGuest();
+  FutureEither<UserEntity> loginAsGuest({required String userType});
 }
