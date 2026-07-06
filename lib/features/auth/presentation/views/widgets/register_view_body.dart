@@ -65,11 +65,6 @@ class RegisterViewBody extends StatelessWidget {
             child: Text("Privacy Policy",style: TextStyle(color: Color(0xff525252), fontSize: 12,decoration:TextDecoration.underline , decorationThickness: 0.8)),
           ),
           const SizedBox(height: 15),
-          Text(
-            'Or',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.grey.shade600),
-            textAlign: TextAlign.center,
-          ),
           // const CustomButtonForSocialMediaConnection(
           //   icon: FontAwesomeIcons.facebookF,
           //   backgroundcolor: Color(0xff395998),
