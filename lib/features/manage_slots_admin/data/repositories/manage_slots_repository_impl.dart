@@ -45,4 +45,14 @@ class ManageSlotsRepositoryImpl implements ManageSlotsRepository {
       return Left(ServerFailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> updateSlotStatus({required String slotId, required bool isOccupied}) async {
+    try {
+      await dataSource.updateSlotStatus(slotId: slotId, isOccupied: isOccupied);
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
 }

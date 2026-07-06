@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:go2car/features/auth/presentation/views/widgets/login_form.dart';
 import 'package:go2car/features/auth/presentation/views/widgets/login_header_section.dart';
 
-
 class LoginViewBody extends StatelessWidget {
   const LoginViewBody({super.key});
 
@@ -13,6 +12,7 @@ class LoginViewBody extends StatelessWidget {
       padding: const EdgeInsets.all(24.0),
       child: ListView(
         children: [
+          const SizedBox(height: 65),
           const LoginHeaderSection(),
           const SizedBox(height: 40),
           const LoginForm(),
@@ -20,14 +20,16 @@ class LoginViewBody extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("By continuing, you agree to our ", style: TextStyle(fontSize: 12,color: Color(0xff525252))),
+              const Text("By continuing, you agree to our ",
+                  style: TextStyle(fontSize: 12, color: Color(0xff525252))),
               GestureDetector(
-                onTap: () {
-                 
-                },
+                onTap: () {},
                 child: const Text(
                   'Terms of Service',
-                  style: TextStyle(color: Color(0xff525252), fontSize: 12,decoration:TextDecoration.underline),
+                  style: TextStyle(
+                      color: Color(0xff525252),
+                      fontSize: 12,
+                      decoration: TextDecoration.underline),
                 ),
               ),
             ],
