@@ -18,19 +18,21 @@ class SlotsViewBody extends StatefulWidget {
 class _SlotsViewBodyState extends State<SlotsViewBody> {
   int _selectedFloor = 1;
   String _userName = 'User';
+  String? _userType;
 
   @override
   void initState() {
     super.initState();
-    _loadUserName();
+    _loadUserData();
   }
 
-  Future<void> _loadUserName() async {
+  Future<void> _loadUserData() async {
     try {
       final user = await sl<AuthLocalDataSource>().getCachedUser();
       if (user != null && mounted) {
         setState(() {
           _userName = user.name;
+          _userType = user.userType;
         });
       }
     } catch (_) {}
@@ -83,9 +85,17 @@ class _SlotsViewBodyState extends State<SlotsViewBody> {
                       ),
                     );
                   } else if (state is SlotsLoaded) {
-                    final filteredSlots = state.slots
-                        .where((slot) => slot.floor == _selectedFloor && (slot.status == 'available' || slot.isAvailable))
-                        .toList();
+                    final filteredSlots = state.slots.where((slot) {
+                      final isCorrectFloor = slot.floor == _selectedFloor;
+                      final isCorrectStatus = slot.status == 'available' || slot.isAvailable;
+                      final isAccessible = slot.isAccessible || slot.slotType == 'handicap';
+                      
+                      if (isAccessible && _userType != 'handicap') {
+                        return false;
+                      }
+                      
+                      return isCorrectFloor && isCorrectStatus;
+                    }).toList();
 
                     if (filteredSlots.isEmpty) {
                       return const Padding(

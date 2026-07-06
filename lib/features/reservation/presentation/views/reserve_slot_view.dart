@@ -8,6 +8,8 @@ import '../../../slots/presentation/manager/slots_cubit/slots_state.dart';
 import '../manager/reservation_cubit/reservation_cubit.dart';
 import '../manager/reservation_cubit/reservation_state.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go2car/features/auth/data/datasources/auth_local_datasource.dart';
+import '../../../../core/di/injection_container.dart';
 
 class ReserveSlotView extends StatefulWidget {
   final String? preselectedSlotCode;
@@ -26,6 +28,7 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
   String? _selectedSectionNameDisplay;
   String? _selectedSavedCarPlate;
   bool _useCustomPlate = false;
+  String? _userType;
 
   late DateTime _startTime;
   late DateTime _endTime;
@@ -40,6 +43,18 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
     // Fetch saved cars & slots
     context.read<SavedCarsCubit>().loadSavedCars();
     context.read<SlotsCubit>().loadSlots();
+    _loadUserType();
+  }
+
+  Future<void> _loadUserType() async {
+    try {
+      final user = await sl<AuthLocalDataSource>().getCachedUser();
+      if (user != null && mounted) {
+        setState(() {
+          _userType = user.userType;
+        });
+      }
+    } catch (_) {}
   }
 
   @override
@@ -416,7 +431,14 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
                       List<DropdownMenuItem<String>> slotItems = [];
 
                       if (state is SlotsLoaded) {
-                        final availableSlots = state.slots.where((s) => s.isAvailable || s.slotId == _selectedSlotCode).toList();
+                        final availableSlots = state.slots.where((s) {
+                          final isAvailableOrSelected = s.isAvailable || s.slotId == _selectedSlotCode;
+                          final isAccessible = s.isAccessible || s.slotType == 'handicap';
+                          if (isAccessible && _userType != 'handicap') {
+                            return false;
+                          }
+                          return isAvailableOrSelected;
+                        }).toList();
 
                         // Resolve preselection
                         if (_selectedSlotCode != null && _selectedFloor == null) {
