@@ -20,7 +20,7 @@ class SlotEntity extends Equatable {
   });
 
   bool get isEV => slotType == 'ev';
-  bool get isAccessible => slotType == 'handicap' || slotType == 'accessible';
+  bool get isAccessible => slotType == 'handicap' || slotType == 'accessible' || slotType == 'disabled';
 
   @override
   List<Object?> get props => [
