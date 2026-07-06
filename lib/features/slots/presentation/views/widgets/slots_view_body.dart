@@ -19,6 +19,7 @@ class _SlotsViewBodyState extends State<SlotsViewBody> {
   int _selectedFloor = 1;
   String _userName = 'User';
   String? _userType;
+  String _slotTypeFilter = 'all'; // 'all', 'normal', 'disabled'
 
   @override
   void initState() {
@@ -59,6 +60,21 @@ class _SlotsViewBodyState extends State<SlotsViewBody> {
                   }
                 },
               ),
+              if (_userType == 'handicap') ...[
+                const SizedBox(height: 12),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      _buildFilterChip(label: "All Slots", filterValue: 'all'),
+                      const SizedBox(width: 8),
+                      _buildFilterChip(label: "Normal", filterValue: 'normal'),
+                      const SizedBox(width: 8),
+                      _buildFilterChip(label: "Special Needs", filterValue: 'disabled'),
+                    ],
+                  ),
+                ),
+              ],
               const SizedBox(height: 14),
 
               BlocBuilder<SlotsCubit, SlotsState>(
@@ -91,13 +107,19 @@ class _SlotsViewBodyState extends State<SlotsViewBody> {
                       
                       final type = slot.slotType.toLowerCase();
                       final isHandicap = type == 'handicap' || type == 'disabled' || type == 'accessible' || slot.isAccessible;
+                      final isNormal = type == 'normal' || type.isEmpty;
                       
                       if (_userType == 'handicap') {
-                        // Handicap users see both normal and disabled slots
-                        return isCorrectFloor && isCorrectStatus && (type == 'normal' || isHandicap || type.isEmpty);
+                        if (_slotTypeFilter == 'normal') {
+                          return isCorrectFloor && isCorrectStatus && isNormal;
+                        } else if (_slotTypeFilter == 'disabled') {
+                          return isCorrectFloor && isCorrectStatus && isHandicap;
+                        } else {
+                          return isCorrectFloor && isCorrectStatus && (isNormal || isHandicap);
+                        }
                       } else {
                         // Normal users see only normal slots
-                        return isCorrectFloor && isCorrectStatus && (type == 'normal' || type.isEmpty);
+                        return isCorrectFloor && isCorrectStatus && isNormal;
                       }
                     }).toList();
 
@@ -133,6 +155,40 @@ class _SlotsViewBodyState extends State<SlotsViewBody> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildFilterChip({required String label, required String filterValue}) {
+    final isSelected = _slotTypeFilter == filterValue;
+    final activeColor = const Color(0xff00A24F);
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _slotTypeFilter = filterValue;
+        });
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? activeColor.withOpacity(0.12) : const Color(0xffF1F5F9),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? activeColor : const Color(0xFFE2E8F0),
+            width: 1.5,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontFamily: 'Space Grotesk',
+            fontSize: 13,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+            color: isSelected ? activeColor : const Color(0xff64748B),
+          ),
+        ),
+      ),
     );
   }
 }
