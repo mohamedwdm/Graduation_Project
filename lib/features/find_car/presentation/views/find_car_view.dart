@@ -11,7 +11,8 @@ import '../../../../core/di/injection_container.dart';
 import '../../../../core/network/api_client.dart';
 
 class FindCarView extends StatelessWidget {
-  const FindCarView({super.key});
+  final bool isAdmin;
+  const FindCarView({super.key, this.isAdmin = false});
 
   @override
   Widget build(BuildContext context) {
@@ -32,15 +33,16 @@ class FindCarView extends StatelessWidget {
         elevation: 0,
         centerTitle: false,
       ),
-      body: const SafeArea(
-        child: _FindCarBody(),
+      body: SafeArea(
+        child: _FindCarBody(isAdmin: isAdmin),
       ),
     );
   }
 }
 
 class _FindCarBody extends StatefulWidget {
-  const _FindCarBody();
+  final bool isAdmin;
+  const _FindCarBody({required this.isAdmin});
 
   @override
   State<_FindCarBody> createState() => _FindCarBodyState();
@@ -272,7 +274,7 @@ class _FindCarBodyState extends State<_FindCarBody> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      floatingActionButton: sl<ApiClient>().isGuest
+      floatingActionButton: (sl<ApiClient>().isGuest || widget.isAdmin)
           ? null
           : FloatingActionButton.extended(
               onPressed: _showSavedCarsPopup,

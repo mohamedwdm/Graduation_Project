@@ -20,7 +20,7 @@ class _AdminReservationsViewState extends State<AdminReservationsView> with Sing
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     // Fetch all reservations & slot descriptions
     context.read<ReservationCubit>().getAllReservations();
     context.read<SlotsCubit>().loadSlots();
@@ -96,13 +96,15 @@ class _AdminReservationsViewState extends State<AdminReservationsView> with Sing
             Tab(text: 'ALL'),
             Tab(text: 'PENDING'),
             Tab(text: 'ACTIVE'),
-            Tab(text: 'HISTORY'),
           ],
         ),
       ),
       body: BlocListener<ReservationCubit, ReservationState>(
         listenWhen: (previous, current) =>
-            current is ApproveReservationSuccess || current is ApproveReservationError,
+            current is ApproveReservationSuccess ||
+            current is ApproveReservationError ||
+            current is RejectReservationSuccess ||
+            current is RejectReservationError,
         listener: (context, state) {
           if (state is ApproveReservationSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -121,6 +123,28 @@ class _AdminReservationsViewState extends State<AdminReservationsView> with Sing
               SnackBar(
                 content: Text(
                   'Failed to approve: ${state.message}',
+                  style: GoogleFonts.spaceGrotesk(),
+                ),
+                backgroundColor: const Color(0xFFEF4444),
+              ),
+            );
+          } else if (state is RejectReservationSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Reservation for ${state.reservation.plateNumber ?? 'Vehicle'} rejected successfully!',
+                  style: GoogleFonts.spaceGrotesk(),
+                ),
+                backgroundColor: const Color(0xFFEF4444),
+              ),
+            );
+            // Reload all reservations
+            context.read<ReservationCubit>().getAllReservations();
+          } else if (state is RejectReservationError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Failed to reject: ${state.message}',
                   style: GoogleFonts.spaceGrotesk(),
                 ),
                 backgroundColor: const Color(0xFFEF4444),
@@ -210,9 +234,13 @@ class _AdminReservationsViewState extends State<AdminReservationsView> with Sing
                   return TabBarView(
                     controller: _tabController,
                     children: [
-                      // ALL TAB
+                      // ALL TAB (Active & Pending only)
                       _buildReservationList(
-                        allReservations,
+                        allReservations
+                            .where((r) =>
+                                r.status.toLowerCase() == 'active' ||
+                                r.status.toLowerCase() == 'pending')
+                            .toList(),
                         slotCodeMap,
                         slotLocationMap,
                         cardColor,
@@ -237,24 +265,6 @@ class _AdminReservationsViewState extends State<AdminReservationsView> with Sing
                       // ACTIVE TAB
                       _buildReservationList(
                         allReservations.where((r) => r.status.toLowerCase() == 'active').toList(),
-                        slotCodeMap,
-                        slotLocationMap,
-                        cardColor,
-                        borderColor,
-                        textColor,
-                        subtitleColor,
-                        dividerColor,
-                        isDark,
-                      ),
-                      // HISTORY TAB
-                      _buildReservationList(
-                        allReservations
-                            .where((r) =>
-                                r.status.toLowerCase() == 'completed' ||
-                                r.status.toLowerCase() == 'cancelled' ||
-                                r.status.toLowerCase() == 'canceled' ||
-                                r.status.toLowerCase() == 'expired')
-                            .toList(),
                         slotCodeMap,
                         slotLocationMap,
                         cardColor,
@@ -488,26 +498,60 @@ class _AdminReservationsViewState extends State<AdminReservationsView> with Sing
                   Container(
                     width: double.infinity,
                     color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                    child: TextButton.icon(
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        foregroundColor: const Color(0xFF00A24F),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(16),
-                            bottomRight: Radius.circular(16),
+                    child: Row(
+                      children: [
+                        // Reject Button
+                        Expanded(
+                          child: TextButton.icon(
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              foregroundColor: const Color(0xFFEF4444),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(16),
+                                ),
+                              ),
+                            ),
+                            onPressed: () => _confirmReject(context, res.id, res.plateNumber ?? 'Vehicle'),
+                            icon: const Icon(Icons.cancel_outlined, size: 18),
+                            label: Text(
+                              'Reject',
+                              style: GoogleFonts.spaceGrotesk(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                      onPressed: () => _confirmApprove(context, res.id, res.plateNumber ?? 'Vehicle'),
-                      icon: const Icon(Icons.check_circle_outline, size: 18),
-                      label: Text(
-                        'Approve & Check In',
-                        style: GoogleFonts.spaceGrotesk(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
+                        Container(
+                          width: 1,
+                          height: 36,
+                          color: dividerColor,
                         ),
-                      ),
+                        // Approve Button
+                        Expanded(
+                          child: TextButton.icon(
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              foregroundColor: const Color(0xFF00A24F),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  bottomRight: Radius.circular(16),
+                                ),
+                              ),
+                            ),
+                            onPressed: () => _confirmApprove(context, res.id, res.plateNumber ?? 'Vehicle'),
+                            icon: const Icon(Icons.check_circle_outline, size: 18),
+                            label: Text(
+                              'Approve',
+                              style: GoogleFonts.spaceGrotesk(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -550,6 +594,47 @@ class _AdminReservationsViewState extends State<AdminReservationsView> with Sing
                 'Yes, Approve',
                 style: GoogleFonts.spaceGrotesk(
                   color: const Color(0xFF00A24F),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _confirmReject(BuildContext dialogContext, int reservationId, String plate) {
+    showDialog(
+      context: dialogContext,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text(
+            'Reject Reservation',
+            style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.w700),
+          ),
+          content: Text(
+            'Are you sure you want to reject the reservation for vehicle "$plate"? This will cancel the booking.',
+            style: GoogleFonts.spaceGrotesk(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                'Cancel',
+                style: GoogleFonts.spaceGrotesk(color: const Color(0xFF64748B)),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                dialogContext.read<ReservationCubit>().rejectReservation(reservationId);
+              },
+              child: Text(
+                'Yes, Reject',
+                style: GoogleFonts.spaceGrotesk(
+                  color: const Color(0xFFEF4444),
                   fontWeight: FontWeight.bold,
                 ),
               ),

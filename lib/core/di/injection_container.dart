@@ -73,6 +73,7 @@ import 'package:go2car/features/reservation/domain/usecases/create_reservation_u
 import 'package:go2car/features/reservation/domain/usecases/get_my_reservations_usecase.dart';
 import 'package:go2car/features/reservation/domain/usecases/get_all_reservations_usecase.dart';
 import 'package:go2car/features/reservation/domain/usecases/approve_reservation_usecase.dart';
+import 'package:go2car/features/reservation/domain/usecases/reject_reservation_usecase.dart';
 import 'package:go2car/features/reservation/presentation/manager/reservation_cubit/reservation_cubit.dart';
 import '../config/env_config.dart';
 import '../network/api_client.dart';
@@ -278,6 +279,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => CancelReservationUseCase(sl()));
   sl.registerLazySingleton(() => GetAllReservationsUseCase(sl()));
   sl.registerLazySingleton(() => ApproveReservationUseCase(sl()));
+  sl.registerLazySingleton(() => RejectReservationUseCase(sl()));
   sl.registerFactory(
     () => ReservationCubit(
       createReservationUseCase: sl(),
@@ -285,6 +287,7 @@ Future<void> initDependencies() async {
       cancelReservationUseCase: sl(),
       getAllReservationsUseCase: sl(),
       approveReservationUseCase: sl(),
+      rejectReservationUseCase: sl(),
     ),
   );
 

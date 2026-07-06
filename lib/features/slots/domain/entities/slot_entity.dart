@@ -27,7 +27,7 @@ class SlotEntity extends Equatable {
     this.status = 'available',
   });
 
-  bool get hasEvCharging => slotType == 'ev';
+  bool get hasEvCharging => slotType == 'ev' || slotType == 'electric';
   bool get isAccessible => slotType == 'handicap' || slotType == 'accessible' || slotType == 'disabled';
 
   // UI Compatibility Getters

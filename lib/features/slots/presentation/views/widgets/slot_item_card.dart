@@ -112,6 +112,32 @@ class SlotItemCard extends StatelessWidget {
                           ),
                         ),
                       ],
+                      if (slot.hasEvCharging) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFECFDF5), // Light green background
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: const Color(0xFF10B981), width: 1),
+                          ),
+                          child: const Row(
+                            children: [
+                              Icon(Icons.electric_car_rounded, size: 12, color: Color(0xFF059669)),
+                              SizedBox(width: 4),
+                              Text(
+                                'Electric',
+                                style: TextStyle(
+                                  fontFamily: 'Space Grotesk',
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF059669),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                   const SizedBox(height: 4),

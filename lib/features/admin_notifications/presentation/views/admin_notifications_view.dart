@@ -95,7 +95,7 @@ class _AdminNotificationsState extends State<AdminNotifications> {
                     const SizedBox(width: 8),
                     ChoiceChip(
                       label: Text(
-                        'Flagged Only',
+                        'Violations',
                         style: GoogleFonts.spaceGrotesk(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,

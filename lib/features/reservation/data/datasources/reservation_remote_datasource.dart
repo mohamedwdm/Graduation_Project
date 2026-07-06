@@ -16,6 +16,8 @@ abstract class ReservationRemoteDataSource {
   Future<List<ReservationResponseModel>> fetchAllReservations();
 
   Future<ReservationResponseModel> approveReservation(int reservationId);
+
+  Future<ReservationResponseModel> rejectReservation(int reservationId);
 }
 
 class ReservationRemoteDataSourceImpl implements ReservationRemoteDataSource {
@@ -71,6 +73,13 @@ class ReservationRemoteDataSourceImpl implements ReservationRemoteDataSource {
   @override
   Future<ReservationResponseModel> approveReservation(int reservationId) async {
     final response = await _apiClient.post('/reservations/$reservationId/approve');
+    final data = response.data as Map<String, dynamic>;
+    return ReservationResponseModel.fromJson(data);
+  }
+
+  @override
+  Future<ReservationResponseModel> rejectReservation(int reservationId) async {
+    final response = await _apiClient.post('/reservations/$reservationId/reject');
     final data = response.data as Map<String, dynamic>;
     return ReservationResponseModel.fromJson(data);
   }

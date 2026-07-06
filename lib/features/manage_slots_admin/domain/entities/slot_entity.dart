@@ -19,7 +19,7 @@ class SlotEntity extends Equatable {
     required this.slotType,
   });
 
-  bool get isEV => slotType == 'ev';
+  bool get isEV => slotType == 'ev' || slotType == 'electric';
   bool get isAccessible => slotType == 'handicap' || slotType == 'accessible' || slotType == 'disabled';
 
   @override

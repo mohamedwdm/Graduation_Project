@@ -100,3 +100,22 @@ class ApproveReservationError extends ReservationState {
   List<Object?> get props => [message];
 }
 
+class RejectReservationLoading extends ReservationState {}
+
+class RejectReservationSuccess extends ReservationState {
+  final ReservationEntity reservation;
+  const RejectReservationSuccess(this.reservation);
+
+  @override
+  List<Object?> get props => [reservation];
+}
+
+class RejectReservationError extends ReservationState {
+  final String message;
+  const RejectReservationError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+

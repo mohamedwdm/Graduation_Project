@@ -105,4 +105,20 @@ class ReservationRepositoryImpl implements ReservationRepository {
       return const Left(NetworkFailure());
     }
   }
+
+  @override
+  FutureEither<ReservationEntity> rejectReservation(int reservationId) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await remoteDataSource.rejectReservation(reservationId);
+        return Right(result);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(e.message));
+      } catch (e) {
+        return Left(ServerFailure(e.toString()));
+      }
+    } else {
+      return const Left(NetworkFailure());
+    }
+  }
 }

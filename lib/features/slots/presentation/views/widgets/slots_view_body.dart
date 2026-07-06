@@ -60,21 +60,26 @@ class _SlotsViewBodyState extends State<SlotsViewBody> {
                   }
                 },
               ),
-              if (_userType == 'handicap') ...[
-                const SizedBox(height: 12),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      _buildFilterChip(label: "All Slots", filterValue: 'all'),
-                      const SizedBox(width: 8),
-                      _buildFilterChip(label: "Normal", filterValue: 'normal'),
+              const SizedBox(height: 12),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _buildFilterChip(label: "All Slots", filterValue: 'all'),
+                    const SizedBox(width: 8),
+                    _buildFilterChip(label: "Normal", filterValue: 'normal'),
+                    const SizedBox(width: 8),
+                    _buildFilterChip(label: "Electric", filterValue: 'ev'),
+                    if (_userType == 'handicap') ...[
                       const SizedBox(width: 8),
                       _buildFilterChip(label: "Special Needs", filterValue: 'disabled'),
+                    ] else ...[
+                      const SizedBox(width: 8),
+                      _buildFilterChip(label: "VIP", filterValue: 'vip'),
                     ],
-                  ),
+                  ],
                 ),
-              ],
+              ),
               const SizedBox(height: 14),
 
               BlocBuilder<SlotsCubit, SlotsState>(
@@ -104,22 +109,29 @@ class _SlotsViewBodyState extends State<SlotsViewBody> {
                     final filteredSlots = state.slots.where((slot) {
                       final isCorrectFloor = slot.floor == _selectedFloor;
                       final isCorrectStatus = slot.status == 'available' || slot.isAvailable;
-                      
+                      if (!isCorrectFloor || !isCorrectStatus) return false;
+
                       final type = slot.slotType.toLowerCase();
                       final isHandicap = type == 'handicap' || type == 'disabled' || type == 'accessible' || slot.isAccessible;
-                      final isNormal = type == 'normal' || type.isEmpty;
-                      
-                      if (_userType == 'handicap') {
-                        if (_slotTypeFilter == 'normal') {
-                          return isCorrectFloor && isCorrectStatus && isNormal;
-                        } else if (_slotTypeFilter == 'disabled') {
-                          return isCorrectFloor && isCorrectStatus && isHandicap;
-                        } else {
-                          return isCorrectFloor && isCorrectStatus && (isNormal || isHandicap);
-                        }
+                      final isEv = type == 'ev' || type == 'electric' || slot.hasEvCharging;
+                      final isVip = type == 'vip';
+                      final isNormal = type == 'normal' || type.isEmpty || (!isHandicap && !isEv && !isVip);
+
+                      if (_slotTypeFilter == 'normal') {
+                        return isNormal;
+                      } else if (_slotTypeFilter == 'disabled') {
+                        return isHandicap;
+                      } else if (_slotTypeFilter == 'ev') {
+                        return isEv;
+                      } else if (_slotTypeFilter == 'vip') {
+                        return isVip;
                       } else {
-                        // Normal users see only normal slots
-                        return isCorrectFloor && isCorrectStatus && isNormal;
+                        // 'all'
+                        if (_userType == 'handicap') {
+                          return isNormal || isHandicap || isEv;
+                        } else {
+                          return isNormal || isEv || isVip;
+                        }
                       }
                     }).toList();
 

@@ -86,7 +86,7 @@ class MainLayoutState extends State<MainLayout> {
     if (user?.isAdmin ?? false) {
       pages.addAll([
         // const SlotsView(),
-        const FindCarView(),
+        const FindCarView(isAdmin: true),
         BlocProvider(
           create: (context) => sl<AdminNotificationsCubit>(),
           child: const AdminNotifications(),

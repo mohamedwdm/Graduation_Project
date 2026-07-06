@@ -95,7 +95,8 @@ class SlotCardWidget extends StatelessWidget {
                   'Normal',
                   customColor: const Color(0xFF475569),
                 ),
-              if (slot.slotType.toLowerCase() == 'disabled' || slot.slotType.toLowerCase() == 'handicap')
+              if (slot.slotType.toLowerCase() == 'disabled' ||
+                  slot.slotType.toLowerCase() == 'handicap')
                 _buildFeatureTag(
                   context,
                   Icons.accessible,
@@ -108,6 +109,14 @@ class SlotCardWidget extends StatelessWidget {
                   Icons.construction_rounded,
                   'Maintenance',
                   customColor: const Color(0xFFDC2626),
+                ),
+              if (slot.slotType.toLowerCase() == 'electric' ||
+                  slot.slotType.toLowerCase() == 'ev')
+                _buildFeatureTag(
+                  context,
+                  Icons.electric_bolt_outlined,
+                  'Electric (For Electric Cars)',
+                  customColor: Colors.blue,
                 ),
             ],
           ),
@@ -136,7 +145,7 @@ class SlotCardWidget extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: _ActionButton(
-                  label: "Override",
+                  label: "Change Type",
                   icon: Icons.tune_rounded,
                   onPressed: () => _showOverrideTypeBottomSheet(context),
                   backgroundColor: isDark
@@ -180,6 +189,12 @@ class SlotCardWidget extends StatelessWidget {
       textColor = const Color(0xFFDC2626);
       icon = Icons.construction_rounded;
       label = 'Maintenance';
+    } else if (t == 'electric' || t == 'ev') {
+      bgColor = const Color(0xFFECFDF5);
+      borderColor = const Color(0xFF10B981);
+      textColor = const Color(0xFF059669);
+      icon = Icons.electric_car_rounded;
+      label = 'Electric';
     } else {
       bgColor = const Color(0xFFF1F5F9);
       borderColor = const Color(0xFF94A3B8);
@@ -213,9 +228,11 @@ class SlotCardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildFeatureTag(BuildContext context, IconData icon, String text, {Color? customColor}) {
+  Widget _buildFeatureTag(BuildContext context, IconData icon, String text,
+      {Color? customColor}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final tagColor = customColor ?? (isDark ? Colors.white70 : const Color(0xFF475569));
+    final tagColor =
+        customColor ?? (isDark ? Colors.white70 : const Color(0xFF475569));
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -290,7 +307,9 @@ class SlotCardWidget extends StatelessWidget {
                     description: "Standard parking space",
                     slotType: "normal",
                     icon: Icons.directions_car_rounded,
-                    color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF475569),
+                    color: isDark
+                        ? const Color(0xFF94A3B8)
+                        : const Color(0xFF475569),
                   ),
                   const SizedBox(height: 12),
                 ],
@@ -303,7 +322,9 @@ class SlotCardWidget extends StatelessWidget {
                     description: "Premium space reserved for VIPs",
                     slotType: "vip",
                     icon: Icons.star_rounded,
-                    color: isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706),
+                    color: isDark
+                        ? const Color(0xFFFBBF24)
+                        : const Color(0xFFD97706),
                   ),
                   const SizedBox(height: 12),
                 ],
@@ -316,7 +337,9 @@ class SlotCardWidget extends StatelessWidget {
                     description: "Accessible space with extra room",
                     slotType: "disabled",
                     icon: Icons.accessible_rounded,
-                    color: isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB),
+                    color: isDark
+                        ? const Color(0xFF60A5FA)
+                        : const Color(0xFF2563EB),
                   ),
                   const SizedBox(height: 12),
                 ],
@@ -329,7 +352,24 @@ class SlotCardWidget extends StatelessWidget {
                     description: "Temporary block for service",
                     slotType: "maintenance",
                     icon: Icons.construction_rounded,
-                    color: isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626),
+                    color: isDark
+                        ? const Color(0xFFF87171)
+                        : const Color(0xFFDC2626),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+                if (currentType != 'electric' && currentType != 'ev') ...[
+                  _buildTypeOption(
+                    context,
+                    sheetContext,
+                    cubit,
+                    title: "Electric",
+                    description: "Charging station for electric vehicles",
+                    slotType: "electric",
+                    icon: Icons.electric_car_rounded,
+                    color: isDark
+                        ? const Color(0xFF34D399)
+                        : const Color(0xFF10B981),
                   ),
                 ],
               ],
