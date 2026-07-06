@@ -141,49 +141,6 @@ class _RegisterFormState extends State<RegisterForm> {
               activeColor: const Color(0xff00A24F),
             ),
           ),
-          const SizedBox(height: 15),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: const Text(
-              "Register As",
-              style: TextStyle(
-                fontFamily: 'Space Grotesk',
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Color(0xff525252),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: _buildRoleCard(
-                  label: "Driver",
-                  icon: Icons.directions_car_outlined,
-                  isSelected: selectedUserType == 'driver',
-                  onTap: () {
-                    setState(() {
-                      selectedUserType = 'driver';
-                    });
-                  },
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildRoleCard(
-                  label: "Parking Owner",
-                  icon: Icons.home_work_outlined,
-                  isSelected: selectedUserType == 'owner',
-                  onTap: () {
-                    setState(() {
-                      selectedUserType = 'owner';
-                    });
-                  },
-                ),
-              ),
-            ],
-          ),
           const SizedBox(height: 30),
           SizedBox(
             width: double.infinity,
@@ -232,51 +189,6 @@ class _RegisterFormState extends State<RegisterForm> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildRoleCard({
-    required String label,
-    required IconData icon,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    final activeColor = const Color(0xff00A24F);
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-        decoration: BoxDecoration(
-          color: isSelected ? activeColor.withOpacity(0.08) : const Color(0xffEFEFEF),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? activeColor : Colors.transparent,
-            width: 1.5,
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              size: 20,
-              color: isSelected ? activeColor : const Color(0xff525252),
-            ),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'Space Grotesk',
-                fontSize: 13,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected ? activeColor : const Color(0xff525252),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
