@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/di/injection_container.dart';
 import 'package:go2car/features/auth/data/datasources/auth_local_datasource.dart';
+import '../../../../../core/di/injection_container.dart';
 
 class SlotsHeaderSection extends StatefulWidget {
   const SlotsHeaderSection({super.key});

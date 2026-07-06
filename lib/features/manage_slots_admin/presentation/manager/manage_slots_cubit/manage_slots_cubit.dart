@@ -3,21 +3,26 @@ import 'package:go2car/core/usecase/usecase.dart';
 import '../../../domain/usecases/get_manage_slots_usecase.dart';
 import '../../../domain/usecases/add_slot_usecase.dart';
 import '../../../domain/usecases/get_sections_usecase.dart';
+import '../../../domain/usecases/update_slot_status_usecase.dart';
 import 'manage_slots_state.dart';
 
 class ManageSlotsCubit extends Cubit<ManageSlotsState> {
   final GetManageSlotsUseCase getManageSlotsUseCase;
   final AddSlotUseCase addSlotUseCase;
   final GetSectionsUseCase getSectionsUseCase;
+  final UpdateSlotStatusUseCase updateSlotStatusUseCase;
 
   ManageSlotsCubit({
     required this.getManageSlotsUseCase,
     required this.addSlotUseCase,
     required this.getSectionsUseCase,
+    required this.updateSlotStatusUseCase,
   }) : super(ManageSlotsInitial());
 
-  Future<void> fetchSlots(int floor) async {
-    emit(ManageSlotsLoading());
+  Future<void> fetchSlots(int floor, {bool showLoading = true}) async {
+    if (showLoading) {
+      emit(ManageSlotsLoading());
+    }
 
     final result = await getManageSlotsUseCase(floor);
 
@@ -46,6 +51,26 @@ class ManageSlotsCubit extends Cubit<ManageSlotsState> {
     return result.fold(
       (failure) => [],
       (sections) => sections,
+    );
+  }
+
+  Future<bool> updateSlotStatus({
+    required String slotId,
+    required bool isOccupied,
+    required int currentFloor,
+  }) async {
+    final result = await updateSlotStatusUseCase(
+      UpdateSlotStatusParams(slotId: slotId, isOccupied: isOccupied),
+    );
+    return result.fold(
+      (failure) {
+        emit(ManageSlotsError(message: failure.message));
+        return false;
+      },
+      (_) async {
+        await fetchSlots(currentFloor, showLoading: false);
+        return true;
+      },
     );
   }
 }

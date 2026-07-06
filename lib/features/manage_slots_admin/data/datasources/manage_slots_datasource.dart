@@ -6,6 +6,7 @@ abstract class ManageSlotsDataSource {
   Future<List<SlotModel>> getSlots(int floor);
   Future<void> addSlot({required String slotCode, required int sectionId});
   Future<List<Map<String, dynamic>>> getSections();
+  Future<void> updateSlotStatus({required String slotId, required bool isOccupied});
 }
 
 class ManageSlotsRemoteDataSourceImpl implements ManageSlotsDataSource {
@@ -34,6 +35,13 @@ class ManageSlotsRemoteDataSourceImpl implements ManageSlotsDataSource {
     final response = await apiClient.get('/sections/all');
     final List dataList = response.data as List;
     return dataList.map((e) => e as Map<String, dynamic>).toList();
+  }
+
+  @override
+  Future<void> updateSlotStatus({required String slotId, required bool isOccupied}) async {
+    await apiClient.patch('/slots/$slotId', data: {
+      'is_occupied': isOccupied,
+    });
   }
 }
 
@@ -158,5 +166,10 @@ class ManageSlotsMockDataSourceImpl implements ManageSlotsDataSource {
         }
       },
     ];
+  }
+
+  @override
+  Future<void> updateSlotStatus({required String slotId, required bool isOccupied}) async {
+    await Future.delayed(const Duration(milliseconds: 500));
   }
 }
