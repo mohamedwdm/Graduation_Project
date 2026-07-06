@@ -63,7 +63,7 @@ import 'package:go2car/features/manage_slots_admin/domain/repositories/manage_sl
 import 'package:go2car/features/manage_slots_admin/domain/usecases/get_manage_slots_usecase.dart';
 import 'package:go2car/features/manage_slots_admin/domain/usecases/add_slot_usecase.dart';
 import 'package:go2car/features/manage_slots_admin/domain/usecases/get_sections_usecase.dart';
-import 'package:go2car/features/manage_slots_admin/domain/usecases/update_slot_status_usecase.dart';
+import 'package:go2car/features/manage_slots_admin/domain/usecases/update_slot_type_usecase.dart';
 import 'package:go2car/features/manage_slots_admin/presentation/manager/manage_slots_cubit/manage_slots_cubit.dart';
 import 'package:go2car/features/reservation/data/datasources/reservation_remote_datasource.dart';
 import 'package:go2car/features/reservation/data/repositories/reservation_repository_impl.dart';
@@ -357,14 +357,14 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => GetManageSlotsUseCase(sl()));
   sl.registerLazySingleton(() => AddSlotUseCase(sl()));
   sl.registerLazySingleton(() => GetSectionsUseCase(sl()));
-  sl.registerLazySingleton(() => UpdateSlotStatusUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateSlotTypeUseCase(sl()));
 
   // Cubit
   sl.registerFactory(() => ManageSlotsCubit(
         getManageSlotsUseCase: sl(),
         addSlotUseCase: sl(),
         getSectionsUseCase: sl(),
-        updateSlotStatusUseCase: sl(),
+        updateSlotTypeUseCase: sl(),
       ));
 
   sl.registerLazySingleton(() => ThemeCubit(sl()));

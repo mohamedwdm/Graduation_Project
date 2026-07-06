@@ -20,16 +20,11 @@ class SlotCardWidget extends StatelessWidget {
     final shadowColor =
         isDark ? Colors.transparent : Colors.black.withValues(alpha: 0.05);
     final titleTextColor = isDark ? Colors.white : const Color(0xFF0F172A);
-
-    // final navigateBtnBgColor = isDark ? const Color(0xFF334155) : const Color(0xff0F172A);
-    // final navigateBtnTextColor = Colors.white;
+    final noteTextColor = isDark ? Colors.white70 : const Color(0xFF64748B);
 
     final viewMapBtnBgColor =
         isDark ? const Color(0xFF334155) : const Color(0xffE2E8F0);
     final viewMapBtnTextColor = isDark ? Colors.white : const Color(0xff0F172A);
-
-    // final statusOutlineBorderColor = isDark ? Colors.white54 : const Color(0xff0F172A);
-    // final statusOutlineTextColor = isDark ? Colors.white : const Color(0xff0F172A);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -50,43 +45,75 @@ class SlotCardWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "Slot ${slot.name}",
-                style: GoogleFonts.spaceGrotesk(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: titleTextColor,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        "Slot ${slot.name}",
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: titleTextColor,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      _buildTypeBadge(slot.slotType),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "Floor ${slot.floor}, Section ${slot.location}",
+                    style: GoogleFonts.spaceGrotesk(
+                      fontSize: 14,
+                      color: noteTextColor,
+                    ),
+                  ),
+                ],
               ),
               _StatusBadge(status: slot.status),
             ],
           ),
-          const SizedBox(height: 12),
-          _InfoRow(
-            icon: Icons.layers_outlined,
-            label: 'Floor',
-            value: slot.floor.toString(),
-          ),
-          const SizedBox(height: 4),
-          _InfoRow(
-            icon: Icons.location_on_outlined,
-            label: 'Location',
-            value: slot.location,
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              if (slot.slotType.toLowerCase() == 'vip')
+                _buildFeatureTag(
+                  context,
+                  Icons.star_rounded,
+                  'VIP',
+                  customColor: const Color(0xFF7C3AED),
+                ),
+              if (slot.slotType.toLowerCase() == 'normal')
+                _buildFeatureTag(
+                  context,
+                  Icons.directions_car_rounded,
+                  'Normal',
+                  customColor: const Color(0xFF475569),
+                ),
+              if (slot.slotType.toLowerCase() == 'disabled' || slot.slotType.toLowerCase() == 'handicap')
+                _buildFeatureTag(
+                  context,
+                  Icons.accessible,
+                  'Special Needs (Disabled)',
+                  customColor: const Color(0xFFD97706),
+                ),
+              if (slot.slotType.toLowerCase() == 'maintenance')
+                _buildFeatureTag(
+                  context,
+                  Icons.construction_rounded,
+                  'Maintenance',
+                  customColor: const Color(0xFFDC2626),
+                ),
+            ],
           ),
           const SizedBox(height: 16),
           Row(
             children: [
-              // Expanded(
-              //   child: _ActionButton(
-              //     label: "Navigate",
-              //     onPressed: () {},
-              //     backgroundColor: navigateBtnBgColor,
-              //     textColor: navigateBtnTextColor,
-              //   ),
-              // ),
-              // const SizedBox(width: 8),
               Expanded(
                 child: _ActionButton(
                   label: "View Map",
@@ -111,7 +138,7 @@ class SlotCardWidget extends StatelessWidget {
                 child: _ActionButton(
                   label: "Override",
                   icon: Icons.tune_rounded,
-                  onPressed: () => _showOverrideStatusBottomSheet(context),
+                  onPressed: () => _showOverrideTypeBottomSheet(context),
                   backgroundColor: isDark
                       ? const Color(0xFF334155)
                       : const Color.fromARGB(255, 92, 114, 134),
@@ -127,9 +154,90 @@ class SlotCardWidget extends StatelessWidget {
     );
   }
 
-  void _showOverrideStatusBottomSheet(BuildContext context) {
+  Widget _buildTypeBadge(String type) {
+    final t = type.toLowerCase();
+    final Color bgColor;
+    final Color borderColor;
+    final Color textColor;
+    final IconData icon;
+    final String label;
+
+    if (t == 'vip') {
+      bgColor = const Color(0xFFF5F3FF);
+      borderColor = const Color(0xFF8B5CF6);
+      textColor = const Color(0xFF7C3AED);
+      icon = Icons.star_rounded;
+      label = 'VIP';
+    } else if (t == 'disabled' || t == 'handicap') {
+      bgColor = const Color(0xFFFEF3C7);
+      borderColor = const Color(0xFFF59E0B);
+      textColor = const Color(0xFFD97706);
+      icon = Icons.accessible;
+      label = 'Special Needs';
+    } else if (t == 'maintenance') {
+      bgColor = const Color(0xFFFEE2E2);
+      borderColor = const Color(0xFFEF4444);
+      textColor = const Color(0xFFDC2626);
+      icon = Icons.construction_rounded;
+      label = 'Maintenance';
+    } else {
+      bgColor = const Color(0xFFF1F5F9);
+      borderColor = const Color(0xFF94A3B8);
+      textColor = const Color(0xFF475569);
+      icon = Icons.directions_car_rounded;
+      label = 'Normal';
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: borderColor, width: 1),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: textColor),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: GoogleFonts.spaceGrotesk(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeatureTag(BuildContext context, IconData icon, String text, {Color? customColor}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final tagColor = customColor ?? (isDark ? Colors.white70 : const Color(0xFF475569));
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 19, color: tagColor),
+        const SizedBox(width: 4),
+        Text(
+          text,
+          style: GoogleFonts.spaceGrotesk(
+            fontWeight: FontWeight.w400,
+            fontSize: 14,
+            color: tagColor,
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showOverrideTypeBottomSheet(BuildContext context) {
     final cubit = context.read<ManageSlotsCubit>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final currentType = slot.slotType.toLowerCase();
 
     showModalBottomSheet(
       context: context,
@@ -157,7 +265,7 @@ class SlotCardWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  "Override Slot Status",
+                  "Override Slot Type",
                   style: GoogleFonts.spaceGrotesk(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -166,40 +274,62 @@ class SlotCardWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "Manually override the occupancy state of Slot ${slot.name}.",
+                  "Manually change the type designation for Slot ${slot.name}.",
                   style: GoogleFonts.spaceGrotesk(
                     fontSize: 14,
                     color: isDark ? Colors.white60 : const Color(0xFF64748B),
                   ),
                 ),
                 const SizedBox(height: 24),
-                if (slot.status != SlotStatus.available) ...[
-                  _buildStatusOption(
+                if (currentType != 'normal') ...[
+                  _buildTypeOption(
                     context,
                     sheetContext,
                     cubit,
-                    title: "Available",
-                    description: "Set slot as free/unoccupied",
-                    isOccupied: false,
-                    icon: Icons.check_circle,
-                    color: isDark
-                        ? const Color(0xFF4ADE80)
-                        : const Color(0xFF15803D),
+                    title: "Normal",
+                    description: "Standard parking space",
+                    slotType: "normal",
+                    icon: Icons.directions_car_rounded,
+                    color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF475569),
                   ),
                   const SizedBox(height: 12),
                 ],
-                if (slot.status != SlotStatus.occupied) ...[
-                  _buildStatusOption(
+                if (currentType != 'vip') ...[
+                  _buildTypeOption(
                     context,
                     sheetContext,
                     cubit,
-                    title: "Occupied",
-                    description: "Set slot as physically occupied",
-                    isOccupied: true,
-                    icon: Icons.cancel,
-                    color: isDark
-                        ? const Color(0xFFF87171)
-                        : const Color(0xFFDC2626),
+                    title: "VIP",
+                    description: "Premium space reserved for VIPs",
+                    slotType: "vip",
+                    icon: Icons.star_rounded,
+                    color: isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+                if (currentType != 'disabled' && currentType != 'handicap') ...[
+                  _buildTypeOption(
+                    context,
+                    sheetContext,
+                    cubit,
+                    title: "Disabled",
+                    description: "Accessible space with extra room",
+                    slotType: "disabled",
+                    icon: Icons.accessible_rounded,
+                    color: isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+                if (currentType != 'maintenance') ...[
+                  _buildTypeOption(
+                    context,
+                    sheetContext,
+                    cubit,
+                    title: "Maintenance",
+                    description: "Temporary block for service",
+                    slotType: "maintenance",
+                    icon: Icons.construction_rounded,
+                    color: isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626),
                   ),
                 ],
               ],
@@ -210,13 +340,13 @@ class SlotCardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusOption(
+  Widget _buildTypeOption(
     BuildContext context,
     BuildContext sheetContext,
     ManageSlotsCubit cubit, {
     required String title,
     required String description,
-    required bool isOccupied,
+    required String slotType,
     required IconData icon,
     required Color color,
   }) {
@@ -226,9 +356,9 @@ class SlotCardWidget extends StatelessWidget {
       onTap: () async {
         Navigator.pop(sheetContext);
 
-        final success = await cubit.updateSlotStatus(
+        final success = await cubit.updateSlotType(
           slotId: slot.id,
-          isOccupied: isOccupied,
+          slotType: slotType,
           currentFloor: slot.floor,
         );
 
@@ -237,8 +367,8 @@ class SlotCardWidget extends StatelessWidget {
             SnackBar(
               content: Text(
                 success
-                    ? "Successfully set Slot ${slot.name} to ${isOccupied ? 'Occupied' : 'Available'}."
-                    : "Failed to update slot status.",
+                    ? "Successfully set Slot ${slot.name} to $title."
+                    : "Failed to update slot type.",
               ),
               backgroundColor: success ? Colors.green : Colors.red,
             ),
@@ -367,35 +497,6 @@ class _StatusBadge extends StatelessWidget {
   }
 }
 
-class _FeatureChip extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const _FeatureChip({required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white70 : const Color(0xff475569);
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 18, color: const Color(0xff94A3B8)),
-        const SizedBox(width: 4),
-        Text(
-          label,
-          style: GoogleFonts.spaceGrotesk(
-            fontWeight: FontWeight.w400,
-            fontSize: 14,
-            color: textColor,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _ActionButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
@@ -404,7 +505,6 @@ class _ActionButton extends StatelessWidget {
   final IconData? icon;
 
   const _ActionButton({
-    super.key,
     required this.label,
     required this.onPressed,
     required this.backgroundColor,
@@ -447,48 +547,6 @@ class _ActionButton extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-
-  const _InfoRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final iconColor = isDark ? Colors.white60 : const Color(0xFF64748B);
-    final labelTextColor = isDark ? Colors.white70 : const Color(0xFF64748B);
-    final valueTextColor = isDark ? Colors.white : const Color(0xFF1E293B);
-
-    return Row(
-      children: [
-        Icon(icon, size: 14, color: iconColor),
-        const SizedBox(width: 6),
-        Text(
-          '$label: ',
-          style: GoogleFonts.spaceGrotesk(
-            fontSize: 13,
-            color: labelTextColor,
-          ),
-        ),
-        Text(
-          value,
-          style: GoogleFonts.spaceGrotesk(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: valueTextColor,
-          ),
-        ),
-      ],
     );
   }
 }
