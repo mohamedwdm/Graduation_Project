@@ -50,14 +50,22 @@ class SlotCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                slot.label,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Space Grotesk',
-                  color: titleTextColor,
-                ),
+              Row(
+                children: [
+                  Text(
+                    slot.label,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Space Grotesk',
+                      color: titleTextColor,
+                    ),
+                  ),
+                  if (slot.isAccessible) ...[
+                    const SizedBox(width: 6),
+                    const Icon(Icons.accessible, size: 16, color: Color(0xFFD97706)),
+                  ],
+                ],
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

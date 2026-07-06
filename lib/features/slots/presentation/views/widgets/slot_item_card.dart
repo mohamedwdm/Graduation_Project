@@ -75,14 +75,44 @@ class SlotItemCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Slot ${slot.slotNumber}',
-                    style: TextStyle(
-                      fontFamily: 'Space Grotesk',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 18,
-                      color: titleTextColor,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        'Slot ${slot.slotNumber}',
+                        style: TextStyle(
+                          fontFamily: 'Space Grotesk',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 18,
+                          color: titleTextColor,
+                        ),
+                      ),
+                      if (slot.isAccessible) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFEF3C7), // Light amber/yellow background
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: const Color(0xFFF59E0B), width: 1),
+                          ),
+                          child: const Row(
+                            children: [
+                              Icon(Icons.accessible, size: 12, color: Color(0xFFD97706)),
+                              SizedBox(width: 4),
+                              Text(
+                                'Special Needs',
+                                style: TextStyle(
+                                  fontFamily: 'Space Grotesk',
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFFD97706),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -136,7 +166,12 @@ class SlotItemCard extends StatelessWidget {
                 if (slot.hasEvCharging && slot.isAccessible)
                   const SizedBox(width: 16),
                 if (slot.isAccessible)
-                  _buildFeatureTag(context, Icons.accessible, 'Accessible'),
+                  _buildFeatureTag(
+                    context,
+                    Icons.accessible,
+                    'Special Needs (Disabled)',
+                    customColor: const Color(0xFFD97706),
+                  ),
               ],
             ),
           ],
@@ -276,10 +311,10 @@ class SlotItemCard extends StatelessWidget {
     );
   }
 
-  Widget _buildFeatureTag(BuildContext context, IconData icon, String text) {
+  Widget _buildFeatureTag(BuildContext context, IconData icon, String text, {Color? customColor}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final tagColor = isDark ? Colors.white70 : const Color(0xFF475569);
-
+    final tagColor = customColor ?? (isDark ? Colors.white70 : const Color(0xFF475569));
+ 
     return Row(
       children: [
         Icon(icon, size: 19, color: tagColor),
