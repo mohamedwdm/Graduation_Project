@@ -1,5 +1,10 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:get_it/get_it.dart';
+import '../../features/auth/data/datasources/auth_local_datasource.dart';
+import '../network/api_client.dart';
+import '../websocket/socket_manager.dart';
+import '../config/app_router.dart';
 
 class AuthInterceptor extends Interceptor {
   String? _token;
@@ -44,8 +49,28 @@ class LoggingInterceptor extends Interceptor {
 
 class ErrorInterceptor extends Interceptor {
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
-    // Placeholder for retry logic
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
+    if (err.response?.statusCode == 401) {
+      log('ErrorInterceptor: Token expired or unauthorized (401). Clearing session and redirecting to login.');
+      final getIt = GetIt.instance;
+      try {
+        final localDataSource = getIt<AuthLocalDataSource>();
+        await localDataSource.clearUser();
+        await localDataSource.clearToken();
+        
+        final apiClient = getIt<ApiClient>();
+        apiClient.updateAuthToken(null);
+        apiClient.setGuestMode(false);
+        
+        final socketManager = getIt<SocketManager>();
+        socketManager.updateToken(null);
+      } catch (e) {
+        log('Error clearing session: $e');
+      }
+
+      // Redirect user to the login screen
+      AppRouter.router.go(AppRouter.loginPath);
+    }
     super.onError(err, handler);
   }
 }
