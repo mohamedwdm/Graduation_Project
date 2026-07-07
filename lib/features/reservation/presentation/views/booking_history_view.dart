@@ -230,8 +230,7 @@ class _BookingHistoryViewState extends State<BookingHistoryView> {
                       final res = reservations[index];
                       final slotLabel = slotCodeMap[res.slotId] ?? 'Slot #${res.slotId}';
                       final location = slotLocationMap[res.slotId] ?? '';
-                      final isCancellable = res.status.toLowerCase() == 'pending' ||
-                          res.status.toLowerCase() == 'active';
+                      final isCancellable = res.status.toLowerCase() == 'pending';
 
                       return Container(
                         margin: const EdgeInsets.only(bottom: 16),

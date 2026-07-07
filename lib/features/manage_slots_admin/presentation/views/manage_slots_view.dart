@@ -348,7 +348,7 @@ class _ManageSlotsViewState extends State<ManageSlotsView> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final titleColor = isDark ? Colors.white : const Color(0xff0F172A);
     final subtitleColor = isDark ? const Color(0xff94A3B8) : const Color(0xff64748B);
-    final plusBtnColor = isDark ? const Color(0xff10B981) : const Color.fromARGB(255, 20, 218, 86);
+   // final plusBtnColor = isDark ? const Color(0xff10B981) : const Color.fromARGB(255, 20, 218, 86);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -377,21 +377,21 @@ class _ManageSlotsViewState extends State<ManageSlotsView> {
               ),
             ],
           ),
-          GestureDetector(
-            onTap: () => _showAddSlotDialog(context),
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: plusBtnColor,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.add,
-                color: Colors.white,
-              ),
-            ),
-          ),
+          // GestureDetector(
+          //   onTap: () => _showAddSlotDialog(context),
+          //   child: Container(
+          //     width: 40,
+          //     height: 40,
+          //     decoration: BoxDecoration(
+          //       color: plusBtnColor,
+          //       shape: BoxShape.circle,
+          //     ),
+          //     child: const Icon(
+          //       Icons.add,
+          //       color: Colors.white,
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
