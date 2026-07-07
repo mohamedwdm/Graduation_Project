@@ -73,9 +73,6 @@ class _SlotsViewBodyState extends State<SlotsViewBody> {
                     if (_userType == 'handicap') ...[
                       const SizedBox(width: 8),
                       _buildFilterChip(label: "Special Needs", filterValue: 'disabled'),
-                    ] else ...[
-                      const SizedBox(width: 8),
-                      _buildFilterChip(label: "VIP", filterValue: 'vip'),
                     ],
                   ],
                 ),
