@@ -102,7 +102,8 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
     }
   }
 
-  Future<DateTime?> _pickDateTime(BuildContext context, DateTime initial) async {
+  Future<DateTime?> _pickDateTime(
+      BuildContext context, DateTime initial) async {
     final date = await showDatePicker(
       context: context,
       initialDate: initial,
@@ -162,7 +163,9 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
         return;
       }
 
-      final plate = _useCustomPlate ? _customPlateController.text : _selectedSavedCarPlate;
+      final plate = _useCustomPlate
+          ? _customPlateController.text
+          : _selectedSavedCarPlate;
       if (plate == null || plate.trim().isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -182,6 +185,357 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
     }
   }
 
+  void _showPaymentDialog() {
+    if (!_formKey.currentState!.validate()) return;
+    if (_selectedSlotCode == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a parking slot'),
+          backgroundColor: Colors.orangeAccent,
+        ),
+      );
+      return;
+    }
+    final plate = _useCustomPlate ? _customPlateController.text : _selectedSavedCarPlate;
+    if (plate == null || plate.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select or enter a vehicle plate number'),
+          backgroundColor: Colors.orangeAccent,
+        ),
+      );
+      return;
+    }
+
+    String selectedPayment = 'card';
+    int currentStep = 1;
+
+    final cardNumberController = TextEditingController(text: "4242 4242 4242 4242");
+    final expiryController = TextEditingController(text: "12/28");
+    final cvvController = TextEditingController(text: "123");
+    final paypalEmailController = TextEditingController(text: "user@example.com");
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: Text(
+                currentStep == 1 ? 'Payment Method' : 'Enter Details',
+                style: GoogleFonts.spaceGrotesk(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: const Color(0xFF0F172A),
+                ),
+              ),
+              content: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 250),
+                child: currentStep == 1
+                    ? Column(
+                        key: const ValueKey(1),
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Choose how you would like to pay for your reservation.',
+                            style: GoogleFonts.spaceGrotesk(
+                              fontSize: 14,
+                              color: const Color(0xFF64748B),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          _buildPaymentOption(
+                            title: 'Credit / Debit Card',
+                            subtitle: 'Visa, Mastercard, etc.',
+                            icon: Icons.credit_card,
+                            value: 'card',
+                            selectedValue: selectedPayment,
+                            onTap: () => setDialogState(() => selectedPayment = 'card'),
+                          ),
+                          const SizedBox(height: 8),
+                          _buildPaymentOption(
+                            title: 'PayPal',
+                            subtitle: 'Pay via PayPal account',
+                            icon: Icons.account_balance_wallet,
+                            value: 'paypal',
+                            selectedValue: selectedPayment,
+                            onTap: () => setDialogState(() => selectedPayment = 'paypal'),
+                          ),
+                          const SizedBox(height: 8),
+                          _buildPaymentOption(
+                            title: 'Apple / Google Pay',
+                            subtitle: 'Instant mobile checkout',
+                            icon: Icons.phone_android,
+                            value: 'mobile_pay',
+                            selectedValue: selectedPayment,
+                            onTap: () => setDialogState(() => selectedPayment = 'mobile_pay'),
+                          ),
+                          const SizedBox(height: 8),
+                          _buildPaymentOption(
+                            title: 'Pay at Location',
+                            subtitle: 'Pay at parking entrance gate',
+                            icon: Icons.payments_outlined,
+                            value: 'cash',
+                            selectedValue: selectedPayment,
+                            onTap: () => setDialogState(() => selectedPayment = 'cash'),
+                          ),
+                        ],
+                      )
+                    : Column(
+                        key: const ValueKey(2),
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (selectedPayment == 'card') ...[
+                            Text(
+                              'Credit Card Details',
+                              style: GoogleFonts.spaceGrotesk(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: const Color(0xFF0F172A),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: cardNumberController,
+                              style: GoogleFonts.spaceGrotesk(fontSize: 14),
+                              decoration: InputDecoration(
+                                labelText: 'Card Number',
+                                labelStyle: GoogleFonts.spaceGrotesk(fontSize: 12),
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                              ),
+                              keyboardType: TextInputType.number,
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: expiryController,
+                                    style: GoogleFonts.spaceGrotesk(fontSize: 14),
+                                    decoration: InputDecoration(
+                                      labelText: 'Expiry Date',
+                                      labelStyle: GoogleFonts.spaceGrotesk(fontSize: 12),
+                                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                    ),
+                                    keyboardType: TextInputType.datetime,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: TextField(
+                                    controller: cvvController,
+                                    style: GoogleFonts.spaceGrotesk(fontSize: 14),
+                                    decoration: InputDecoration(
+                                      labelText: 'CVV',
+                                      labelStyle: GoogleFonts.spaceGrotesk(fontSize: 12),
+                                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    obscureText: true,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ] else if (selectedPayment == 'paypal') ...[
+                            Text(
+                              'PayPal Authentication',
+                              style: GoogleFonts.spaceGrotesk(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: const Color(0xFF0F172A),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: paypalEmailController,
+                              style: GoogleFonts.spaceGrotesk(fontSize: 14),
+                              decoration: InputDecoration(
+                                labelText: 'PayPal Email / Account',
+                                labelStyle: GoogleFonts.spaceGrotesk(fontSize: 12),
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                              ),
+                              keyboardType: TextInputType.emailAddress,
+                            ),
+                            const SizedBox(height: 10),
+                            TextField(
+                              obscureText: true,
+                              style: GoogleFonts.spaceGrotesk(fontSize: 14),
+                              decoration: InputDecoration(
+                                labelText: 'Password',
+                                labelStyle: GoogleFonts.spaceGrotesk(fontSize: 12),
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                              ),
+                            ),
+                          ] else if (selectedPayment == 'mobile_pay') ...[
+                            Center(
+                              child: Column(
+                                children: [
+                                  const Icon(Icons.contactless_outlined, size: 60, color: Color(0xff00A24F)),
+                                  const SizedBox(height: 14),
+                                  Text(
+                                    'Simulating Mobile Pay...',
+                                    style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    'Place phone near payment terminal or confirm popup request.',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.spaceGrotesk(fontSize: 12, color: const Color(0xFF64748B)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ] else ...[
+                            Center(
+                              child: Column(
+                                children: [
+                                  const Icon(Icons.info_outline_rounded, size: 60, color: Color(0xff00A24F)),
+                                  const SizedBox(height: 14),
+                                  Text(
+                                    'Pay at Parking Entrance',
+                                    style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    'No card details are needed. You will pay cash or POS card machine at the gate upon entry.',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.spaceGrotesk(fontSize: 12, color: const Color(0xFF64748B)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    if (currentStep == 2) {
+                      setDialogState(() => currentStep = 1);
+                    } else {
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: Text(
+                    currentStep == 2 ? 'Back' : 'Cancel',
+                    style: GoogleFonts.spaceGrotesk(
+                      color: const Color(0xFF64748B),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xff00A24F),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                  ),
+                  onPressed: () {
+                    if (currentStep == 1) {
+                      setDialogState(() => currentStep = 2);
+                    } else {
+                      Navigator.pop(context);
+                      _submit();
+                    }
+                  },
+                  child: Text(
+                    currentStep == 1 ? 'Next' : 'Pay & Confirm',
+                    style: GoogleFonts.spaceGrotesk(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildPaymentOption({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required String value,
+    required String selectedValue,
+    required VoidCallback onTap,
+  }) {
+    final isSelected = value == selectedValue;
+    final activeColor = const Color(0xff00A24F);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isSelected ? activeColor.withOpacity(0.06) : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? activeColor : const Color(0xFFE2E8F0),
+            width: isSelected ? 1.8 : 1.0,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(icon,
+                color: isSelected ? activeColor : const Color(0xFF64748B),
+                size: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.spaceGrotesk(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: const Color(0xFF0F172A),
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: GoogleFonts.spaceGrotesk(
+                      fontSize: 12,
+                      color: const Color(0xFF64748B),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              Icon(Icons.check_circle, color: activeColor, size: 20)
+            else
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border:
+                      Border.all(color: const Color(0xFFCBD5E1), width: 1.5),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<ReservationCubit, ReservationState>(
@@ -189,7 +543,8 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
         if (state is ReservationSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Reservation request submitted! Awaiting admin approval.'),
+              content: Text(
+                  'Reservation request submitted! Awaiting admin approval.'),
               backgroundColor: const Color(0xff00A24F),
             ),
           );
@@ -203,7 +558,8 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
               ),
               title: Row(
                 children: [
-                  const Icon(Icons.error_outline, color: Colors.redAccent, size: 28),
+                  const Icon(Icons.error_outline,
+                      color: Colors.redAccent, size: 28),
                   const SizedBox(width: 10),
                   Text(
                     'Reservation Failed',
@@ -301,10 +657,14 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
                       }
 
                       // Automatically select first car if available and none selected yet
-                      if (state is SavedCarsLoaded && state.cars.isNotEmpty && _selectedSavedCarPlate == null && !_useCustomPlate) {
+                      if (state is SavedCarsLoaded &&
+                          state.cars.isNotEmpty &&
+                          _selectedSavedCarPlate == null &&
+                          !_useCustomPlate) {
                         WidgetsBinding.instance.addPostFrameCallback((_) {
                           setState(() {
-                            _selectedSavedCarPlate = state.cars.first.plateNumber;
+                            _selectedSavedCarPlate =
+                                state.cars.first.plateNumber;
                           });
                         });
                       }
@@ -358,11 +718,13 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
                           const SizedBox(height: 8),
                           if (!_useCustomPlate)
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: const Color(0xFFE2E8F0)),
+                                border:
+                                    Border.all(color: const Color(0xFFE2E8F0)),
                               ),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButtonFormField<String>(
@@ -372,8 +734,11 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
                                     isDense: true,
                                   ),
                                   hint: Text(
-                                    state is SavedCarsLoading ? 'Loading cars...' : 'Choose a car',
-                                    style: GoogleFonts.spaceGrotesk(color: const Color(0xFF94A3B8)),
+                                    state is SavedCarsLoading
+                                        ? 'Loading cars...'
+                                        : 'Choose a car',
+                                    style: GoogleFonts.spaceGrotesk(
+                                        color: const Color(0xFF94A3B8)),
                                   ),
                                   items: carItems,
                                   onChanged: (val) {
@@ -390,29 +755,36 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
                               style: GoogleFonts.spaceGrotesk(),
                               decoration: InputDecoration(
                                 hintText: 'Enter plate number (e.g. 123 ABC)',
-                                hintStyle: GoogleFonts.spaceGrotesk(color: const Color(0xFF94A3B8)),
+                                hintStyle: GoogleFonts.spaceGrotesk(
+                                    color: const Color(0xFF94A3B8)),
                                 filled: true,
                                 fillColor: Colors.white,
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 16),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                                  borderSide: const BorderSide(
+                                      color: Color(0xFFE2E8F0)),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(color: Color(0xff00A24F), width: 1.5),
+                                  borderSide: const BorderSide(
+                                      color: Color(0xff00A24F), width: 1.5),
                                 ),
                                 errorBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(color: Colors.redAccent),
+                                  borderSide:
+                                      const BorderSide(color: Colors.redAccent),
                                 ),
                                 focusedErrorBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
+                                  borderSide: const BorderSide(
+                                      color: Colors.redAccent, width: 1.5),
                                 ),
                               ),
                               validator: (value) {
-                                if (_useCustomPlate && (value == null || value.trim().isEmpty)) {
+                                if (_useCustomPlate &&
+                                    (value == null || value.trim().isEmpty)) {
                                   return 'Please enter plate number';
                                 }
                                 return null;
@@ -432,31 +804,45 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
 
                       if (state is SlotsLoaded) {
                         final availableSlots = state.slots.where((s) {
-                          final isAvailableOrSelected = s.isAvailable || s.slotId == _selectedSlotCode;
-                          
+                          final isAvailableOrSelected =
+                              s.isAvailable || s.slotId == _selectedSlotCode;
+
                           final type = s.slotType.toLowerCase();
-                          final isHandicap = type == 'handicap' || type == 'disabled' || type == 'accessible' || s.isAccessible;
-                          
+                          final isHandicap = type == 'handicap' ||
+                              type == 'disabled' ||
+                              type == 'accessible' ||
+                              s.isAccessible;
+
                           if (_userType == 'handicap') {
-                            return isAvailableOrSelected && (type == 'normal' || isHandicap || type.isEmpty);
+                            return isAvailableOrSelected &&
+                                (type == 'normal' ||
+                                    isHandicap ||
+                                    type.isEmpty);
                           } else {
-                            return isAvailableOrSelected && (type == 'normal' || type.isEmpty);
+                            return isAvailableOrSelected &&
+                                (type == 'normal' || type.isEmpty);
                           }
                         }).toList();
 
                         // Resolve preselection
-                        if (_selectedSlotCode != null && _selectedFloor == null) {
+                        if (_selectedSlotCode != null &&
+                            _selectedFloor == null) {
                           for (final slot in availableSlots) {
                             if (slot.slotId == _selectedSlotCode) {
                               _selectedFloor = slot.floor;
-                              _selectedSectionNameDisplay = slot.sectionNameDisplay;
+                              _selectedSectionNameDisplay =
+                                  slot.sectionNameDisplay;
                               break;
                             }
                           }
                         }
 
                         // Floors
-                        final floorsList = availableSlots.map((s) => s.floor).toSet().toList()..sort();
+                        final floorsList = availableSlots
+                            .map((s) => s.floor)
+                            .toSet()
+                            .toList()
+                          ..sort();
                         floorItems = floorsList.map((f) {
                           return DropdownMenuItem<int>(
                             value: f,
@@ -474,7 +860,7 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
                               .map((s) => s.sectionNameDisplay)
                               .toSet()
                               .toList()
-                              ..sort();
+                            ..sort();
                           sectionItems = sectionsList.map((sec) {
                             return DropdownMenuItem<String>(
                               value: sec,
@@ -487,9 +873,13 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
                         }
 
                         // Slots
-                        if (_selectedFloor != null && _selectedSectionNameDisplay != null) {
+                        if (_selectedFloor != null &&
+                            _selectedSectionNameDisplay != null) {
                           final slotsList = availableSlots
-                              .where((s) => s.floor == _selectedFloor && s.sectionNameDisplay == _selectedSectionNameDisplay)
+                              .where((s) =>
+                                  s.floor == _selectedFloor &&
+                                  s.sectionNameDisplay ==
+                                      _selectedSectionNameDisplay)
                               .toList();
                           slotItems = slotsList.map((slot) {
                             return DropdownMenuItem<String>(
@@ -503,8 +893,11 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
                         }
                       }
 
-                      final isDark = Theme.of(context).brightness == Brightness.dark;
-                      final disabledColor = isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9);
+                      final isDark =
+                          Theme.of(context).brightness == Brightness.dark;
+                      final disabledColor = isDark
+                          ? const Color(0xFF1E293B)
+                          : const Color(0xFFF1F5F9);
 
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -517,7 +910,8 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                              border:
+                                  Border.all(color: const Color(0xFFE2E8F0)),
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButtonFormField<int>(
@@ -527,17 +921,22 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
                                   isDense: true,
                                 ),
                                 hint: Text(
-                                  state is SlotsLoading ? 'Loading floors...' : 'Choose a floor',
-                                  style: GoogleFonts.spaceGrotesk(color: const Color(0xFF94A3B8)),
+                                  state is SlotsLoading
+                                      ? 'Loading floors...'
+                                      : 'Choose a floor',
+                                  style: GoogleFonts.spaceGrotesk(
+                                      color: const Color(0xFF94A3B8)),
                                 ),
                                 items: floorItems,
-                                onChanged: state is! SlotsLoaded ? null : (val) {
-                                  setState(() {
-                                    _selectedFloor = val;
-                                    _selectedSectionNameDisplay = null;
-                                    _selectedSlotCode = null;
-                                  });
-                                },
+                                onChanged: state is! SlotsLoaded
+                                    ? null
+                                    : (val) {
+                                        setState(() {
+                                          _selectedFloor = val;
+                                          _selectedSectionNameDisplay = null;
+                                          _selectedSlotCode = null;
+                                        });
+                                      },
                               ),
                             ),
                           ),
@@ -549,9 +948,12 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             decoration: BoxDecoration(
-                              color: _selectedFloor == null ? disabledColor : Colors.white,
+                              color: _selectedFloor == null
+                                  ? disabledColor
+                                  : Colors.white,
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                              border:
+                                  Border.all(color: const Color(0xFFE2E8F0)),
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButtonFormField<String>(
@@ -561,16 +963,21 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
                                   isDense: true,
                                 ),
                                 hint: Text(
-                                  _selectedFloor == null ? 'Select a floor first' : 'Choose a section',
-                                  style: GoogleFonts.spaceGrotesk(color: const Color(0xFF94A3B8)),
+                                  _selectedFloor == null
+                                      ? 'Select a floor first'
+                                      : 'Choose a section',
+                                  style: GoogleFonts.spaceGrotesk(
+                                      color: const Color(0xFF94A3B8)),
                                 ),
                                 items: sectionItems,
-                                onChanged: _selectedFloor == null ? null : (val) {
-                                  setState(() {
-                                    _selectedSectionNameDisplay = val;
-                                    _selectedSlotCode = null;
-                                  });
-                                },
+                                onChanged: _selectedFloor == null
+                                    ? null
+                                    : (val) {
+                                        setState(() {
+                                          _selectedSectionNameDisplay = val;
+                                          _selectedSlotCode = null;
+                                        });
+                                      },
                               ),
                             ),
                           ),
@@ -582,9 +989,12 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             decoration: BoxDecoration(
-                              color: _selectedSectionNameDisplay == null ? disabledColor : Colors.white,
+                              color: _selectedSectionNameDisplay == null
+                                  ? disabledColor
+                                  : Colors.white,
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                              border:
+                                  Border.all(color: const Color(0xFFE2E8F0)),
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButtonFormField<String>(
@@ -594,15 +1004,20 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
                                   isDense: true,
                                 ),
                                 hint: Text(
-                                  _selectedSectionNameDisplay == null ? 'Select a section first' : 'Choose a slot',
-                                  style: GoogleFonts.spaceGrotesk(color: const Color(0xFF94A3B8)),
+                                  _selectedSectionNameDisplay == null
+                                      ? 'Select a section first'
+                                      : 'Choose a slot',
+                                  style: GoogleFonts.spaceGrotesk(
+                                      color: const Color(0xFF94A3B8)),
                                 ),
                                 items: slotItems,
-                                onChanged: _selectedSectionNameDisplay == null ? null : (val) {
-                                  setState(() {
-                                    _selectedSlotCode = val;
-                                  });
-                                },
+                                onChanged: _selectedSectionNameDisplay == null
+                                    ? null
+                                    : (val) {
+                                        setState(() {
+                                          _selectedSlotCode = val;
+                                        });
+                                      },
                               ),
                             ),
                           ),
@@ -625,7 +1040,8 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                              border:
+                                  Border.all(color: const Color(0xFFE2E8F0)),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -660,7 +1076,8 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                              border:
+                                  Border.all(color: const Color(0xFFE2E8F0)),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -698,9 +1115,9 @@ class _ReserveSlotViewState extends State<ReserveSlotView> {
                         child: CustomButton(
                           backgroundcolor: const Color(0xff00A24F),
                           textcolor: Colors.white,
-                          text: 'CONFIRM RESERVATION',
+                          text: 'PAY TO RESERVE',
                           isLoading: state is ReservationLoading,
-                          onPressed: _submit,
+                          onPressed: _showPaymentDialog,
                         ),
                       );
                     },
