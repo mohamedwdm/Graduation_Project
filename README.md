@@ -10,14 +10,16 @@ A production-ready Flutter mobile application for the **Go2Car — AI-Powered Sm
 * **Real-time Slot Viewer**: View live parking spot availability organized by floor, section, and accessibility needs.
 * **Smart Reservations**: Choose a floor, section, and slot to reserve parking in advance with custom start and end timeframes.
 * **Vehicle Manager**: Save personal vehicles (model, plate number) for quick selection when booking or locate vehicles by plate.
-* **Interactive Payment Checkout**: Multi-step checkout experience supporting:
-  * **Credit / Debit Cards** (simulated input fields with validation)
-  * **PayPal** authentication simulation
-  * **Apple / Google Pay** contact-free payment simulation
-  * **Pay at Location** (cash or card POS terminal at entrance)
 * **Booking History**: Keep track of all current and historical parking records.
 * **Active Status Guard**: Live active reservations cannot be cancelled once they have been approved or have started, preventing status conflicts.
 * **Find My Car**: Input a plate number to get fuzzy searches and navigation guidelines to locate your parked car.
+* **Simulated Multi-Step Checkout**: A purely client-side user interface mockup demonstrating how the payment process would function, supporting:
+  * **Simulated Credit / Debit Card**: Mock input fields for Card Number, Expiry, and CVV.
+  * **Simulated PayPal**: Mock login credentials and authorization form.
+  * **Simulated Apple / Google Pay**: Contact-free mobile payment mockup interface.
+  * **Simulated Pay at Location**: Confirmation screen for cash or POS payment at the physical gate.
+  *(Note: All payment options are mock UI simulations; no actual financial transactions or payment gateway integrations exist).*
+
 
 ### 🔑 Admin Features
 * **Facility Overview Dashboard**: View live analytics showing active parking spots, total slot occupancy, and historical activity timelines.
